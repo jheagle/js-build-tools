@@ -32,7 +32,10 @@
       "jest"
     ]
   },
-  "devDependencies": {
+  "dependencies": {
+    "@babel/core": "^7.17.8",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/runtime-corejs3": "^7.17.8",
     "browserify": "^17.0.0",
     "core-js": "^3.21.1",
     "del": "^6.0.0",
@@ -47,6 +50,7 @@
     "jest": "^27.5.1",
     "jsdoc-to-markdown": "^7.1.1",
     "lodash.template": "^4.5.0",
+    "regenerator-runtime": "^0.13.9",
     "vinyl-source-stream": "^2.0.0"
   },
   "resolutions": {
