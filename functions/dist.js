@@ -1,3 +1,5 @@
-const distFor = require('./distFor.js');
+const distFor = require('./distFor.js')
 
-module.exports = () => distFor()
+const dist = () => distFor()
+
+module.exports = dist

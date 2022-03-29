@@ -9,8 +9,10 @@ const distMinify = require('./distMinify')
 const { parallel, series } = require('gulp')
 const testFull = require('./testFull')
 
-module.exports = parallel(
+const build = parallel(
   series(clean, dist, parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)),
   compileReadme,
   testFull
 )
+
+module.exports = build

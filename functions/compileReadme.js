@@ -2,4 +2,6 @@ const addToReadme = require('./addToReadme')
 const readmeTemplate = require('./readmeTemplate')
 const { series } = require('gulp')
 
-module.exports = series(readmeTemplate, addToReadme)
+const compileReadme = series(readmeTemplate, addToReadme)
+
+module.exports = compileReadme
