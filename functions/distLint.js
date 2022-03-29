@@ -1,4 +1,4 @@
-const gulpConfig = require('../.gulp.config.js');
+const gulpConfig = require('../gulp.config.js');
 const { dest, src } = require('gulp')
 const standard = require('gulp-standard')
 

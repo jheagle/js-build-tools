@@ -1,6 +1,6 @@
 const bundle = require('./bundle')
 const distFor = require('./distFor')
-const gulpConfig = require('../.gulp.config.js')
+const gulpConfig = require('../gulp.config.js')
 const { parallel, series, watch } = require('gulp')
 const testQuick = require('./testQuick')
 

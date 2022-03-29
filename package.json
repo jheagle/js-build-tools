@@ -2,7 +2,7 @@
   "name": "js-build-tools",
   "version": "1.0.0",
   "description": "Standarized build process.",
-  "main": "index.js",
+  "main": "gulpfile.base.js",
   "scripts": {
     "build": "gulp build",
     "dev": "gulp",
@@ -32,7 +32,7 @@
       "jest"
     ]
   },
-  "dependencies": {
+  "devDependencies": {
     "browserify": "^17.0.0",
     "core-js": "^3.21.1",
     "del": "^6.0.0",

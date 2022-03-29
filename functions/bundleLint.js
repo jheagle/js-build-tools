@@ -1,5 +1,5 @@
 const { dest, src } = require('gulp')
-const gulpConfig = require('../.gulp.config.js')
+const gulpConfig = require('../gulp.config.js')
 const standard = require('gulp-standard')
 
 module.exports = () => src(`${gulpConfig.browserPath}/${gulpConfig.browserName}.js`)

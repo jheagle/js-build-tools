@@ -1,6 +1,6 @@
 const filenames = require('gulp-filenames')
 const fs = require('fs')
-const gulpConfig = require('../.gulp.config.js')
+const gulpConfig = require('../gulp.config.js')
 const jsdoc2md = require('jsdoc-to-markdown')
 const { src } = require('gulp')
 
