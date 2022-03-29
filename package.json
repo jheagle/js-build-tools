@@ -36,6 +36,7 @@
     "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
     "@babel/runtime-corejs3": "^7.17.8",
+    "babel-jest": "^27.5.1",
     "browserify": "^17.0.0",
     "core-js": "^3.21.1",
     "del": "^6.0.0",
