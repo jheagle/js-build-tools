@@ -14,5 +14,5 @@ module.exports = {
   readmeTemplate: defaultConfig(parentConfig, 'readmeTemplate', 'MAIN.md'),
   srcPath: defaultConfig(parentConfig, 'srcPath', 'src'),
   srcSearch: defaultConfig(parentConfig, 'srcSearch', 'src/**/!(*.test).js'),
-  testPath: defaultConfig(parentConfig, 'testPath', ['./src']),
+  testPath: defaultConfig(parentConfig, 'testPath', ['src']),
 }

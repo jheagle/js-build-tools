@@ -1,7 +1,7 @@
 {
   "name": "js-build-tools",
   "version": "1.0.0",
-  "description": "Standarized build process.",
+  "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
   "scripts": {
     "build": "gulp build",
@@ -57,5 +57,12 @@
   "resolutions": {
     "glob-parent": "6.0.2",
     "lodash.template": "4.5.0"
-  }
+  },
+  "files": [
+    "babel.config.js",
+    "functions",
+    "gulpfile.base.js",
+    "gulp.config.js"
+  ],
+  "funding": "https://www.paypal.com/donate/?business=LRYR6SZRWKXVY&no_recurring=0&item_name=Let%27s+build+together+today+to+simplify+our+jobs+tomorrow.&currency_code=CAD"
 }

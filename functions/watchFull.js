@@ -4,6 +4,10 @@ const gulpConfig = require('../gulp.config.js')
 const { parallel, series, watch } = require('gulp')
 const testQuick = require('./testQuick')
 
+/**
+ * Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+ * @returns {*}
+ */
 const watchFull = () => watch(gulpConfig.srcSearch)
   .on('change', path => {
     const pathRegex = new RegExp(`^${gulpConfig.srcPath}(.*\\/).+\\.js$`, 'i')

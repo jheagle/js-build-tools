@@ -4,6 +4,10 @@ const gulpConfig = require('../gulp.config.js')
 const jsdoc2md = require('jsdoc-to-markdown')
 const { src } = require('gulp')
 
+/**
+ * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
+ * @returns {*}
+ */
 const addToReadme = () => src(gulpConfig.srcSearch)
   .pipe(filenames('readme'))
   .on('end', () => {
