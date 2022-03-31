@@ -15,4 +15,5 @@ module.exports = {
   srcPath: defaultConfig(parentConfig, 'srcPath', 'src'),
   srcSearch: defaultConfig(parentConfig, 'srcSearch', 'src/**/!(*.test).js'),
   testPath: defaultConfig(parentConfig, 'testPath', ['src']),
+  watchSearch: defaultConfig(parentConfig, 'watchSearch', 'src/**/*.js'),
 }
