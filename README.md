@@ -45,6 +45,10 @@ module.exports = {
   // The directory where Jest test files are stored.
   // By default stored as *.test.js adjacent with the files they are testing).
   testPath: 'src',
+  
+  // The search pattern for watching files for changes.
+  watchSearch: 'src/**/*.js',
+}
 ```
 
 ### Create your local gulpfile.js
