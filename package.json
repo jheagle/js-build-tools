@@ -4,15 +4,7 @@
   "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
   "scripts": {
-    "build": "gulp build",
-    "dev": "gulp",
-    "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
-    "readme": "gulp readme",
-    "resolutions": "npx npm-force-resolutions",
-    "test": "gulp test",
-    "test:quick": "gulp test:quick",
-    "watch": "gulp watch",
-    "watch:tests": "gulp watch:tests"
+    "resolutions": "npx npm-force-resolutions"
   },
   "repository": "github:jheagle/js-build-tools",
   "keywords": [
@@ -33,12 +25,12 @@
     ]
   },
   "dependencies": {
-    "@babel/core": "^7.17.8",
+    "@babel/core": "^7.17.9",
     "@babel/preset-env": "^7.16.11",
-    "@babel/runtime-corejs3": "^7.17.8",
+    "@babel/runtime-corejs3": "^7.17.9",
     "babel-jest": "^27.5.1",
     "browserify": "^17.0.0",
-    "core-js": "^3.21.1",
+    "core-js": "^3.22.1",
     "del": "^6.0.0",
     "fs": "^0.0.1-security",
     "glob-parent": "^6.0.2",
