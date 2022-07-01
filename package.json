@@ -33,7 +33,7 @@
     "core-js": "^3.23.3",
     "del": "^6.1.1",
     "fs": "^0.0.1-security",
-    "glob-parent": "^6.0.2",
+    "glob-parent": "^5.1.2",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-filenames": "^4.0.1",
@@ -47,7 +47,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "resolutions": {
-    "glob-parent": "6.0.2",
+    "glob-parent": "5.1.2",
     "lodash.template": "4.5.0"
   },
   "files": [
