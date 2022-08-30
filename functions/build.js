@@ -7,6 +7,7 @@ const dist = require('./dist')
 const distLint = require('./distLint')
 const distMinify = require('./distMinify')
 const { parallel, series } = require('gulp')
+const gulpConfig = require('../gulp.config.js')
 const testFull = require('./testFull')
 
 /**
@@ -14,7 +15,9 @@ const testFull = require('./testFull')
  * Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
  */
 const build = parallel(
-  series(clean, dist, parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)),
+  gulpConfig.nodeOnly
+    ? series(clean, dist, parallel(distLint, distMinify))
+    : series(clean, dist, parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)),
   compileReadme,
   testFull
 )

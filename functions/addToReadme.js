@@ -6,7 +6,7 @@ const { src } = require('gulp')
 
 /**
  * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
- * @returns {*}
+ * @returns {string|Uint8Array}
  */
 const addToReadme = () => src(gulpConfig.srcSearch)
   .pipe(filenames('readme'))
