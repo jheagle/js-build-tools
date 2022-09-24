@@ -55,6 +55,7 @@
   },
   "files": [
     "babel.config.js",
+    "dist",
     "functions",
     "gulpfile.base.js",
     "gulp.config.js"
