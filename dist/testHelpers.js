@@ -1,12 +1,10 @@
 'use strict'
 
 require('core-js/modules/es.object.define-property.js')
-
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
 exports.nodeTree = exports.multiReferenceObject = exports.logObject = exports.linkedList = exports.jsonDom = exports.domItem = exports.deepReferenceObject = exports.circularObject = void 0
-
 /**
  * Log out an object in a nicely formatted way.
  * @param {Object} object
@@ -14,19 +12,17 @@ exports.nodeTree = exports.multiReferenceObject = exports.logObject = exports.li
  */
 var logObject = function logObject (object) {
   var label = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logging'
-
   if (typeof require === 'undefined') {
     console.log(label, object)
     return
   }
-
   console.log(label, require('util').inspect(object, false, null, true))
 }
+
 /**
  * Multilayered node tree-like structure with parent references
  * @type {Object.<string, string|Object|Array>}
  */
-
 exports.logObject = logObject
 var circularObject = {
   name: 'root',
@@ -71,11 +67,11 @@ circularObject.head.children = [{
 }]
 circularObject.head.children[0].parent = circularObject.head
 circularObject.head.children[1].parent = circularObject.head
+
 /**
  * Sample object with deep references.
  * @type {Object.<string, string|number|Object>}
  */
-
 var deepReferenceObject = {
   object1: {
     name: 'someName',
@@ -88,11 +84,11 @@ var deepReferenceObject = {
   title: 'Some Title',
   item: 45
 }
+
 /**
  * Sample LinkedList for testing circular references.
  * @type {Object.<string, string|Object>}
  */
-
 exports.deepReferenceObject = deepReferenceObject
 var linkedList = {
   name: 'one',
@@ -110,10 +106,10 @@ linkedList.next.next = {
   prev: linkedList.next,
   next: null
 }
+
 /**
  * Sample of jsonDom object containing empty nested array and objects
  */
-
 var jsonDom = {
   tagName: 'div',
   attributes: {
@@ -126,10 +122,10 @@ var jsonDom = {
   children: [],
   axis: 'x'
 }
+
 /**
  * Sample of domItem child with nested child and optional details
  */
-
 exports.jsonDom = jsonDom
 var domItem = [{
   attributes: {
@@ -156,11 +152,11 @@ var domItem = [{
   parentItem: {},
   tagName: 'div'
 }]
+
 /**
  * Sample of object containing multiple references.
  * @type {Object.<string, string|number|Object>}
  */
-
 exports.domItem = domItem
 var multiReferenceObject = {
   object1: {
@@ -174,11 +170,11 @@ var multiReferenceObject = {
   title: 'Some Title',
   item: 45
 }
+
 /**
  * Sample NodeTree for testing circular references and arrays.
  * @type {Object.<string, string|Object|Array>}
  */
-
 exports.multiReferenceObject = multiReferenceObject
 var nodeTree = {
   name: 'one',
