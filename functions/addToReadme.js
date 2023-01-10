@@ -1,19 +1,17 @@
-const filenames = require('gulp-filenames')
 const fs = require('fs')
 const gulpConfig = require('../gulp.config.js')
 const jsdoc2md = require('jsdoc-to-markdown')
-const { src } = require('gulp')
+const glob = require('glob')
 
 /**
  * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
  * @returns {string|Uint8Array}
  */
-const addToReadme = () => src(gulpConfig.srcSearch)
-  .pipe(filenames('readme'))
-  .on('end', () => {
-    const readme = jsdoc2md.renderSync({ files: filenames.get('readme').map(file => `${gulpConfig.srcPath}/${file}`) })
-    fs.appendFileSync('README.md', readme, 'utf8')
-    return readme
-  })
+const addToReadme = done => {
+  const files = glob.sync(gulpConfig.srcSearch)
+  const readme = jsdoc2md.renderSync({ files: files })
+  fs.appendFileSync('README.md', readme, 'utf8')
+  done()
+}
 
 module.exports = addToReadme
