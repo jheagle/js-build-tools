@@ -105,16 +105,6 @@ Run any of the above commands with `gulp` or `npm run`.
 ## Constants
 
 <dl>
-<dt><a href="#build">build</a></dt>
-<dd><p>Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.</p>
-</dd>
-<dt><a href="#compileReadme">compileReadme</a></dt>
-<dd><p>Generate the README.md file based off of the template, then append the generated documentation.</p>
-</dd>
-<dt><a href="#defaultCmd">defaultCmd</a></dt>
-<dd><p>Recommended as the default task, runs the simple dist and bundle tasks.</p>
-</dd>
 <dt><a href="#logObject">logObject</a></dt>
 <dd><p>Log out an object in a nicely formatted way.</p>
 </dd>
@@ -139,74 +129,65 @@ Cleans, distributes (lint and minify), bundles (lint and minify), creates the re
 <dt><a href="#nodeTree">nodeTree</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
 <dd><p>Sample NodeTree for testing circular references and arrays.</p>
 </dd>
+<dt><a href="#defaultCmd">defaultCmd</a></dt>
+<dd><p>Recommended as the default task, runs the simple dist and bundle tasks.</p>
+</dd>
+<dt><a href="#compileReadme">compileReadme</a></dt>
+<dd><p>Generate the README.md file based off of the template, then append the generated documentation.</p>
+</dd>
+<dt><a href="#build">build</a></dt>
+<dd><p>Runs several processes to build and validate the project.
+Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.</p>
+</dd>
 </dl>
 
 ## Functions
 
 <dl>
-<dt><a href="#addToReadme">addToReadme()</a> ⇒ <code>string</code> | <code>Uint8Array</code></dt>
-<dd><p>Appends all the jsdoc comments to the readme file. Assumes empty or templated file.</p>
-</dd>
-<dt><a href="#bundle">bundle()</a> ⇒ <code>*</code></dt>
-<dd><p>Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.</p>
-</dd>
-<dt><a href="#bundleLint">bundleLint()</a> ⇒ <code>*</code></dt>
-<dd><p>Applies Standard code style linting to bundled file.</p>
-</dd>
-<dt><a href="#bundleMinify">bundleMinify()</a> ⇒ <code>*</code></dt>
-<dd><p>Creates the minified bundle file.</p>
-</dd>
-<dt><a href="#clean">clean()</a> ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> | <code>*</code></dt>
-<dd><p>Deletes all the distribution and browser files (used before create a new build).</p>
-</dd>
-<dt><a href="#dist">dist()</a> ⇒ <code>*</code></dt>
-<dd><p>Simplified distribution tasks which will use arguments from distFor.</p>
-</dd>
-<dt><a href="#distFor">distFor(srcPath, destPath)</a> ⇒ <code>*</code></dt>
-<dd><p>Build the distribution for a given source pattern.</p>
-</dd>
-<dt><a href="#distLint">distLint()</a> ⇒ <code>*</code></dt>
-<dd><p>Applies Standard code style linting to distribution files.</p>
-</dd>
-<dt><a href="#distMinify">distMinify()</a> ⇒ <code>*</code></dt>
-<dd><p>Creates minified versions of the dist files.</p>
-</dd>
-<dt><a href="#readmeTemplate">readmeTemplate()</a> ⇒ <code>*</code></dt>
-<dd><p>Copy a readme template into the README.md file.</p>
-</dd>
-<dt><a href="#testFull">testFull()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd><p>Run all tests with jest.</p>
-</dd>
-<dt><a href="#testQuick">testQuick()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd><p>Run the Jest tests for files which have been modified (based on git status).</p>
+<dt><a href="#watchTest">watchTest()</a> ⇒ <code>*</code></dt>
+<dd><p>Watch for changes and run the tests.</p>
 </dd>
 <dt><a href="#watchFull">watchFull()</a> ⇒ <code>*</code></dt>
 <dd><p>Watch for changes and run the distribution for the changed files, then bundle and test the changed files.</p>
 </dd>
-<dt><a href="#watchTest">watchTest()</a> ⇒ <code>*</code></dt>
-<dd><p>Watch for changes and run the tests.</p>
+<dt><a href="#testQuick">testQuick()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd><p>Run the Jest tests for files which have been modified (based on git status).</p>
+</dd>
+<dt><a href="#testFull">testFull()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd><p>Run all tests with jest.</p>
+</dd>
+<dt><a href="#readmeTemplate">readmeTemplate()</a> ⇒ <code>*</code></dt>
+<dd><p>Copy a readme template into the README.md file.</p>
+</dd>
+<dt><a href="#distMinify">distMinify()</a> ⇒ <code>*</code></dt>
+<dd><p>Creates minified versions of the dist files.</p>
+</dd>
+<dt><a href="#distLint">distLint()</a> ⇒ <code>*</code></dt>
+<dd><p>Applies Standard code style linting to distribution files.</p>
+</dd>
+<dt><a href="#distFor">distFor(srcPath, destPath)</a> ⇒ <code>*</code></dt>
+<dd><p>Build the distribution for a given source pattern.</p>
+</dd>
+<dt><a href="#dist">dist()</a> ⇒ <code>*</code></dt>
+<dd><p>Simplified distribution tasks which will use arguments from distFor.</p>
+</dd>
+<dt><a href="#clean">clean()</a> ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> | <code>*</code></dt>
+<dd><p>Deletes all the distribution and browser files (used before create a new build).</p>
+</dd>
+<dt><a href="#bundleMinify">bundleMinify()</a> ⇒ <code>*</code></dt>
+<dd><p>Creates the minified bundle file.</p>
+</dd>
+<dt><a href="#bundleLint">bundleLint()</a> ⇒ <code>*</code></dt>
+<dd><p>Applies Standard code style linting to bundled file.</p>
+</dd>
+<dt><a href="#bundle">bundle()</a> ⇒ <code>*</code></dt>
+<dd><p>Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.</p>
+</dd>
+<dt><a href="#addToReadme">addToReadme()</a> ⇒ <code>string</code> | <code>Uint8Array</code></dt>
+<dd><p>Appends all the jsdoc comments to the readme file. Assumes empty or templated file.</p>
 </dd>
 </dl>
 
-<a name="build"></a>
-
-## build
-Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
-
-**Kind**: global constant  
-<a name="compileReadme"></a>
-
-## compileReadme
-Generate the README.md file based off of the template, then append the generated documentation.
-
-**Kind**: global constant  
-<a name="defaultCmd"></a>
-
-## defaultCmd
-Recommended as the default task, runs the simple dist and bundle tasks.
-
-**Kind**: global constant  
 <a name="logObject"></a>
 
 ## logObject
@@ -261,40 +242,65 @@ Sample of object containing multiple references.
 Sample NodeTree for testing circular references and arrays.
 
 **Kind**: global constant  
-<a name="addToReadme"></a>
+<a name="defaultCmd"></a>
 
-## addToReadme() ⇒ <code>string</code> \| <code>Uint8Array</code>
-Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
+## defaultCmd
+Recommended as the default task, runs the simple dist and bundle tasks.
 
-**Kind**: global function  
-<a name="bundle"></a>
+**Kind**: global constant  
+<a name="compileReadme"></a>
 
-## bundle() ⇒ <code>\*</code>
-Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
+## compileReadme
+Generate the README.md file based off of the template, then append the generated documentation.
 
-**Kind**: global function  
-<a name="bundleLint"></a>
+**Kind**: global constant  
+<a name="build"></a>
 
-## bundleLint() ⇒ <code>\*</code>
-Applies Standard code style linting to bundled file.
+## build
+Runs several processes to build and validate the project.
+Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
 
-**Kind**: global function  
-<a name="bundleMinify"></a>
+**Kind**: global constant  
+<a name="watchTest"></a>
 
-## bundleMinify() ⇒ <code>\*</code>
-Creates the minified bundle file.
-
-**Kind**: global function  
-<a name="clean"></a>
-
-## clean() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
-Deletes all the distribution and browser files (used before create a new build).
+## watchTest() ⇒ <code>\*</code>
+Watch for changes and run the tests.
 
 **Kind**: global function  
-<a name="dist"></a>
+<a name="watchFull"></a>
 
-## dist() ⇒ <code>\*</code>
-Simplified distribution tasks which will use arguments from distFor.
+## watchFull() ⇒ <code>\*</code>
+Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+
+**Kind**: global function  
+<a name="testQuick"></a>
+
+## testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run the Jest tests for files which have been modified (based on git status).
+
+**Kind**: global function  
+<a name="testFull"></a>
+
+## testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run all tests with jest.
+
+**Kind**: global function  
+<a name="readmeTemplate"></a>
+
+## readmeTemplate() ⇒ <code>\*</code>
+Copy a readme template into the README.md file.
+
+**Kind**: global function  
+<a name="distMinify"></a>
+
+## distMinify() ⇒ <code>\*</code>
+Creates minified versions of the dist files.
+
+**Kind**: global function  
+<a name="distLint"></a>
+
+## distLint() ⇒ <code>\*</code>
+Applies Standard code style linting to distribution files.
 
 **Kind**: global function  
 <a name="distFor"></a>
@@ -309,45 +315,39 @@ Build the distribution for a given source pattern.
 | srcPath | <code>string</code> \| <code>array</code> | 
 | destPath | <code>string</code> | 
 
-<a name="distLint"></a>
+<a name="dist"></a>
 
-## distLint() ⇒ <code>\*</code>
-Applies Standard code style linting to distribution files.
-
-**Kind**: global function  
-<a name="distMinify"></a>
-
-## distMinify() ⇒ <code>\*</code>
-Creates minified versions of the dist files.
+## dist() ⇒ <code>\*</code>
+Simplified distribution tasks which will use arguments from distFor.
 
 **Kind**: global function  
-<a name="readmeTemplate"></a>
+<a name="clean"></a>
 
-## readmeTemplate() ⇒ <code>\*</code>
-Copy a readme template into the README.md file.
-
-**Kind**: global function  
-<a name="testFull"></a>
-
-## testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
-Run all tests with jest.
+## clean() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+Deletes all the distribution and browser files (used before create a new build).
 
 **Kind**: global function  
-<a name="testQuick"></a>
+<a name="bundleMinify"></a>
 
-## testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
-Run the Jest tests for files which have been modified (based on git status).
-
-**Kind**: global function  
-<a name="watchFull"></a>
-
-## watchFull() ⇒ <code>\*</code>
-Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+## bundleMinify() ⇒ <code>\*</code>
+Creates the minified bundle file.
 
 **Kind**: global function  
-<a name="watchTest"></a>
+<a name="bundleLint"></a>
 
-## watchTest() ⇒ <code>\*</code>
-Watch for changes and run the tests.
+## bundleLint() ⇒ <code>\*</code>
+Applies Standard code style linting to bundled file.
+
+**Kind**: global function  
+<a name="bundle"></a>
+
+## bundle() ⇒ <code>\*</code>
+Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
+
+**Kind**: global function  
+<a name="addToReadme"></a>
+
+## addToReadme() ⇒ <code>string</code> \| <code>Uint8Array</code>
+Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
 
 **Kind**: global function  

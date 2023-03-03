@@ -3,14 +3,15 @@
 var fs = require('fs')
 var gulpConfig = require('../gulp.config.js')
 var jsdoc2md = require('jsdoc-to-markdown')
-var glob = require('glob')
+var _require = require('glob')
+var globSync = _require.globSync
 
 /**
  * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
  * @returns {string|Uint8Array}
  */
 var addToReadme = function addToReadme (done) {
-  var files = glob.sync(gulpConfig.srcSearch)
+  var files = globSync(gulpConfig.srcSearch)
   var readme = jsdoc2md.renderSync({
     files: files
   })
