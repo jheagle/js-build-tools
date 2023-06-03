@@ -1,10 +1,11 @@
 'use strict'
 
-var babel = require('gulp-babel')
-var _require = require('gulp')
-var dest = _require.dest
-var src = _require.src
-var gulpConfig = require('../gulp.config.js')
+const babel = require('gulp-babel')
+const {
+  dest,
+  src
+} = require('gulp')
+const gulpConfig = require('../gulp.config.js')
 
 /**
  * Build the distribution for a given source pattern.
@@ -12,9 +13,9 @@ var gulpConfig = require('../gulp.config.js')
  * @param {string} destPath
  * @returns {*}
  */
-var distFor = function distFor () {
-  var srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.srcSearch
-  var destPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.distPath
+const distFor = function () {
+  const srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.srcSearch
+  const destPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.distPath
   return src(srcPath).pipe(babel()).pipe(dest(destPath))
 }
 module.exports = distFor
