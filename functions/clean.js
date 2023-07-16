@@ -3,8 +3,10 @@ const gulpConfig = require('../gulp.config.js')
 
 /**
  * Deletes all the distribution and browser files (used before create a new build).
+ * @param {function} [done=null]
+ * @param {string[]} [paths=[]]
  * @returns {Promise<string[]> | *}
  */
-const clean = () => del([gulpConfig.distPath, gulpConfig.browserPath])
+const clean = (done = null, paths = [gulpConfig.get('distPath'), gulpConfig.get('browserPath')]) => del(paths).then(() => done && done())
 
 module.exports = clean

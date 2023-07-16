@@ -1,15 +1,16 @@
 'use strict'
 
-const {
-  dest,
-  src
-} = require('gulp')
-const gulpConfig = require('../gulp.config.js')
-const rename = require('gulp-rename')
+var _require = require('gulp')
+var dest = _require.dest
+var src = _require.src
+var gulpConfig = require('../gulp.config.js')
+var rename = require('gulp-rename')
 
 /**
  * Copy a readme template into the README.md file.
  * @returns {*}
  */
-const readmeTemplate = () => src(gulpConfig.readmeTemplate).pipe(rename('README.md')).pipe(dest('.'))
+var readmeTemplate = function readmeTemplate () {
+  return src(gulpConfig.get('readmeTemplate')).pipe(rename('README.md')).pipe(dest('.'))
+}
 module.exports = readmeTemplate

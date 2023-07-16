@@ -15,7 +15,7 @@ const testFull = require('./testFull')
  * Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
  */
 const build = parallel(
-  gulpConfig.nodeOnly
+  gulpConfig.get('nodeOnly')
     ? series(clean, dist, parallel(distLint, distMinify))
     : series(clean, dist, parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)),
   compileReadme,

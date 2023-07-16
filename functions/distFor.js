@@ -8,7 +8,7 @@ const gulpConfig = require('../gulp.config.js')
  * @param {string} destPath
  * @returns {*}
  */
-const distFor = (srcPath = gulpConfig.srcSearch, destPath = gulpConfig.distPath) => src(srcPath)
+const distFor = (srcPath = gulpConfig.get('srcSearch'), destPath = gulpConfig.get('distPath')) => src(srcPath)
   .pipe(babel())
   .pipe(dest(destPath))
 

@@ -7,5 +7,6 @@ module.exports = {
   srcPath: 'functions',
   srcSearch: 'functions/!(*.test).js',
   testPath: ['functions'],
+  useTsConfig: 'tsconfig.json',
   watchSearch: 'functions/*.js'
 }

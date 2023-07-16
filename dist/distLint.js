@@ -1,20 +1,21 @@
 'use strict'
 
-const gulpConfig = require('../gulp.config.js')
-const {
-  dest,
-  src
-} = require('gulp')
-const standard = require('gulp-standard')
+var gulpConfig = require('../gulp.config.js')
+var _require = require('gulp')
+var dest = _require.dest
+var src = _require.src
+var standard = require('gulp-standard')
 
 /**
  * Applies Standard code style linting to distribution files.
  * @returns {*}
  */
-const distLint = () => src(gulpConfig.distSearch).pipe(standard({
-  fix: true
-})).pipe(standard.reporter('default', {
-  fix: true,
-  quiet: true
-})).pipe(dest(gulpConfig.distPath))
+var distLint = function distLint () {
+  return src(gulpConfig.get('distSearch')).pipe(standard({
+    fix: true
+  })).pipe(standard.reporter('default', {
+    fix: true,
+    quiet: true
+  })).pipe(dest(gulpConfig.get('distPath')))
+}
 module.exports = distLint

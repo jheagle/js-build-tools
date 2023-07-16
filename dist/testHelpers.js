@@ -1,5 +1,6 @@
 'use strict'
 
+require('core-js/modules/es.object.define-property.js')
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
@@ -9,8 +10,8 @@ exports.nodeTree = exports.multiReferenceObject = exports.logObject = exports.li
  * @param {Object} object
  * @param {string} [label='logging']
  */
-const logObject = function (object) {
-  const label = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logging'
+var logObject = function logObject (object) {
+  var label = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logging'
   if (typeof require === 'undefined') {
     console.log(label, object)
     return
@@ -23,7 +24,7 @@ const logObject = function (object) {
  * @type {Object.<string, string|Object|Array>}
  */
 exports.logObject = logObject
-const circularObject = {
+var circularObject = {
   name: 'root',
   parent: {},
   body: {},
@@ -71,7 +72,7 @@ circularObject.head.children[1].parent = circularObject.head
  * Sample object with deep references.
  * @type {Object.<string, string|number|Object>}
  */
-const deepReferenceObject = {
+var deepReferenceObject = {
   object1: {
     name: 'someName',
     object2: {
@@ -89,7 +90,7 @@ const deepReferenceObject = {
  * @type {Object.<string, string|Object>}
  */
 exports.deepReferenceObject = deepReferenceObject
-const linkedList = {
+var linkedList = {
   name: 'one',
   prev: null,
   next: null
@@ -109,7 +110,7 @@ linkedList.next.next = {
 /**
  * Sample of jsonDom object containing empty nested array and objects
  */
-const jsonDom = {
+var jsonDom = {
   tagName: 'div',
   attributes: {
     style: {},
@@ -126,7 +127,7 @@ const jsonDom = {
  * Sample of domItem child with nested child and optional details
  */
 exports.jsonDom = jsonDom
-const domItem = [{
+var domItem = [{
   attributes: {
     className: 'row',
     style: {}
@@ -157,7 +158,7 @@ const domItem = [{
  * @type {Object.<string, string|number|Object>}
  */
 exports.domItem = domItem
-const multiReferenceObject = {
+var multiReferenceObject = {
   object1: {
     name: 'someName'
   },
@@ -175,7 +176,7 @@ const multiReferenceObject = {
  * @type {Object.<string, string|Object|Array>}
  */
 exports.multiReferenceObject = multiReferenceObject
-const nodeTree = {
+var nodeTree = {
   name: 'one',
   parent: null,
   children: []

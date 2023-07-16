@@ -6,6 +6,6 @@ const testQuick = require('./testQuick')
  * Watch for changes and run the tests.
  * @returns {*}
  */
-const watchTest = () => watch(gulpConfig.watchSearch, { ignoreInitial: false }, series(testQuick))
+const watchTest = () => watch(gulpConfig.get('watchSearch'), { ignoreInitial: false }, series(testQuick))
 
 module.exports = watchTest

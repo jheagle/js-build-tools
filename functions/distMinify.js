@@ -7,9 +7,9 @@ const rename = require('gulp-rename')
  * Creates minified versions of the dist files.
  * @returns {*}
  */
-const distMinify = () => src(gulpConfig.distSearch)
+const distMinify = () => src(gulpConfig.get('distSearch'))
   .pipe(uglify())
   .pipe(rename({ extname: '.min.js' }))
-  .pipe(dest(gulpConfig.distPath))
+  .pipe(dest(gulpConfig.get('distPath')))
 
 module.exports = distMinify

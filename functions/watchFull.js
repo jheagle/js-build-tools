@@ -8,10 +8,10 @@ const testQuick = require('./testQuick')
  * Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
  * @returns {*}
  */
-const watchFull = () => watch(gulpConfig.watchSearch)
+const watchFull = () => watch(gulpConfig.get('watchSearch'))
   .on('change', path => {
-    const pathRegex = new RegExp(`^${gulpConfig.srcPath}(.*\\/).+\\.js$`, 'i')
-    const distForPath = () => distFor(path, path.replace(pathRegex, `${gulpConfig.distPath}$1`))
+    const pathRegex = new RegExp(`^${gulpConfig.get('srcPath')}(.*\\/).+\\.js$`, 'i')
+    const distForPath = () => distFor(path, path.replace(pathRegex, `${gulpConfig.get('distPath')}$1`))
     return parallel(testQuick, series(distForPath, bundle))()
   })
 
