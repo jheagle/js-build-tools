@@ -11,13 +11,20 @@ const {
 const util = require('util')
 
 describe('testHelpers', () => {
-  test('can nicely output objects with logObject', () => {
-    const logSpy = jest.spyOn(console, 'log')
+  test('logObject: can nicely output objects', () => {
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
     const inspectSpy = jest.spyOn(util, 'inspect')
     const someObject = { one: 1, two: 2, three: 3 }
     logObject(someObject, 'someObject')
     expect(inspectSpy).toHaveBeenCalledWith(someObject, false, null, true)
     expect(logSpy).toHaveBeenCalledWith('someObject', util.inspect(someObject, false, null, true))
+  })
+
+  test('logObject: output to string when that argument is provided', () => {
+    const someObject = { one: 1, two: 2, three: 3 }
+    const label = 'someObject'
+    const result = logObject(someObject, label, 'string')
+    expect(result).toEqual(`'${label}' | ` + JSON.stringify(someObject))
   })
 
   test('has sample circular object', () => {

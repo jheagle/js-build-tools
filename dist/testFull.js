@@ -39,7 +39,7 @@ var testFull = /* #__PURE__ */(function () {
         switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2
-            return jest({}, gulpConfig.get('testPath'))
+            return jest(gulpConfig.get('testOptions'), gulpConfig.get('testPath'))
           case 2:
             return _context.abrupt('return', _context.sent)
           case 3:

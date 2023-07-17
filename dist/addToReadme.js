@@ -17,7 +17,7 @@ var addToReadme = function addToReadme () {
   var readme = jsdoc2md.renderSync({
     files: files
   })
-  fs.appendFileSync(gulpConfig.get('readmePath'), readme, gulpConfig.get('readmeOptions'))
+  fs.appendFileSync(gulpConfig.get('readmePath') + gulpConfig.get('readmeFile'), readme, gulpConfig.get('readmeOptions'))
   return done && done()
 }
 module.exports = addToReadme

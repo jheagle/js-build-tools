@@ -7,7 +7,7 @@ const rename = require('gulp-rename')
  * @returns {*}
  */
 const readmeTemplate = () => src(gulpConfig.get('readmeTemplate'))
-  .pipe(rename('README.md'))
-  .pipe(dest('.'))
+  .pipe(rename(gulpConfig.get('readmeFile')))
+  .pipe(dest(gulpConfig.get('readmePath')))
 
 module.exports = readmeTemplate

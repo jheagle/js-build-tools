@@ -2,13 +2,15 @@
  * Log out an object in a nicely formatted way.
  * @param {Object} object
  * @param {string} [label='logging']
+ * @param {string} [outputType='log']
+ * @returns {string|undefined}
  */
-export const logObject = (object, label = 'logging') => {
-  if (typeof require === 'undefined') {
-    console.log(label, object)
-    return
+export const logObject = (object, label = 'logging', outputType = 'log') => {
+  const logger = outputType === 'string' ? (label, object) => `'${label}' | ` + JSON.stringify(object) : console[outputType]
+  if (typeof require === 'undefined' || outputType === 'string') {
+    return logger(label, object)
   }
-  console.log(label, require('util').inspect(object, false, null, true))
+  return logger(label, require('util').inspect(object, false, null, true))
 }
 
 /**

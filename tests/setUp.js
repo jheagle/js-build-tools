@@ -1,20 +1,33 @@
 const fs = require('fs')
 const del = require('del')
 const gulpConfig = require('../gulp.config.js')
-gulpConfig.set('browserPath', 'test-temp/browser')
-gulpConfig.set('distMain', 'test-temp/dist/main')
-gulpConfig.set('distPath', 'test-temp/dist')
-gulpConfig.set('distSearch', 'test-temp/dist/**/*.js')
-gulpConfig.set('readmeTemplate', 'test-temp/MAIN.md')
-gulpConfig.set('readmePath', 'test-temp/README.md')
-gulpConfig.set('srcPath', 'test-temp/src')
-gulpConfig.set('srcSearch', 'test-temp/src/**/!(*.test).js')
-gulpConfig.set('watchSearch', 'test-temp/src/**/*.js')
+const tempDir = 'test-temp/'
+const srcPath = `${tempDir}src`
+gulpConfig.set('browserPath', `${tempDir}browser`)
+gulpConfig.set('distMain', `${tempDir}dist/main`)
+gulpConfig.set('distPath', `${tempDir}dist`)
+gulpConfig.set('distSearch', `${tempDir}dist/**/*.js`)
+gulpConfig.set('readmeTemplate', `${tempDir}MAIN.md`)
+gulpConfig.set('readmePath', tempDir)
+gulpConfig.set('rootPath', tempDir)
+gulpConfig.set('srcPath', srcPath)
+gulpConfig.set('srcSearch', `${tempDir}src/**/!(*.test).js`)
+gulpConfig.set('watchSearch', `${tempDir}src/**/*.js`)
 
-const tempDir = 'test-temp'
+/**
+ * Ensure that the del has completed, recursively attempt to delete and recreate
+ * @param exists
+ * @returns {Promise<*|void>}
+ */
+const createTempDir = async (exists) => {
+  if (exists) {
+    return del(tempDir)
+      .then(() => createTempDir(fs.existsSync(tempDir)))
+  }
+  await fs.mkdirSync(tempDir)
+  return fs.mkdirSync(srcPath)
+}
 
-exports.beforeEach = () => del(tempDir)
-  .then(() => fs.mkdirSync(tempDir))
-  .then(() => fs.mkdirSync(gulpConfig.get('srcPath')))
+exports.beforeEach = () => createTempDir(true)
 
-exports.afterEach = () => del('test-temp')
+exports.afterEach = async () => await del(tempDir)
