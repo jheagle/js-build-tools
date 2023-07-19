@@ -1,4 +1,12 @@
 /**
+ * Simple way to count string occurrences for testing.
+ * @param {string} content
+ * @param {string} search
+ * @returns {number}
+ */
+export const countMatches = (content, search) => content.split(search).length - 1
+
+/**
  * Log out an object in a nicely formatted way.
  * @param {Object} object
  * @param {string} [label='logging']

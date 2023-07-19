@@ -4,8 +4,20 @@ require('core-js/modules/es.object.define-property.js')
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
-exports.nodeTree = exports.multiReferenceObject = exports.logObject = exports.linkedList = exports.jsonDom = exports.domItem = exports.deepReferenceObject = exports.circularObject = void 0
+exports.nodeTree = exports.multiReferenceObject = exports.logObject = exports.linkedList = exports.jsonDom = exports.domItem = exports.deepReferenceObject = exports.countMatches = exports.circularObject = void 0
+require('core-js/modules/es.regexp.exec.js')
+require('core-js/modules/es.string.split.js')
 require('core-js/modules/es.json.stringify.js')
+/**
+ * Simple way to count string occurrences for testing.
+ * @param {string} content
+ * @param {string} search
+ * @returns {number}
+ */
+var countMatches = function countMatches (content, search) {
+  return content.split(search).length - 1
+}
+
 /**
  * Log out an object in a nicely formatted way.
  * @param {Object} object
@@ -13,6 +25,7 @@ require('core-js/modules/es.json.stringify.js')
  * @param {string} [outputType='log']
  * @returns {string|undefined}
  */
+exports.countMatches = countMatches
 var logObject = function logObject (object) {
   var label = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logging'
   var outputType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'log'
