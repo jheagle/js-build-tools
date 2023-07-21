@@ -9,8 +9,15 @@ const {
   nodeTree
 } = require('./testHelpers.js')
 const util = require('util')
+const { countMatches } = require('./testHelpers')
 
 describe('testHelpers', () => {
+  test('countMatches: can get count of string occurrences', () => {
+    const find = 'find me'
+    const sampleString = `${find} in some string that could change the times ${find} will occur here, ${find} should be found three times`
+    expect(countMatches(sampleString, find)).toBe(3)
+  })
+
   test('logObject: can nicely output objects', () => {
     const logSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
     const inspectSpy = jest.spyOn(util, 'inspect')

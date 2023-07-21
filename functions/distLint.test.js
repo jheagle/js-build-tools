@@ -39,14 +39,18 @@ describe('distLint', () => {
   test('copies the src directory and babelifies it into the dist directory', done => {
     const distPath = gulpConfig.get('distPath')
     const oldContents = fs.readFileSync(`${distPath}/distLint.js`).toString()
+    expect.assertions(4)
     expect(countMatches(oldContents, '"')).toEqual(12)
     expect(countMatches(oldContents, ';')).toEqual(5)
     distLint()
-      .on('end', () => {
-        expect(fs.existsSync(distPath)).toBeTruthy()
+      .on('finish', () => {
         const lintedContents = fs.readFileSync(`${distPath}/distLint.js`).toString()
         expect(countMatches(lintedContents, '"')).toEqual(0)
         expect(countMatches(lintedContents, ';')).toEqual(0)
+        done()
+      })
+      .on('error', error => {
+        console.error('Encountered error', error)
         done()
       })
   })

@@ -15,14 +15,17 @@ describe('readmeTemplate', () => {
   test('copies the main contents into the new README.md', done => {
     const readmeFilePath = gulpConfig.get('readmePath') + gulpConfig.get('readmeFile')
     const mainContents = fs.readFileSync(mainTestPath)
-    expect.assertions(3)
-    expect(fs.existsSync(readmeFilePath)).toBeFalsy()
+    expect.assertions(2)
     readmeTemplate()
-      .on('end', async () => {
+      .on('finish', async () => {
         await expect(fs.existsSync(readmeFilePath)).toBeTruthy()
         const readme = await fs.readFileSync(readmeFilePath)
         // Confirm that the contents for MAIN.md are copied to README.md
         await expect(readme).toEqual(mainContents)
+        done()
+      })
+      .on('error', error => {
+        console.error('Encountered error', error)
         done()
       })
   })

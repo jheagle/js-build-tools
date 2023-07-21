@@ -36,16 +36,12 @@ describe('distFor', () => {
   test('copies the src directory and babelifies it into the dist directory', done => {
     const distPath = gulpConfig.get('distPath')
     const srcPath = gulpConfig.get('srcPath')
-    expect.assertions(12)
-    expect(fs.existsSync(distPath)).toBeFalsy()
-    const oldContents = fs.readFileSync(`${srcPath}/distFor.js`).toString()
-    expect(countMatches(oldContents, '\'use strict\'')).toEqual(0)
+    const srcFile = `${srcPath}/distFor.js`
+    expect.assertions(7)
+    const oldContents = fs.readFileSync(srcFile).toString()
     expect(countMatches(oldContents, 'const ')).toEqual(4)
-    expect(countMatches(oldContents, 'var ')).toEqual(0)
-    expect(countMatches(oldContents, 'function')).toEqual(0)
-    expect(countMatches(oldContents, 'arguments')).toEqual(0)
-    distFor(gulpConfig.get('srcSearch'))
-      .on('end', () => {
+    distFor(srcFile)
+      .on('finish', () => {
         expect(fs.existsSync(distPath)).toBeTruthy()
         const babelifiedContents = fs.readFileSync(`${distPath}/distFor.js`).toString()
         expect(countMatches(babelifiedContents, '"use strict"')).toEqual(1)

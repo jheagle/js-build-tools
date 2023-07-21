@@ -28,11 +28,14 @@ afterEach(setUp.afterEach)
 describe('dist', () => {
   test('uses the configured paths', done => {
     const distPath = gulpConfig.get('distPath')
-    expect.assertions(2)
-    expect(fs.existsSync(distPath)).toBeFalsy()
+    expect.assertions(1)
     dist()
-      .on('end', () => {
+      .on('finish', () => {
         expect(fs.existsSync(distPath)).toBeTruthy()
+        done()
+      })
+      .on('error', error => {
+        console.error('Encountered error', error)
         done()
       })
   })

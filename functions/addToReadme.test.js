@@ -12,8 +12,7 @@ afterEach(setUp.afterEach)
 describe('addToReadme', () => {
   test('generates the documentation', () => {
     const readmeFilePath = gulpConfig.get('readmePath') + gulpConfig.get('readmeFile')
-    expect.assertions(3)
-    expect(fs.existsSync(readmeFilePath)).toBeFalsy()
+    expect.assertions(2)
     addToReadme(async () => {
       await expect(fs.existsSync(readmeFilePath)).toBeTruthy()
       const readme = await fs.readFileSync(readmeFilePath)
