@@ -11,7 +11,7 @@ module.exports = {
   readmeTemplate: 'MAIN.md',
   rootPath: './',
   srcPath: 'functions',
-  srcSearch: 'functions/!(*.test).js',
+  srcSearch: 'functions/**/!(*.test).js',
   testOptions: {
     clearCache: false,
     debug: false,

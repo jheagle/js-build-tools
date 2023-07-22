@@ -105,14 +105,21 @@ Run any of the above commands with `gulp` or `npm run`.
 ## Constants
 
 <dl>
-<dt><a href="#logObject">logObject</a></dt>
-<dd><p>Log out an object in a nicely formatted way.</p>
+<dt><a href="#defaultCmd">defaultCmd</a></dt>
+<dd><p>Recommended as the default task, runs the simple dist and bundle tasks.</p>
 </dd>
-<dt><a href="#circularObject">circularObject</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
-<dd><p>Multilayered node tree-like structure with parent references</p>
+<dt><a href="#compileReadme">compileReadme</a></dt>
+<dd><p>Generate the README.md file based off of the template, then append the generated documentation.</p>
 </dd>
-<dt><a href="#deepReferenceObject">deepReferenceObject</a> : <code>Object.&lt;string, (string|number|Object)&gt;</code></dt>
-<dd><p>Sample object with deep references.</p>
+<dt><a href="#build">build</a></dt>
+<dd><p>Runs several processes to build and validate the project.
+Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.</p>
+</dd>
+<dt><a href="#nodeTree">nodeTree</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
+<dd><p>Sample NodeTree for testing circular references and arrays.</p>
+</dd>
+<dt><a href="#multiReferenceObject">multiReferenceObject</a> : <code>Object.&lt;string, (string|number|Object)&gt;</code></dt>
+<dd><p>Sample of object containing multiple references.</p>
 </dd>
 <dt><a href="#linkedList">linkedList</a> : <code>Object.&lt;string, (string|Object)&gt;</code></dt>
 <dd><p>Sample LinkedList for testing circular references.</p>
@@ -123,21 +130,11 @@ Run any of the above commands with `gulp` or `npm run`.
 <dt><a href="#domItem">domItem</a></dt>
 <dd><p>Sample of domItem child with nested child and optional details</p>
 </dd>
-<dt><a href="#multiReferenceObject">multiReferenceObject</a> : <code>Object.&lt;string, (string|number|Object)&gt;</code></dt>
-<dd><p>Sample of object containing multiple references.</p>
+<dt><a href="#deepReferenceObject">deepReferenceObject</a> : <code>Object.&lt;string, (string|number|Object)&gt;</code></dt>
+<dd><p>Sample object with deep references.</p>
 </dd>
-<dt><a href="#nodeTree">nodeTree</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
-<dd><p>Sample NodeTree for testing circular references and arrays.</p>
-</dd>
-<dt><a href="#defaultCmd">defaultCmd</a></dt>
-<dd><p>Recommended as the default task, runs the simple dist and bundle tasks.</p>
-</dd>
-<dt><a href="#compileReadme">compileReadme</a></dt>
-<dd><p>Generate the README.md file based off of the template, then append the generated documentation.</p>
-</dd>
-<dt><a href="#build">build</a></dt>
-<dd><p>Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.</p>
+<dt><a href="#circularObject">circularObject</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
+<dd><p>Multilayered node tree-like structure with parent references</p>
 </dd>
 </dl>
 
@@ -150,6 +147,9 @@ Cleans, distributes (lint and minify), bundles (lint and minify), creates the re
 <dt><a href="#watchFull">watchFull()</a> ⇒ <code>*</code></dt>
 <dd><p>Watch for changes and run the distribution for the changed files, then bundle and test the changed files.</p>
 </dd>
+<dt><a href="#typeScript">typeScript()</a> ⇒ <code>*</code></dt>
+<dd><p>Starting at the source directory, find all the ts files and convert them into the distribution directory.</p>
+</dd>
 <dt><a href="#testQuick">testQuick()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd><p>Run the Jest tests for files which have been modified (based on git status).</p>
 </dd>
@@ -158,6 +158,9 @@ Cleans, distributes (lint and minify), bundles (lint and minify), creates the re
 </dd>
 <dt><a href="#readmeTemplate">readmeTemplate()</a> ⇒ <code>*</code></dt>
 <dd><p>Copy a readme template into the README.md file.</p>
+</dd>
+<dt><a href="#minifyFor">minifyFor()</a> ⇒ <code>*</code></dt>
+<dd><p>Minify files and rename the output with &#39;.min&#39; extension.</p>
 </dd>
 <dt><a href="#distMinify">distMinify()</a> ⇒ <code>*</code></dt>
 <dd><p>Creates minified versions of the dist files.</p>
@@ -171,7 +174,7 @@ Cleans, distributes (lint and minify), bundles (lint and minify), creates the re
 <dt><a href="#dist">dist()</a> ⇒ <code>*</code></dt>
 <dd><p>Simplified distribution tasks which will use arguments from distFor.</p>
 </dd>
-<dt><a href="#clean">clean()</a> ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> | <code>*</code></dt>
+<dt><a href="#clean">clean([done], [paths])</a> ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> | <code>*</code></dt>
 <dd><p>Deletes all the distribution and browser files (used before create a new build).</p>
 </dd>
 <dt><a href="#bundleMinify">bundleMinify()</a> ⇒ <code>*</code></dt>
@@ -183,33 +186,49 @@ Cleans, distributes (lint and minify), bundles (lint and minify), creates the re
 <dt><a href="#bundle">bundle()</a> ⇒ <code>*</code></dt>
 <dd><p>Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.</p>
 </dd>
-<dt><a href="#addToReadme">addToReadme()</a> ⇒ <code>string</code> | <code>Uint8Array</code></dt>
+<dt><a href="#addToReadme">addToReadme([done])</a> ⇒ <code>string</code> | <code>Uint8Array</code></dt>
 <dd><p>Appends all the jsdoc comments to the readme file. Assumes empty or templated file.</p>
+</dd>
+<dt><a href="#createTempDir">createTempDir([exists])</a> ⇒ <code>Promise.&lt;(*|void)&gt;</code></dt>
+<dd><p>Ensure that the del has completed, recursively attempt to delete and recreate</p>
+</dd>
+<dt><a href="#logObject">logObject(object, [label], [outputType])</a> ⇒ <code>string</code> | <code>undefined</code></dt>
+<dd><p>Log out an object in a nicely formatted way.</p>
+</dd>
+<dt><a href="#countMatches">countMatches(content, search)</a> ⇒ <code>number</code></dt>
+<dd><p>Simple way to count string occurrences for testing.</p>
 </dd>
 </dl>
 
-<a name="logObject"></a>
+<a name="defaultCmd"></a>
 
-## logObject
-Log out an object in a nicely formatted way.
-
-**Kind**: global constant  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| object | <code>Object</code> |  | 
-| [label] | <code>string</code> | <code>&quot;&#x27;logging&#x27;&quot;</code> | 
-
-<a name="circularObject"></a>
-
-## circularObject : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
-Multilayered node tree-like structure with parent references
+## defaultCmd
+Recommended as the default task, runs the simple dist and bundle tasks.
 
 **Kind**: global constant  
-<a name="deepReferenceObject"></a>
+<a name="compileReadme"></a>
 
-## deepReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
-Sample object with deep references.
+## compileReadme
+Generate the README.md file based off of the template, then append the generated documentation.
+
+**Kind**: global constant  
+<a name="build"></a>
+
+## build
+Runs several processes to build and validate the project.
+Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+
+**Kind**: global constant  
+<a name="nodeTree"></a>
+
+## nodeTree : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+Sample NodeTree for testing circular references and arrays.
+
+**Kind**: global constant  
+<a name="multiReferenceObject"></a>
+
+## multiReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+Sample of object containing multiple references.
 
 **Kind**: global constant  
 <a name="linkedList"></a>
@@ -230,35 +249,16 @@ Sample of jsonDom object containing empty nested array and objects
 Sample of domItem child with nested child and optional details
 
 **Kind**: global constant  
-<a name="multiReferenceObject"></a>
+<a name="deepReferenceObject"></a>
 
-## multiReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
-Sample of object containing multiple references.
-
-**Kind**: global constant  
-<a name="nodeTree"></a>
-
-## nodeTree : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
-Sample NodeTree for testing circular references and arrays.
+## deepReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+Sample object with deep references.
 
 **Kind**: global constant  
-<a name="defaultCmd"></a>
+<a name="circularObject"></a>
 
-## defaultCmd
-Recommended as the default task, runs the simple dist and bundle tasks.
-
-**Kind**: global constant  
-<a name="compileReadme"></a>
-
-## compileReadme
-Generate the README.md file based off of the template, then append the generated documentation.
-
-**Kind**: global constant  
-<a name="build"></a>
-
-## build
-Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+## circularObject : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+Multilayered node tree-like structure with parent references
 
 **Kind**: global constant  
 <a name="watchTest"></a>
@@ -271,6 +271,12 @@ Watch for changes and run the tests.
 
 ## watchFull() ⇒ <code>\*</code>
 Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+
+**Kind**: global function  
+<a name="typeScript"></a>
+
+## typeScript() ⇒ <code>\*</code>
+Starting at the source directory, find all the ts files and convert them into the distribution directory.
 
 **Kind**: global function  
 <a name="testQuick"></a>
@@ -289,6 +295,12 @@ Run all tests with jest.
 
 ## readmeTemplate() ⇒ <code>\*</code>
 Copy a readme template into the README.md file.
+
+**Kind**: global function  
+<a name="minifyFor"></a>
+
+## minifyFor() ⇒ <code>\*</code>
+Minify files and rename the output with '.min' extension.
 
 **Kind**: global function  
 <a name="distMinify"></a>
@@ -323,10 +335,16 @@ Simplified distribution tasks which will use arguments from distFor.
 **Kind**: global function  
 <a name="clean"></a>
 
-## clean() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+## clean([done], [paths]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
 Deletes all the distribution and browser files (used before create a new build).
 
 **Kind**: global function  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+| [paths] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | 
+
 <a name="bundleMinify"></a>
 
 ## bundleMinify() ⇒ <code>\*</code>
@@ -347,7 +365,48 @@ Starting at the distribution entry point, bundle all the files into a single fil
 **Kind**: global function  
 <a name="addToReadme"></a>
 
-## addToReadme() ⇒ <code>string</code> \| <code>Uint8Array</code>
+## addToReadme([done]) ⇒ <code>string</code> \| <code>Uint8Array</code>
 Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
 
 **Kind**: global function  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> \| <code>null</code> | <code></code> | 
+
+<a name="createTempDir"></a>
+
+## createTempDir([exists]) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+Ensure that the del has completed, recursively attempt to delete and recreate
+
+**Kind**: global function  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [exists] | <code>boolean</code> | <code>true</code> | 
+
+<a name="logObject"></a>
+
+## logObject(object, [label], [outputType]) ⇒ <code>string</code> \| <code>undefined</code>
+Log out an object in a nicely formatted way.
+
+**Kind**: global function  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| object | <code>Object</code> |  | 
+| [label] | <code>string</code> | <code>&quot;&#x27;logging&#x27;&quot;</code> | 
+| [outputType] | <code>string</code> | <code>&quot;&#x27;log&#x27;&quot;</code> | 
+
+<a name="countMatches"></a>
+
+## countMatches(content, search) ⇒ <code>number</code>
+Simple way to count string occurrences for testing.
+
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| content | <code>string</code> | 
+| search | <code>string</code> | 
+

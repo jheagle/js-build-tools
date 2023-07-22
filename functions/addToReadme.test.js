@@ -1,7 +1,7 @@
 const fs = require('fs')
 const gulpConfig = require('../gulp.config.js')
 gulpConfig.set('srcSearch', 'test-temp/src/addToReadme.js')
-const setUp = require('../tests/setUp')
+const setUp = require('./test-helpers/setUp')
 const addToReadme = require('./addToReadme')
 
 beforeEach(() => setUp.beforeEach()

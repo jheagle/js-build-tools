@@ -1,6 +1,6 @@
 const fs = require('fs')
 const del = require('del')
-const gulpConfig = require('../gulp.config.js')
+const gulpConfig = require('../../gulp.config.js')
 const tempDir = 'test-temp/'
 const srcPath = `${tempDir}src`
 gulpConfig.set('browserPath', `${tempDir}browser`)
@@ -14,12 +14,14 @@ gulpConfig.set('srcPath', srcPath)
 gulpConfig.set('srcSearch', `${tempDir}src/**/!(*.test).js`)
 gulpConfig.set('watchSearch', `${tempDir}src/**/*.js`)
 
+exports.gulpConfig = gulpConfig
+
 /**
  * Ensure that the del has completed, recursively attempt to delete and recreate
- * @param exists
+ * @param {boolean} [exists=true]
  * @returns {Promise<*|void>}
  */
-const createTempDir = async (exists) => {
+const createTempDir = async (exists = true) => {
   if (exists) {
     return del(tempDir)
       .then(() => createTempDir(fs.existsSync(tempDir)))
@@ -28,6 +30,8 @@ const createTempDir = async (exists) => {
   return fs.mkdirSync(srcPath)
 }
 
-exports.beforeEach = () => createTempDir(true)
+exports.createTempDir = createTempDir
+
+exports.beforeEach = () => createTempDir()
 
 exports.afterEach = async () => await del(tempDir)
