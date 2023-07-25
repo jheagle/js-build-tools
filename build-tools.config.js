@@ -9,7 +9,7 @@ module.exports = {
   readmePath: './',
   readmeOptions: 'utf8',
   readmeTemplate: 'MAIN.md',
-  readmeSearch: ['gulpfile.base.js', 'functions/**/!(*.test).js'],
+  readmeSearch: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
   rootPath: './',
   srcPath: 'functions',
   srcSearch: 'functions/**/!(*.test).js',
@@ -24,7 +24,7 @@ module.exports = {
     watch: false,
     watchAll: false,
   },
-  testPath: ['functions'],
+  testPath: 'functions',
   useTsConfig: 'tsconfig.json',
   watchSearch: 'functions/*.js',
 }

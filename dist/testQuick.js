@@ -27,6 +27,11 @@ function _asyncToGenerator (fn) { return function () { var self = this; var args
 var gulpConfig = require('../gulp.config.js')
 var _require = require('jest')
 var jest = _require.runCLI
+var testPath = gulpConfig.get('testPath')
+if (!Array.isArray(testPath)) {
+  // The testPath must be an array of strings
+  testPath = [testPath]
+}
 
 /**
  * Run the Jest tests for files which have been modified (based on git status).
@@ -43,7 +48,7 @@ var testQuick = /* #__PURE__ */(function () {
             _context.next = 2
             return jest({
               onlyChanged: true
-            }, gulpConfig.get('testPath'))
+            }, testPath)
           case 2:
             return _context.abrupt('return', _context.sent)
           case 3:

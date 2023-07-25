@@ -1,7 +1,5 @@
 /**
- * This file is a cumulative example of implementing the resources available for building a project.
- * Importing this file as-is is recommended by requiring it into your gylpfile.js, however the option is available
- * customize as needed.
+ * Export these functions to your own project in order to customize your build pipeline.
  * @file
  * @author Joshua Heagle <joshuaheagle@gmail.com>
  * @version 2.0.0

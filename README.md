@@ -31,20 +31,44 @@ module.exports = {
   distPath: 'dist',
 
   // The search pattern used for retrieving compiled distribution files.
-  distSearch: 'dist/**/*.js',
+  distSearch: 'dist/**/*.js',]\
+  
+  // 'true' to only generate node environment files.
+  nodeOnly: false,
+  
+  // The name of the output documentation markdown file.
+  readmeFile: 'README.md',
+  
+  // The directory to output the readme file in.
+  readmePath: './',
+  
+  // Options for formatting the output readme.
+  readmeOptions: 'utf8',
 
   // The file which will be pre-fixed to your README.md output.
   readmeTemplate: 'MAIN.md',
+  
+  // Location of files to use for compiling documentation into the readme.
+  readmeSearch: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
 
+  // Base directory of the project.
+  rootPath: './',
+  
   // The directory where your source files are stored (the files you manually created).
   srcPath: 'src',
 
   // The search pattern used for gathering source files for distribution.
   srcSearch: 'src/**/!(*.test).js',
+  
+  // Additional flags for programatically running Jest Cli.
+  testOptions: null,
 
   // The directory where Jest test files are stored.
   // By default stored as *.test.js adjacent with the files they are testing).
   testPath: 'src',
+  
+  // The path the tsconfig file for running typescript or false if no ts file given.
+  useTsConfig: 'tsconfig.json',
   
   // The search pattern for watching files for changes.
   watchSearch: 'src/**/*.js',
@@ -106,9 +130,10 @@ Run any of the above commands with `gulp` or `npm run`.
 
 <dl>
 <dt><a href="#module_js-build-tools">js-build-tools</a></dt>
-<dd><p>This file is a cumulative example of implementing the resources available for building a project.
-Importing this file as-is is recommended by requiring it into your gylpfile.js, however the option is available
-customize as needed.</p>
+<dd><p>Export these functions to your own project in order to customize your build pipeline.</p>
+</dd>
+<dt><a href="#module_gulpConfig">gulpConfig</a></dt>
+<dd><p>Modify these configurations to match your project specifications.</p>
 </dd>
 <dt><a href="#module_testHelpers">testHelpers</a></dt>
 <dd><p>An assortment of objects that can be used in tests and some functions to help debug and write tests.</p>
@@ -118,7 +143,7 @@ customize as needed.</p>
 <a name="module_js-build-tools"></a>
 
 ## js-build-tools
-This file is a cumulative example of implementing the resources available for building a project.Importing this file as-is is recommended by requiring it into your gylpfile.js, however the option is availablecustomize as needed.
+Export these functions to your own project in order to customize your build pipeline.
 
 **Version**: 2.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
@@ -276,6 +301,158 @@ Appends all the jsdoc comments to the readme file. Assumes empty or templated fi
 | --- | --- | --- |
 | [done] | <code>function</code> \| <code>null</code> | <code></code> | 
 
+<a name="module_gulpConfig"></a>
+
+## gulpConfig
+Modify these configurations to match your project specifications.
+
+**Version**: 2.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
+
+* [gulpConfig](#module_gulpConfig)
+    * _static_
+        * [.gulpConfigurations](#module_gulpConfig.gulpConfigurations) : <code>Configurations</code>
+        * [.defaultConfig([config], [path], [defaultValue])](#module_gulpConfig.defaultConfig) ⇒ <code>\*</code> \| <code>null</code>
+        * [.get(path, defaultValue)](#module_gulpConfig.get) ⇒ <code>\*</code> \| <code>null</code>
+        * [.set(path, value)](#module_gulpConfig.set) ⇒ <code>\*</code>
+    * _inner_
+        * [~ArrayableSetting](#module_gulpConfig..ArrayableSetting) : <code>Array.&lt;string&gt;</code> \| <code>string</code>
+        * [~BooleanSetting](#module_gulpConfig..BooleanSetting) : <code>boolean</code>
+        * [~FlagStringSetting](#module_gulpConfig..FlagStringSetting) : <code>false</code> \| <code>StringSetting</code>
+        * [~FlagsSetting](#module_gulpConfig..FlagsSetting) : <code>Object.&lt;string, BooleanSetting&gt;</code>
+        * [~JestTestFlags](#module_gulpConfig..JestTestFlags) : <code>FlagsSetting</code>
+        * [~StringSetting](#module_gulpConfig..StringSetting) : <code>string</code>
+        * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+        * [~Configurations](#module_gulpConfig..Configurations) : <code>Object.&lt;string, Setting&gt;</code>
+
+<a name="module_gulpConfig.gulpConfigurations"></a>
+
+### gulpConfig.gulpConfigurations : <code>Configurations</code>
+All the available configuration setting options for running the build.
+
+**Kind**: static property of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig.defaultConfig"></a>
+
+### gulpConfig.defaultConfig([config], [path], [defaultValue]) ⇒ <code>\*</code> \| <code>null</code>
+Retrieve a value from an object with the path (key), return a given default if the key is not found.
+
+**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [config] | <code>Object.&lt;string, \*&gt;</code> | <code>[]</code> | 
+| [path] | <code>string</code> \| <code>null</code> | <code>null</code> | 
+| [defaultValue] | <code>\*</code> | <code></code> | 
+
+<a name="module_gulpConfig.get"></a>
+
+### gulpConfig.get(path, defaultValue) ⇒ <code>\*</code> \| <code>null</code>
+Retrieve a value from teh configurations, default may be returned.
+
+**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| path | <code>string</code> \| <code>null</code> | <code>null</code> | 
+| defaultValue | <code>\*</code> | <code></code> | 
+
+<a name="module_gulpConfig.set"></a>
+
+### gulpConfig.set(path, value) ⇒ <code>\*</code>
+Specify a value for the configurations to use.
+
+**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
+
+| Param |
+| --- |
+| path | 
+| value | 
+
+<a name="module_gulpConfig..ArrayableSetting"></a>
+
+### gulpConfig~ArrayableSetting : <code>Array.&lt;string&gt;</code> \| <code>string</code>
+A setting that may be an array of strings or a string only.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..BooleanSetting"></a>
+
+### gulpConfig~BooleanSetting : <code>boolean</code>
+A setting that may be true or false.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..FlagStringSetting"></a>
+
+### gulpConfig~FlagStringSetting : <code>false</code> \| <code>StringSetting</code>
+A setting that may be flag 'false' or provide a StringSetting
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..FlagsSetting"></a>
+
+### gulpConfig~FlagsSetting : <code>Object.&lt;string, BooleanSetting&gt;</code>
+An object of boolean settings used as flags.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..JestTestFlags"></a>
+
+### gulpConfig~JestTestFlags : <code>FlagsSetting</code>
+Configure cli options for running Jest.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| clearCache | <code>BooleanSetting</code> | 
+| debug | <code>BooleanSetting</code> | 
+| ignoreProjects: | <code>BooleanSetting</code> | 
+| json | <code>BooleanSetting</code> | 
+| selectProjects | <code>BooleanSetting</code> | 
+| showConfig | <code>BooleanSetting</code> | 
+| useStderr | <code>BooleanSetting</code> | 
+| watch | <code>BooleanSetting</code> | 
+| watchAll | <code>BooleanSetting</code> | 
+
+<a name="module_gulpConfig..StringSetting"></a>
+
+### gulpConfig~StringSetting : <code>string</code>
+A setting that may only be a string.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..Setting"></a>
+
+### gulpConfig~Setting : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+Any single configuration option is a Setting.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..Configurations"></a>
+
+### gulpConfig~Configurations : <code>Object.&lt;string, Setting&gt;</code>
+A set of Configurations options defined by Settings.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| browserName | <code>StringSetting</code> | 
+| browserPath | <code>StringSetting</code> | 
+| distMain | <code>StringSetting</code> | 
+| distPath | <code>StringSetting</code> | 
+| distSearch | <code>ArrayableSetting</code> | 
+| nodeOnly | <code>BooleanSetting</code> | 
+| readmeTemplate | <code>StringSetting</code> | 
+| readmeOptions | <code>ArrayableSetting</code> | 
+| readmeFile | <code>StringSetting</code> | 
+| readmePath | <code>StringSetting</code> | 
+| readmeSearch | <code>ArrayableSetting</code> | 
+| rootPath | <code>StringSetting</code> | 
+| srcPath | <code>StringSetting</code> | 
+| srcSearch | <code>ArrayableSetting</code> | 
+| testOptions | <code>JestTestFlags</code> | 
+| testPath | <code>ArrayableSetting</code> | 
+| useTsConfig | <code>FlagStringSetting</code> | 
+| watchSearch | <code>ArrayableSetting</code> | 
+
 <a name="module_testHelpers"></a>
 
 ## testHelpers
@@ -373,8 +550,8 @@ Log out an object in a nicely formatted way.
 | Param | Type | Default |
 | --- | --- | --- |
 | object | <code>Object</code> |  | 
-| [label] | <code>string</code> | <code>&quot;&#x27;logging&#x27;&quot;</code> | 
-| [outputType] | <code>string</code> | <code>&quot;&#x27;log&#x27;&quot;</code> | 
+| [label] | <code>string</code> | <code>&quot;logging&quot;</code> | 
+| [outputType] | <code>string</code> | <code>&quot;log&quot;</code> | 
 
 <a name="module_testHelpers.countMatches"></a>
 
