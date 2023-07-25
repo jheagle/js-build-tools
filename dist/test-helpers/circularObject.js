@@ -2,6 +2,7 @@
 
 /**
  * Multilayered node tree-like structure with parent references
+ * @memberOf module:testHelpers
  * @type {Object.<string, string|Object|Array>}
  */
 var circularObject = {

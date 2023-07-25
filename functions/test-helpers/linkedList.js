@@ -1,5 +1,6 @@
 /**
  * Sample LinkedList for testing circular references.
+ * @memberOf module:testHelpers
  * @type {Object.<string, string|Object>}
  */
 const linkedList = { name: 'one', prev: null, next: null }

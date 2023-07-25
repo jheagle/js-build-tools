@@ -4,6 +4,8 @@ const standard = require('gulp-standard')
 
 /**
  * Applies Standard code style linting to bundled file.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {*}
  */
 const bundleLint = () => src(`${gulpConfig.get('browserPath')}/${gulpConfig.get('browserName')}.js`)

@@ -4,6 +4,8 @@ const rename = require('gulp-rename')
 
 /**
  * Copy a readme template into the README.md file.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {*}
  */
 const readmeTemplate = () => src(gulpConfig.get('readmeTemplate'))

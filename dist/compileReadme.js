@@ -7,6 +7,7 @@ var series = _require.series
 
 /**
  * Generate the README.md file based off of the template, then append the generated documentation.
+ * @memberOf module:js-build-tools
  */
 var compileReadme = series(readmeTemplate, addToReadme)
 module.exports = compileReadme

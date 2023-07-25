@@ -5,6 +5,8 @@ const source = require('vinyl-source-stream')
 
 /**
  * Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {*}
  */
 const bundle = () => browserify(gulpConfig.get('distMain'))

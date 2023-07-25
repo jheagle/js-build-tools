@@ -2,6 +2,7 @@
 
 /**
  * Sample object with deep references.
+ * @memberOf module:testHelpers
  * @type {Object.<string, string|number|Object>}
  */
 var deepReferenceObject = {

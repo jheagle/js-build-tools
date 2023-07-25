@@ -5,6 +5,8 @@ var minifyFor = require('./minifyFor')
 
 /**
  * Creates minified versions of the dist files.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {*}
  */
 var distMinify = function distMinify () {

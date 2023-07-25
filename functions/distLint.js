@@ -4,6 +4,8 @@ const standard = require('gulp-standard')
 
 /**
  * Applies Standard code style linting to distribution files.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {*}
  */
 const distLint = () => src(gulpConfig.get('distSearch'))

@@ -3,6 +3,8 @@
 require("core-js/modules/es.json.stringify.js");
 /**
  * Log out an object in a nicely formatted way.
+ * @function
+ * @memberOf module:testHelpers
  * @param {Object} object
  * @param {string} [label='logging']
  * @param {string} [outputType='log']

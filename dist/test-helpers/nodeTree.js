@@ -2,6 +2,7 @@
 
 /**
  * Sample NodeTree for testing circular references and arrays.
+ * @memberOf module:testHelpers
  * @type {Object.<string, string|Object|Array>}
  */
 var nodeTree = {

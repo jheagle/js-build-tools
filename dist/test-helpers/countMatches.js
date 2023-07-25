@@ -4,6 +4,8 @@ require("core-js/modules/es.regexp.exec.js");
 require("core-js/modules/es.string.split.js");
 /**
  * Simple way to count string occurrences for testing.
+ * @function
+ * @memberOf module:testHelpers
  * @param {string} content
  * @param {string} search
  * @returns {number}

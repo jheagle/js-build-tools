@@ -5,6 +5,7 @@ const gulpConfig = require('../gulp.config')
 
 /**
  * Recommended as the default task, runs the simple dist and bundle tasks.
+ * @memberOf module:js-build-tools
  */
 const defaultCmd = gulpConfig.get('nodeOnly') ? series(dist) : series(dist, bundle)
 

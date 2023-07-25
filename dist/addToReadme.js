@@ -8,6 +8,8 @@ var globSync = _require.globSync
 
 /**
  * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
+ * @function
+ * @memberOf module:js-build-tools
  * @param {function|null} [done=null]
  * @returns {string|Uint8Array}
  */

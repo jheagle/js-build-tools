@@ -102,295 +102,99 @@ Run any of the above commands with `gulp` or `npm run`.
 
 # Available functions documentation
 
-## Constants
+<a name="module_testHelpers"></a>
 
-<dl>
-<dt><a href="#defaultCmd">defaultCmd</a></dt>
-<dd><p>Recommended as the default task, runs the simple dist and bundle tasks.</p>
-</dd>
-<dt><a href="#compileReadme">compileReadme</a></dt>
-<dd><p>Generate the README.md file based off of the template, then append the generated documentation.</p>
-</dd>
-<dt><a href="#build">build</a></dt>
-<dd><p>Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.</p>
-</dd>
-<dt><a href="#nodeTree">nodeTree</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
-<dd><p>Sample NodeTree for testing circular references and arrays.</p>
-</dd>
-<dt><a href="#multiReferenceObject">multiReferenceObject</a> : <code>Object.&lt;string, (string|number|Object)&gt;</code></dt>
-<dd><p>Sample of object containing multiple references.</p>
-</dd>
-<dt><a href="#linkedList">linkedList</a> : <code>Object.&lt;string, (string|Object)&gt;</code></dt>
-<dd><p>Sample LinkedList for testing circular references.</p>
-</dd>
-<dt><a href="#jsonDom">jsonDom</a></dt>
-<dd><p>Sample of jsonDom object containing empty nested array and objects</p>
-</dd>
-<dt><a href="#domItem">domItem</a></dt>
-<dd><p>Sample of domItem child with nested child and optional details</p>
-</dd>
-<dt><a href="#deepReferenceObject">deepReferenceObject</a> : <code>Object.&lt;string, (string|number|Object)&gt;</code></dt>
-<dd><p>Sample object with deep references.</p>
-</dd>
-<dt><a href="#circularObject">circularObject</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
-<dd><p>Multilayered node tree-like structure with parent references</p>
-</dd>
-</dl>
+## testHelpers
+An assortment of objects that can be used in tests and some functions to help debug and write tests.
 
-## Functions
+**Version**: 2.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
-<dl>
-<dt><a href="#watchTest">watchTest()</a> ⇒ <code>*</code></dt>
-<dd><p>Watch for changes and run the tests.</p>
-</dd>
-<dt><a href="#watchFull">watchFull()</a> ⇒ <code>*</code></dt>
-<dd><p>Watch for changes and run the distribution for the changed files, then bundle and test the changed files.</p>
-</dd>
-<dt><a href="#typeScript">typeScript()</a> ⇒ <code>*</code></dt>
-<dd><p>Starting at the source directory, find all the ts files and convert them into the distribution directory.</p>
-</dd>
-<dt><a href="#testQuick">testQuick()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd><p>Run the Jest tests for files which have been modified (based on git status).</p>
-</dd>
-<dt><a href="#testFull">testFull()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd><p>Run all tests with jest.</p>
-</dd>
-<dt><a href="#readmeTemplate">readmeTemplate()</a> ⇒ <code>*</code></dt>
-<dd><p>Copy a readme template into the README.md file.</p>
-</dd>
-<dt><a href="#minifyFor">minifyFor()</a> ⇒ <code>*</code></dt>
-<dd><p>Minify files and rename the output with &#39;.min&#39; extension.</p>
-</dd>
-<dt><a href="#distMinify">distMinify()</a> ⇒ <code>*</code></dt>
-<dd><p>Creates minified versions of the dist files.</p>
-</dd>
-<dt><a href="#distLint">distLint()</a> ⇒ <code>*</code></dt>
-<dd><p>Applies Standard code style linting to distribution files.</p>
-</dd>
-<dt><a href="#distFor">distFor(srcPath, destPath)</a> ⇒ <code>*</code></dt>
-<dd><p>Build the distribution for a given source pattern.</p>
-</dd>
-<dt><a href="#dist">dist()</a> ⇒ <code>*</code></dt>
-<dd><p>Simplified distribution tasks which will use arguments from distFor.</p>
-</dd>
-<dt><a href="#clean">clean([done], [paths])</a> ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> | <code>*</code></dt>
-<dd><p>Deletes all the distribution and browser files (used before create a new build).</p>
-</dd>
-<dt><a href="#bundleMinify">bundleMinify()</a> ⇒ <code>*</code></dt>
-<dd><p>Creates the minified bundle file.</p>
-</dd>
-<dt><a href="#bundleLint">bundleLint()</a> ⇒ <code>*</code></dt>
-<dd><p>Applies Standard code style linting to bundled file.</p>
-</dd>
-<dt><a href="#bundle">bundle()</a> ⇒ <code>*</code></dt>
-<dd><p>Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.</p>
-</dd>
-<dt><a href="#addToReadme">addToReadme([done])</a> ⇒ <code>string</code> | <code>Uint8Array</code></dt>
-<dd><p>Appends all the jsdoc comments to the readme file. Assumes empty or templated file.</p>
-</dd>
-<dt><a href="#createTempDir">createTempDir([exists])</a> ⇒ <code>Promise.&lt;(*|void)&gt;</code></dt>
-<dd><p>Ensure that the del has completed, recursively attempt to delete and recreate</p>
-</dd>
-<dt><a href="#logObject">logObject(object, [label], [outputType])</a> ⇒ <code>string</code> | <code>undefined</code></dt>
-<dd><p>Log out an object in a nicely formatted way.</p>
-</dd>
-<dt><a href="#countMatches">countMatches(content, search)</a> ⇒ <code>number</code></dt>
-<dd><p>Simple way to count string occurrences for testing.</p>
-</dd>
-</dl>
+* [testHelpers](#module_testHelpers)
+    * [.nodeTree](#module_testHelpers.nodeTree) : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+    * [.multiReferenceObject](#module_testHelpers.multiReferenceObject) : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+    * [.linkedList](#module_testHelpers.linkedList) : <code>Object.&lt;string, (string\|Object)&gt;</code>
+    * [.jsonDom](#module_testHelpers.jsonDom) : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
+    * [.domItem](#module_testHelpers.domItem) : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
+    * [.deepReferenceObject](#module_testHelpers.deepReferenceObject) : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+    * [.circularObject](#module_testHelpers.circularObject) : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+    * [.createTempDir([exists])](#module_testHelpers.createTempDir) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+    * [.exports.beforeEach()](#module_testHelpers.exports.beforeEach) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+    * [.exports.afterEach()](#module_testHelpers.exports.afterEach) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.logObject(object, [label], [outputType])](#module_testHelpers.logObject) ⇒ <code>string</code> \| <code>undefined</code>
+    * [.countMatches(content, search)](#module_testHelpers.countMatches) ⇒ <code>number</code>
 
-<a name="defaultCmd"></a>
+<a name="module_testHelpers.nodeTree"></a>
 
-## defaultCmd
-Recommended as the default task, runs the simple dist and bundle tasks.
-
-**Kind**: global constant  
-<a name="compileReadme"></a>
-
-## compileReadme
-Generate the README.md file based off of the template, then append the generated documentation.
-
-**Kind**: global constant  
-<a name="build"></a>
-
-## build
-Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
-
-**Kind**: global constant  
-<a name="nodeTree"></a>
-
-## nodeTree : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+### testHelpers.nodeTree : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
 Sample NodeTree for testing circular references and arrays.
 
-**Kind**: global constant  
-<a name="multiReferenceObject"></a>
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.multiReferenceObject"></a>
 
-## multiReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+### testHelpers.multiReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
 Sample of object containing multiple references.
 
-**Kind**: global constant  
-<a name="linkedList"></a>
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.linkedList"></a>
 
-## linkedList : <code>Object.&lt;string, (string\|Object)&gt;</code>
+### testHelpers.linkedList : <code>Object.&lt;string, (string\|Object)&gt;</code>
 Sample LinkedList for testing circular references.
 
-**Kind**: global constant  
-<a name="jsonDom"></a>
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.jsonDom"></a>
 
-## jsonDom
+### testHelpers.jsonDom : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
 Sample of jsonDom object containing empty nested array and objects
 
-**Kind**: global constant  
-<a name="domItem"></a>
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.domItem"></a>
 
-## domItem
+### testHelpers.domItem : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
 Sample of domItem child with nested child and optional details
 
-**Kind**: global constant  
-<a name="deepReferenceObject"></a>
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.deepReferenceObject"></a>
 
-## deepReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+### testHelpers.deepReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
 Sample object with deep references.
 
-**Kind**: global constant  
-<a name="circularObject"></a>
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.circularObject"></a>
 
-## circularObject : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+### testHelpers.circularObject : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
 Multilayered node tree-like structure with parent references
 
-**Kind**: global constant  
-<a name="watchTest"></a>
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.createTempDir"></a>
 
-## watchTest() ⇒ <code>\*</code>
-Watch for changes and run the tests.
-
-**Kind**: global function  
-<a name="watchFull"></a>
-
-## watchFull() ⇒ <code>\*</code>
-Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
-
-**Kind**: global function  
-<a name="typeScript"></a>
-
-## typeScript() ⇒ <code>\*</code>
-Starting at the source directory, find all the ts files and convert them into the distribution directory.
-
-**Kind**: global function  
-<a name="testQuick"></a>
-
-## testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
-Run the Jest tests for files which have been modified (based on git status).
-
-**Kind**: global function  
-<a name="testFull"></a>
-
-## testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
-Run all tests with jest.
-
-**Kind**: global function  
-<a name="readmeTemplate"></a>
-
-## readmeTemplate() ⇒ <code>\*</code>
-Copy a readme template into the README.md file.
-
-**Kind**: global function  
-<a name="minifyFor"></a>
-
-## minifyFor() ⇒ <code>\*</code>
-Minify files and rename the output with '.min' extension.
-
-**Kind**: global function  
-<a name="distMinify"></a>
-
-## distMinify() ⇒ <code>\*</code>
-Creates minified versions of the dist files.
-
-**Kind**: global function  
-<a name="distLint"></a>
-
-## distLint() ⇒ <code>\*</code>
-Applies Standard code style linting to distribution files.
-
-**Kind**: global function  
-<a name="distFor"></a>
-
-## distFor(srcPath, destPath) ⇒ <code>\*</code>
-Build the distribution for a given source pattern.
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| srcPath | <code>string</code> \| <code>array</code> | 
-| destPath | <code>string</code> | 
-
-<a name="dist"></a>
-
-## dist() ⇒ <code>\*</code>
-Simplified distribution tasks which will use arguments from distFor.
-
-**Kind**: global function  
-<a name="clean"></a>
-
-## clean([done], [paths]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
-Deletes all the distribution and browser files (used before create a new build).
-
-**Kind**: global function  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> | <code></code> | 
-| [paths] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | 
-
-<a name="bundleMinify"></a>
-
-## bundleMinify() ⇒ <code>\*</code>
-Creates the minified bundle file.
-
-**Kind**: global function  
-<a name="bundleLint"></a>
-
-## bundleLint() ⇒ <code>\*</code>
-Applies Standard code style linting to bundled file.
-
-**Kind**: global function  
-<a name="bundle"></a>
-
-## bundle() ⇒ <code>\*</code>
-Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
-
-**Kind**: global function  
-<a name="addToReadme"></a>
-
-## addToReadme([done]) ⇒ <code>string</code> \| <code>Uint8Array</code>
-Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
-
-**Kind**: global function  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> \| <code>null</code> | <code></code> | 
-
-<a name="createTempDir"></a>
-
-## createTempDir([exists]) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+### testHelpers.createTempDir([exists]) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
 Ensure that the del has completed, recursively attempt to delete and recreate
 
-**Kind**: global function  
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
 
 | Param | Type | Default |
 | --- | --- | --- |
 | [exists] | <code>boolean</code> | <code>true</code> | 
 
-<a name="logObject"></a>
+<a name="module_testHelpers.exports.beforeEach"></a>
 
-## logObject(object, [label], [outputType]) ⇒ <code>string</code> \| <code>undefined</code>
+### testHelpers.exports.beforeEach() ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+In the Jest.beforeEach function call this one to set up the temp directory.
+
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.exports.afterEach"></a>
+
+### testHelpers.exports.afterEach() ⇒ <code>Promise.&lt;\*&gt;</code>
+In the Jest.afterEach function call this one to clean up and remove the temp directory.
+
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.logObject"></a>
+
+### testHelpers.logObject(object, [label], [outputType]) ⇒ <code>string</code> \| <code>undefined</code>
 Log out an object in a nicely formatted way.
 
-**Kind**: global function  
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
 
 | Param | Type | Default |
 | --- | --- | --- |
@@ -398,12 +202,12 @@ Log out an object in a nicely formatted way.
 | [label] | <code>string</code> | <code>&quot;&#x27;logging&#x27;&quot;</code> | 
 | [outputType] | <code>string</code> | <code>&quot;&#x27;log&#x27;&quot;</code> | 
 
-<a name="countMatches"></a>
+<a name="module_testHelpers.countMatches"></a>
 
-## countMatches(content, search) ⇒ <code>number</code>
+### testHelpers.countMatches(content, search) ⇒ <code>number</code>
 Simple way to count string occurrences for testing.
 
-**Kind**: global function  
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
 
 | Param | Type |
 | --- | --- |

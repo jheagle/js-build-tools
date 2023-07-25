@@ -1,4 +1,13 @@
-const circularObject = require('./test-helpers/circurlarObject')
+/**
+ * An assortment of objects that can be used in tests and some functions to help debug and write tests.
+ * @file
+ * @author Joshua Heagle <joshuaheagle@gmail.com>
+ * @version 2.0.0
+ * @module testHelpers
+ * @memberOf module:js-build-tools
+ */
+
+const circularObject = require('./test-helpers/circularObject')
 const countMatches = require('./test-helpers/countMatches')
 const deepReferenceObject = require('./test-helpers/deepReferenceObject')
 const domItem = require('./test-helpers/domItem')

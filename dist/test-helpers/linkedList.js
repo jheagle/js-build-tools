@@ -2,6 +2,7 @@
 
 /**
  * Sample LinkedList for testing circular references.
+ * @memberOf module:testHelpers
  * @type {Object.<string, string|Object>}
  */
 var linkedList = {

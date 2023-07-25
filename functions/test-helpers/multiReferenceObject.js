@@ -1,5 +1,6 @@
 /**
  * Sample of object containing multiple references.
+ * @memberOf module:testHelpers
  * @type {Object.<string, string|number|Object>}
  */
 const multiReferenceObject = {

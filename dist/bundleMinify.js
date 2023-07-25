@@ -6,6 +6,8 @@ var minifyFor = require('./minifyFor')
 
 /**
  * Creates the minified bundle file.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {*}
  */
 var bundleMinify = function bundleMinify () {

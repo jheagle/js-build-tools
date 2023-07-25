@@ -9,6 +9,8 @@ var standard = require('gulp-standard')
 
 /**
  * Applies Standard code style linting to bundled file.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {*}
  */
 var bundleLint = function bundleLint () {

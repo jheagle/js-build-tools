@@ -26,6 +26,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 var fs = require('fs');
 var del = require('del');
+// Import the configurations and override some of them in order to direct to the temp directory.
 var gulpConfig = require('../../gulp.config.js');
 var tempDir = 'test-temp/';
 var srcPath = "".concat(tempDir, "src");
@@ -43,6 +44,8 @@ exports.gulpConfig = gulpConfig;
 
 /**
  * Ensure that the del has completed, recursively attempt to delete and recreate
+ * @function
+ * @memberOf module:testHelpers
  * @param {boolean} [exists=true]
  * @returns {Promise<*|void>}
  */
@@ -77,9 +80,23 @@ var createTempDir = /*#__PURE__*/function () {
   };
 }();
 exports.createTempDir = createTempDir;
+
+/**
+ * In the Jest.beforeEach function call this one to set up the temp directory.
+ * @function
+ * @memberOf module:testHelpers
+ * @returns {Promise<*|void>}
+ */
 exports.beforeEach = function () {
   return createTempDir();
 };
+
+/**
+ * In the Jest.afterEach function call this one to clean up and remove the temp directory.
+ * @function
+ * @memberOf module:testHelpers
+ * @returns {Promise<*>}
+ */
 exports.afterEach = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
   return _regeneratorRuntime().wrap(function _callee2$(_context2) {
     while (1) switch (_context2.prev = _context2.next) {

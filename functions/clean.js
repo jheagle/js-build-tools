@@ -3,6 +3,8 @@ const gulpConfig = require('../gulp.config.js')
 
 /**
  * Deletes all the distribution and browser files (used before create a new build).
+ * @function
+ * @memberOf module:js-build-tools
  * @param {function} [done=null]
  * @param {string[]} [paths=[]]
  * @returns {Promise<string[]> | *}

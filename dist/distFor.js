@@ -8,6 +8,8 @@ var gulpConfig = require('../gulp.config.js')
 
 /**
  * Build the distribution for a given source pattern.
+ * @function
+ * @memberOf module:js-build-tools
  * @param {string|array} srcPath
  * @param {string} destPath
  * @returns {*}

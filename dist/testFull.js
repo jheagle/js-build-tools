@@ -30,6 +30,8 @@ var jest = _require.runCLI
 
 /**
  * Run all tests with jest.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {Promise<*>}
  */
 var testFull = /* #__PURE__ */(function () {
