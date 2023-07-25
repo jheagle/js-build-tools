@@ -102,6 +102,180 @@ Run any of the above commands with `gulp` or `npm run`.
 
 # Available functions documentation
 
+## Modules
+
+<dl>
+<dt><a href="#module_js-build-tools">js-build-tools</a></dt>
+<dd><p>This file is a cumulative example of implementing the resources available for building a project.
+Importing this file as-is is recommended by requiring it into your gylpfile.js, however the option is available
+customize as needed.</p>
+</dd>
+<dt><a href="#module_testHelpers">testHelpers</a></dt>
+<dd><p>An assortment of objects that can be used in tests and some functions to help debug and write tests.</p>
+</dd>
+</dl>
+
+<a name="module_js-build-tools"></a>
+
+## js-build-tools
+This file is a cumulative example of implementing the resources available for building a project.Importing this file as-is is recommended by requiring it into your gylpfile.js, however the option is availablecustomize as needed.
+
+**Version**: 2.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
+
+* [js-build-tools](#module_js-build-tools)
+    * [.defaultCmd](#module_js-build-tools.defaultCmd)
+    * [.compileReadme](#module_js-build-tools.compileReadme)
+    * [.build](#module_js-build-tools.build)
+    * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
+    * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>\*</code>
+    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>\*</code>
+    * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.readmeTemplate()](#module_js-build-tools.readmeTemplate) ⇒ <code>\*</code>
+    * [.minifyFor()](#module_js-build-tools.minifyFor) ⇒ <code>\*</code>
+    * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
+    * [.distLint()](#module_js-build-tools.distLint) ⇒ <code>\*</code>
+    * [.distFor(srcPath, destPath)](#module_js-build-tools.distFor) ⇒ <code>\*</code>
+    * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
+    * [.clean([done], [paths])](#module_js-build-tools.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+    * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
+    * [.bundleLint()](#module_js-build-tools.bundleLint) ⇒ <code>\*</code>
+    * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>\*</code>
+    * [.addToReadme([done])](#module_js-build-tools.addToReadme) ⇒ <code>string</code> \| <code>Uint8Array</code>
+
+<a name="module_js-build-tools.defaultCmd"></a>
+
+### js-build-tools.defaultCmd
+Recommended as the default task, runs the simple dist and bundle tasks.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.compileReadme"></a>
+
+### js-build-tools.compileReadme
+Generate the README.md file based off of the template, then append the generated documentation.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.build"></a>
+
+### js-build-tools.build
+Runs several processes to build and validate the project.
+Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.watchTest"></a>
+
+### js-build-tools.watchTest() ⇒ <code>\*</code>
+Watch for changes and run the tests.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.watchFull"></a>
+
+### js-build-tools.watchFull() ⇒ <code>\*</code>
+Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.typeScript"></a>
+
+### js-build-tools.typeScript() ⇒ <code>\*</code>
+Starting at the source directory, find all the ts files and convert them into the distribution directory.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.testQuick"></a>
+
+### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run the Jest tests for files which have been modified (based on git status).
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.testFull"></a>
+
+### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run all tests with jest.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.readmeTemplate"></a>
+
+### js-build-tools.readmeTemplate() ⇒ <code>\*</code>
+Copy a readme template into the README.md file.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.minifyFor"></a>
+
+### js-build-tools.minifyFor() ⇒ <code>\*</code>
+Minify files and rename the output with '.min' extension.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.distMinify"></a>
+
+### js-build-tools.distMinify() ⇒ <code>\*</code>
+Creates minified versions of the dist files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.distLint"></a>
+
+### js-build-tools.distLint() ⇒ <code>\*</code>
+Applies Standard code style linting to distribution files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.distFor"></a>
+
+### js-build-tools.distFor(srcPath, destPath) ⇒ <code>\*</code>
+Build the distribution for a given source pattern.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type |
+| --- | --- |
+| srcPath | <code>string</code> \| <code>array</code> | 
+| destPath | <code>string</code> | 
+
+<a name="module_js-build-tools.dist"></a>
+
+### js-build-tools.dist() ⇒ <code>\*</code>
+Simplified distribution tasks which will use arguments from distFor.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.clean"></a>
+
+### js-build-tools.clean([done], [paths]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+Deletes all the distribution and browser files (used before create a new build).
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+| [paths] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | 
+
+<a name="module_js-build-tools.bundleMinify"></a>
+
+### js-build-tools.bundleMinify() ⇒ <code>\*</code>
+Creates the minified bundle file.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundleLint"></a>
+
+### js-build-tools.bundleLint() ⇒ <code>\*</code>
+Applies Standard code style linting to bundled file.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundle"></a>
+
+### js-build-tools.bundle() ⇒ <code>\*</code>
+Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.addToReadme"></a>
+
+### js-build-tools.addToReadme([done]) ⇒ <code>string</code> \| <code>Uint8Array</code>
+Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> \| <code>null</code> | <code></code> | 
+
 <a name="module_testHelpers"></a>
 
 ## testHelpers

@@ -1,6 +1,6 @@
-import circularObject from './circurlarObject'
+import circularObject from './circularObject'
 
-describe('circurlarObject', () => {
+describe('circularObject', () => {
   test('has sample circular object', () => {
     expect(circularObject.body.parent).toBe(circularObject)
     expect(circularObject.body.children[0].parent).toBe(circularObject.body)

@@ -37,6 +37,7 @@ const setDefaults = {
   readmeOptions: 'utf8',
   readmeFile: 'README.md',
   readmePath: './',
+  readmeSearch: 'src/**/!(*.test).js',
   rootPath: './',
   srcPath: 'src',
   srcSearch: 'src/**/!(*.test).js',

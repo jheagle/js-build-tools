@@ -11,7 +11,7 @@ const { globSync } = require('glob')
  * @returns {string|Uint8Array}
  */
 const addToReadme = (done = null) => {
-  const files = globSync(gulpConfig.get('srcSearch'))
+  const files = globSync(gulpConfig.get('readmeSearch'))
   const readme = jsdoc2md.renderSync({ files: files })
   fs.appendFileSync(gulpConfig.get('readmePath') + gulpConfig.get('readmeFile'), readme, gulpConfig.get('readmeOptions'))
   return done && done()

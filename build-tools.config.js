@@ -9,6 +9,7 @@ module.exports = {
   readmePath: './',
   readmeOptions: 'utf8',
   readmeTemplate: 'MAIN.md',
+  readmeSearch: ['gulpfile.base.js', 'functions/**/!(*.test).js'],
   rootPath: './',
   srcPath: 'functions',
   srcSearch: 'functions/**/!(*.test).js',

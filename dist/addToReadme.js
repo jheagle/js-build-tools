@@ -15,7 +15,7 @@ var globSync = _require.globSync
  */
 var addToReadme = function addToReadme () {
   var done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
-  var files = globSync(gulpConfig.get('srcSearch'))
+  var files = globSync(gulpConfig.get('readmeSearch'))
   var readme = jsdoc2md.renderSync({
     files: files
   })
