@@ -6,8 +6,8 @@ require("core-js/modules/es.json.stringify.js");
  * @function
  * @memberOf module:testHelpers
  * @param {Object} object
- * @param {string} [label='logging']
- * @param {string} [outputType='log']
+ * @param {string} [label=logging]
+ * @param {string} [outputType=log]
  * @returns {string|undefined}
  */
 var logObject = function logObject(object) {

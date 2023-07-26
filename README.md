@@ -184,8 +184,7 @@ Generate the README.md file based off of the template, then append the generated
 <a name="module_js-build-tools.build"></a>
 
 ### js-build-tools.build
-Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+Runs several processes to build and validate the project.Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
 
 **Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.watchTest"></a>

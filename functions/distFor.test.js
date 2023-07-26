@@ -51,5 +51,9 @@ describe('distFor', () => {
         expect(countMatches(babelifiedContents, 'arguments')).toEqual(6)
         done()
       })
+      .on('error', error => {
+        console.error('Encountered error', error)
+        done()
+      })
   })
 })

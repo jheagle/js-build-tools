@@ -12,7 +12,7 @@ var tsProject = ts.createProject(gulpConfig.get('useTsConfig'))
  * @returns {*}
  */
 var typeScript = function typeScript () {
-  return tsProject.src().pipe(tsProject()).js.pipe(dest('dist'))
+  return tsProject.src().pipe(tsProject()).js.pipe(dest(gulpConfig.get('distPath')))
 }
 module.exports = typeScript
 

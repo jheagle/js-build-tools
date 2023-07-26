@@ -9,7 +9,11 @@ const tsProject = ts.createProject(gulpConfig.get('useTsConfig'))
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const typeScript = () => tsProject.src().pipe(tsProject()).js.pipe(dest('dist'))
+const typeScript = () => tsProject
+  .src()
+  .pipe(tsProject())
+  .js
+  .pipe(dest(gulpConfig.get('distPath')))
 
 module.exports = typeScript
 

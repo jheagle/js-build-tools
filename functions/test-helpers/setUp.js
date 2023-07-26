@@ -14,6 +14,16 @@ gulpConfig.set('rootPath', tempDir)
 gulpConfig.set('srcPath', srcPath)
 gulpConfig.set('srcSearch', `${tempDir}src/**/!(*.test).js`)
 gulpConfig.set('watchSearch', `${tempDir}src/**/*.js`)
+gulpConfig.set('useTsConfig', './tsconfig.json')
+// Why can't I use an object for settings instead?
+// gulpConfig.set('useTsConfig', {
+//   files: ['test-temp/src/typeScript.ts'],
+//   compilerOptions: {
+//     moduleResolution: 'node',
+//     noImplicitAny: true,
+//     target: 'es6',
+//   }
+// })
 
 exports.gulpConfig = gulpConfig
 
