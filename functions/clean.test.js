@@ -1,6 +1,7 @@
 const fs = require('fs')
-const gulpConfig = require('../gulp.config')
 const setUp = require('./test-helpers/setUp')
+setUp.setDefaults('test-clean')
+const gulpConfig = setUp.gulpConfig
 const clean = require('./clean')
 
 beforeEach(setUp.beforeEach)

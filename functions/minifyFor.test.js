@@ -1,6 +1,7 @@
 const fs = require('fs')
-const gulpConfig = require('../gulp.config')
 const setUp = require('./test-helpers/setUp')
+setUp.setDefaults('test-minify-for')
+const gulpConfig = setUp.gulpConfig
 const minifyFor = require('./minifyFor')
 const { countMatches } = require('./testHelpers')
 

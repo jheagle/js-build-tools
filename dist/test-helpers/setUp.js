@@ -30,27 +30,30 @@ var del = require('del');
 var gulpConfig = require('../../gulp.config.js');
 var tempDir = 'test-temp/';
 var srcPath = "".concat(tempDir, "src");
-gulpConfig.set('browserPath', "".concat(tempDir, "browser"));
-gulpConfig.set('distMain', "".concat(tempDir, "dist/main"));
-gulpConfig.set('distPath', "".concat(tempDir, "dist"));
-gulpConfig.set('distSearch', "".concat(tempDir, "dist/**/*.js"));
-gulpConfig.set('readmeTemplate', "".concat(tempDir, "MAIN.md"));
-gulpConfig.set('readmePath', tempDir);
-gulpConfig.set('rootPath', tempDir);
-gulpConfig.set('srcPath', srcPath);
-gulpConfig.set('srcSearch', "".concat(tempDir, "src/**/!(*.test).js"));
-gulpConfig.set('watchSearch', "".concat(tempDir, "src/**/*.js"));
-gulpConfig.set('useTsConfig', './tsconfig.json');
-// Why can't I use an object for settings instead?
-// gulpConfig.set('useTsConfig', {
-//   files: ['test-temp/src/typeScript.ts'],
-//   compilerOptions: {
-//     moduleResolution: 'node',
-//     noImplicitAny: true,
-//     target: 'es6',
-//   }
-// })
 
+/**
+ * Update the gulp configurations with the test data. Set the test directory where temp files will be created for testing.
+ * @function
+ * @memberOf module:testHelpers
+ * @param {string} testDir
+ */
+var setDefaults = function setDefaults() {
+  var testDir = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'test-temp';
+  tempDir = "".concat(testDir, "/");
+  srcPath = "".concat(tempDir, "src");
+  gulpConfig.set('browserPath', "".concat(tempDir, "browser"));
+  gulpConfig.set('distMain', "".concat(tempDir, "dist/main"));
+  gulpConfig.set('distPath', "".concat(tempDir, "dist"));
+  gulpConfig.set('distSearch', "".concat(tempDir, "dist/**/*.js"));
+  gulpConfig.set('readmeTemplate', "".concat(tempDir, "MAIN.md"));
+  gulpConfig.set('readmePath', tempDir);
+  gulpConfig.set('rootPath', tempDir);
+  gulpConfig.set('srcPath', srcPath);
+  gulpConfig.set('srcSearch', "".concat(tempDir, "src/**/!(*.test).js"));
+  gulpConfig.set('tsSearch', "".concat(tempDir, "src/**/*.ts"));
+  gulpConfig.set('watchSearch', "".concat(tempDir, "src/**/*.js"));
+};
+exports.setDefaults = setDefaults;
 exports.gulpConfig = gulpConfig;
 
 /**

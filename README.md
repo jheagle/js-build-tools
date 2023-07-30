@@ -140,6 +140,14 @@ Run any of the above commands with `gulp` or `npm run`.
 </dd>
 </dl>
 
+## Constants
+
+<dl>
+<dt><a href="#defaultSrc">defaultSrc</a> : <code>string</code> | <code>array</code></dt>
+<dd><p>By default, with typescript the files will have been copied into dist already, otherwise use actual src.</p>
+</dd>
+</dl>
+
 <a name="module_js-build-tools"></a>
 
 ## js-build-tools
@@ -154,7 +162,7 @@ Export these functions to your own project in order to customize your build pipe
     * [.build](#module_js-build-tools.build)
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>\*</code>
-    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>\*</code>
+    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>readable-stream.Stream</code>
     * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.readmeTemplate()](#module_js-build-tools.readmeTemplate) ⇒ <code>\*</code>
@@ -201,10 +209,11 @@ Watch for changes and run the distribution for the changed files, then bundle an
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.typeScript"></a>
 
-### js-build-tools.typeScript() ⇒ <code>\*</code>
+### js-build-tools.typeScript() ⇒ <code>readable-stream.Stream</code>
 Starting at the source directory, find all the ts files and convert them into the distribution directory.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+**See**: `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info  
 <a name="module_js-build-tools.testQuick"></a>
 
 ### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -468,6 +477,7 @@ An assortment of objects that can be used in tests and some functions to help de
     * [.domItem](#module_testHelpers.domItem) : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
     * [.deepReferenceObject](#module_testHelpers.deepReferenceObject) : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
     * [.circularObject](#module_testHelpers.circularObject) : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+    * [.setDefaults(testDir)](#module_testHelpers.setDefaults)
     * [.createTempDir([exists])](#module_testHelpers.createTempDir) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
     * [.exports.beforeEach()](#module_testHelpers.exports.beforeEach) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
     * [.exports.afterEach()](#module_testHelpers.exports.afterEach) ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -516,6 +526,17 @@ Sample object with deep references.
 Multilayered node tree-like structure with parent references
 
 **Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.setDefaults"></a>
+
+### testHelpers.setDefaults(testDir)
+Update the gulp configurations with the test data. Set the test directory where temp files will be created for testing.
+
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| testDir | <code>string</code> | <code>&quot;test-temp&quot;</code> | 
+
 <a name="module_testHelpers.createTempDir"></a>
 
 ### testHelpers.createTempDir([exists]) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
@@ -564,3 +585,9 @@ Simple way to count string occurrences for testing.
 | content | <code>string</code> | 
 | search | <code>string</code> | 
 
+<a name="defaultSrc"></a>
+
+## defaultSrc : <code>string</code> \| <code>array</code>
+By default, with typescript the files will have been copied into dist already, otherwise use actual src.
+
+**Kind**: global constant  

@@ -1,6 +1,7 @@
 const fs = require('fs')
-const gulpConfig = require('../gulp.config.js')
 const setUp = require('./test-helpers/setUp')
+setUp.setDefaults('test-readme-template')
+const gulpConfig = setUp.gulpConfig
 const readmeTemplate = require('./readmeTemplate')
 
 const mainMd = 'MAIN.md'

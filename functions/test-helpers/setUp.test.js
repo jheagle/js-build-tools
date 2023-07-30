@@ -1,5 +1,7 @@
-import { afterEach, createTempDir, gulpConfig } from './setUp'
+import { afterEach, createTempDir, gulpConfig, setDefaults } from './setUp'
 import fs from 'fs'
+
+setDefaults()
 
 describe('setUp', () => {
   test('able to create the test-temp/src directory', async () => {

@@ -1,6 +1,7 @@
 const fs = require('fs')
-const gulpConfig = require('../gulp.config')
 const setUp = require('./test-helpers/setUp')
+setUp.setDefaults('test-dist-lint')
+const gulpConfig = setUp.gulpConfig
 const distLint = require('./distLint')
 const { countMatches } = require('./testHelpers')
 

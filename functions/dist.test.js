@@ -1,6 +1,7 @@
 const fs = require('fs')
-const gulpConfig = require('../gulp.config')
 const setUp = require('./test-helpers/setUp')
+setUp.setDefaults('test-dist')
+const gulpConfig = setUp.gulpConfig
 const dist = require('./dist')
 
 const rawContents = 'const distFor = require(\'./distFor.js\')\n' +

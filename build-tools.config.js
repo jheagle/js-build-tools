@@ -25,6 +25,7 @@ module.exports = {
     watchAll: false,
   },
   testPath: 'functions',
-  useTsConfig: 'tsconfig.json',
+  tsSearch: 'functions/**/*.ts',
+  useTsConfig: false,
   watchSearch: 'functions/*.js',
 }

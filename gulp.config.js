@@ -136,6 +136,7 @@ const setDefaults = {
     watchAll: false,
   },
   testPath: ['src'],
+  tsSearch: 'src/**/*.ts',
   useTsConfig: false,
   watchSearch: 'src/**/*.js'
 }

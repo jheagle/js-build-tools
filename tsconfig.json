@@ -1,5 +1,4 @@
 {
-  "files": ["test-temp/src/typeScript.ts"],
   "compilerOptions": {
     "moduleResolution": "node",
     "noImplicitAny": true,

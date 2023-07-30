@@ -1,6 +1,7 @@
 const fs = require('fs')
-const gulpConfig = require('../gulp.config')
 const setUp = require('./test-helpers/setUp')
+setUp.setDefaults('test-type-script')
+const gulpConfig = setUp.gulpConfig
 const typeScript = require('./typeScript')
 const { countMatches, logObject } = require('./testHelpers')
 
@@ -28,7 +29,7 @@ describe('typeScript', () => {
     expect.assertions(3)
     const oldContents = fs.readFileSync(srcFile).toString()
     expect(countMatches(oldContents, 'sayHello(name: string)')).toEqual(1)
-    typeScript(srcFile)
+    typeScript()
       .on('finish', () => {
         expect(fs.existsSync(distPath)).toBeTruthy()
         const compiledContents = fs.readFileSync(`${distPath}/typeScript.js`).toString()
