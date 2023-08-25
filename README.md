@@ -148,6 +148,14 @@ Run any of the above commands with `gulp` or `npm run`.
 </dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#distSeries">distSeries()</a> ⇒ <code>function</code></dt>
+<dd><p>When using TypeScript, ensure that we process the ts first then run babel (dist)</p>
+</dd>
+</dl>
+
 <a name="module_js-build-tools"></a>
 
 ## js-build-tools
@@ -162,14 +170,15 @@ Export these functions to your own project in order to customize your build pipe
     * [.build](#module_js-build-tools.build)
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>\*</code>
-    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>readable-stream.Stream</code>
+    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>stream.Stream</code>
+    * [.tsFor([srcPath], [distPath])](#module_js-build-tools.tsFor) ⇒ <code>stream.Stream</code>
     * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.readmeTemplate()](#module_js-build-tools.readmeTemplate) ⇒ <code>\*</code>
     * [.minifyFor()](#module_js-build-tools.minifyFor) ⇒ <code>\*</code>
     * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
     * [.distLint()](#module_js-build-tools.distLint) ⇒ <code>\*</code>
-    * [.distFor(srcPath, destPath)](#module_js-build-tools.distFor) ⇒ <code>\*</code>
+    * [.distFor([srcPath], [destPath])](#module_js-build-tools.distFor) ⇒ <code>\*</code>
     * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
     * [.clean([done], [paths])](#module_js-build-tools.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
     * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
@@ -204,16 +213,32 @@ Watch for changes and run the tests.
 <a name="module_js-build-tools.watchFull"></a>
 
 ### js-build-tools.watchFull() ⇒ <code>\*</code>
-Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+Watch for changes and run the distribution for the changed files, then bundle and test the changed files.1. Find the sub-folders within src path2. Maintain the folders, but use distPath for base3. Remove base folder and return dist path with correct sub-folders
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+**Example**  
+```js
+// Configured pathsdistPath = 'dist'srcPath = 'functions'// Path parameterpath = 'functions/some/path/file.js'// Generated regex using configured srcPathpathRegex = '/^functions(.*\/).+\.js$/i'// Replace value using the configured distPathreplacePath = 'dist$1'// The resulting replaced path for the destination folderdistPathResult = 'dist/some/path/'
+```
 <a name="module_js-build-tools.typeScript"></a>
 
-### js-build-tools.typeScript() ⇒ <code>readable-stream.Stream</code>
+### js-build-tools.typeScript() ⇒ <code>stream.Stream</code>
+Simplified typescript task using tsFor.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.tsFor"></a>
+
+### js-build-tools.tsFor([srcPath], [distPath]) ⇒ <code>stream.Stream</code>
 Starting at the source directory, find all the ts files and convert them into the distribution directory.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 **See**: `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
+| [distPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
+
 <a name="module_js-build-tools.testQuick"></a>
 
 ### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -252,15 +277,15 @@ Applies Standard code style linting to distribution files.
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.distFor"></a>
 
-### js-build-tools.distFor(srcPath, destPath) ⇒ <code>\*</code>
+### js-build-tools.distFor([srcPath], [destPath]) ⇒ <code>\*</code>
 Build the distribution for a given source pattern.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 
-| Param | Type |
-| --- | --- |
-| srcPath | <code>string</code> \| <code>array</code> | 
-| destPath | <code>string</code> | 
+| Param | Type | Default |
+| --- | --- | --- |
+| [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
+| [destPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
 
 <a name="module_js-build-tools.dist"></a>
 
@@ -591,3 +616,9 @@ Simple way to count string occurrences for testing.
 By default, with typescript the files will have been copied into dist already, otherwise use actual src.
 
 **Kind**: global constant  
+<a name="distSeries"></a>
+
+## distSeries() ⇒ <code>function</code>
+When using TypeScript, ensure that we process the ts first then run babel (dist)
+
+**Kind**: global function  

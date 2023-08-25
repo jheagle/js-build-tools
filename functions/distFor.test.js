@@ -119,5 +119,5 @@ describe('distFor', () => {
         console.error('Encountered error with typeScript', error)
         done()
       })
-  }, 7000)
+  }, 15000)
 })

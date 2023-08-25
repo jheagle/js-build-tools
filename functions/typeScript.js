@@ -1,19 +1,11 @@
-const { dest, src } = require('gulp')
-const gulpConfig = require('../gulp.config.js')
-const ts = require('gulp-typescript')
-
-const tsProject = ts.createProject(gulpConfig.get('useTsConfig'))
+const tsFor = require('./tsFor')
 
 /**
- * Starting at the source directory, find all the ts files and convert them into the distribution directory.
+ * Simplified typescript task using tsFor.
  * @function
  * @memberOf module:js-build-tools
- * @returns {readable-stream.Stream}
- * @see `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info
+ * @returns {stream.Stream}
  */
-const typeScript = () => src(gulpConfig.get('tsSearch'))
-  .pipe(tsProject())
-  .js
-  .pipe(dest(gulpConfig.get('distPath')))
+const typeScript = () => tsFor()
 
 module.exports = typeScript

@@ -16,8 +16,8 @@ var defaultSrc = gulpConfig.get('useTsConfig') ? gulpConfig.get('distSearch') : 
  * Build the distribution for a given source pattern.
  * @function
  * @memberOf module:js-build-tools
- * @param {string|array} srcPath
- * @param {string} destPath
+ * @param {string|array} [srcPath='']
+ * @param {string} [destPath='']
  * @returns {*}
  */
 var distFor = function distFor () {
