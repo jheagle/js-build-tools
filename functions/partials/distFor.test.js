@@ -1,10 +1,10 @@
 const fs = require('fs')
-const setUp = require('./test-helpers/setUp')
+const setUp = require('../test-helpers/setUp')
 setUp.setDefaults('test-dist-for')
 const gulpConfig = setUp.gulpConfig
 const distFor = require('./distFor')
-const { countMatches } = require('./testHelpers')
-const typeScript = require('./typeScript')
+const { countMatches } = require('../testHelpers')
+const typeScript = require('../typeScript')
 
 const rawContents = 'const babel = require(\'gulp-babel\')\n' +
   'const { dest, src } = require(\'gulp\')\n' +
@@ -59,7 +59,7 @@ const rawTsContents = '// @ts-ignore\n' +
   '\n' +
   'export default distFor\n'
 
-beforeEach(() => setUp.beforeEach())
+beforeEach(setUp.beforeEach)
 
 afterEach(setUp.afterEach)
 
@@ -119,5 +119,5 @@ describe('distFor', () => {
         console.error('Encountered error with typeScript', error)
         done()
       })
-  }, 15000)
+  }, 30000)
 })

@@ -3,25 +3,18 @@
 var bundle = require('./bundle')
 var bundleLint = require('./bundleLint')
 var bundleMinify = require('./bundleMinify')
-var clean = require('./clean')
+var _require = require('./partials')
+var clean = _require.clean
+var distSeries = _require.distSeries
 var compileReadme = require('./compileReadme')
 var dist = require('./dist')
 var distLint = require('./distLint')
 var distMinify = require('./distMinify')
-var _require = require('gulp')
-var parallel = _require.parallel
-var series = _require.series
+var _require2 = require('gulp')
+var parallel = _require2.parallel
+var series = _require2.series
 var gulpConfig = require('../gulp.config.js')
 var testFull = require('./testFull')
-var typeScript = require('./typeScript')
-
-/**
- * When using TypeScript, ensure that we process the ts first then run babel (dist)
- * @returns {Function}
- */
-var distSeries = function distSeries () {
-  return gulpConfig.get('useTsConfig') ? series(typeScript, dist) : dist
-}
 
 /**
  * Runs several processes to build and validate the project.

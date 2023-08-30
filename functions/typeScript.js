@@ -1,4 +1,4 @@
-const tsFor = require('./tsFor')
+const tsFor = require('./partials/tsFor')
 
 /**
  * Simplified typescript task using tsFor.

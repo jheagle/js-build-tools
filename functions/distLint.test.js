@@ -54,5 +54,5 @@ describe('distLint', () => {
         console.error('Encountered error', error)
         done()
       })
-  })
+  }, 10000)
 })

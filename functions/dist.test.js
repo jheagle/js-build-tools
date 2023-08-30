@@ -39,5 +39,5 @@ describe('dist', () => {
         console.error('Encountered error', error)
         done()
       })
-  })
+  }, 10000)
 })

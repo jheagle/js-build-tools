@@ -1,5 +1,5 @@
 const { dest, src } = require('gulp')
-const gulpConfig = require('../gulp.config.js')
+const gulpConfig = require('../../gulp.config.js')
 const ts = require('gulp-typescript')
 
 const tsProject = ts.createProject(gulpConfig.get('useTsConfig'))
@@ -7,7 +7,7 @@ const tsProject = ts.createProject(gulpConfig.get('useTsConfig'))
 /**
  * Starting at the source directory, find all the ts files and convert them into the distribution directory.
  * @function
- * @memberOf module:js-build-tools
+ * @memberOf module:partials
  * @param {string|array} [srcPath='']
  * @param {string} [distPath='']
  * @returns {stream.Stream}

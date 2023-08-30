@@ -1,5 +1,4 @@
-const addToReadme = require('./addToReadme')
-const readmeTemplate = require('./readmeTemplate')
+const { addToReadme, readmeTemplate } = require('./partials')
 const { series } = require('gulp')
 
 /**

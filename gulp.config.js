@@ -27,27 +27,27 @@ const defaultConfig = (config = {}, path = null, defaultValue = null) => {
 
 /**
  * A setting that may be an array of strings or a string only.
- * @typedef {Array<string>|string} ArrayableSetting
+ * @typedef {Array<string>|string} module:gulpConfig~ArrayableSetting
  */
 
 /**
  * A setting that may be true or false.
- * @typedef {boolean} BooleanSetting
+ * @typedef {boolean} module:gulpConfig~BooleanSetting
  */
 
 /**
  * A setting that may be flag 'false' or provide a StringSetting
- * @typedef {false|StringSetting} FlagStringSetting
+ * @typedef {false|StringSetting} module:gulpConfig~FlagStringSetting
  */
 
 /**
  * An object of boolean settings used as flags.
- * @typedef {Object<string, BooleanSetting>} FlagsSetting
+ * @typedef {Object<string, BooleanSetting>} module:gulpConfig~FlagsSetting
  */
 
 /**
  * Configure cli options for running Jest.
- * @typedef {FlagsSetting} JestTestFlags
+ * @typedef {FlagsSetting} module:gulpConfig~JestTestFlags
  * @property {BooleanSetting} clearCache
  * @property {BooleanSetting} debug
  * @property {BooleanSetting} ignoreProjects:
@@ -61,7 +61,7 @@ const defaultConfig = (config = {}, path = null, defaultValue = null) => {
 
 /**
  * A setting that may only be a string.
- * @typedef {string} StringSetting
+ * @typedef {string} module:gulpConfig~StringSetting
  */
 
 /**
@@ -71,7 +71,7 @@ const defaultConfig = (config = {}, path = null, defaultValue = null) => {
 
 /**
  * A set of Configurations options defined by Settings.
- * @typedef {Object<string, Setting>} Configurations
+ * @typedef {Object<string, Setting>} module:gulpConfig~Configurations
  * @property {StringSetting} browserName
  * @property {StringSetting} browserPath
  * @property {StringSetting} distMain
@@ -94,7 +94,7 @@ const defaultConfig = (config = {}, path = null, defaultValue = null) => {
 
 /**
  * All the available configuration setting options for running the build.
- * @memberOf module:gulpConfig
+ * @memberOf module:gulpConfig` `
  * @type {Configurations}
  */
 let gulpConfigurations = {}

@@ -1,6 +1,6 @@
 'use strict'
 
-var distFor = require('./distFor.js')
+var distFor = require('./partials/distFor.js')
 
 /**
  * Simplified distribution tasks which will use arguments from distFor.

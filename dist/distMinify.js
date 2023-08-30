@@ -1,7 +1,7 @@
 'use strict'
 
 var gulpConfig = require('../gulp.config.js')
-var minifyFor = require('./minifyFor')
+var minifyFor = require('./partials/minifyFor')
 
 /**
  * Creates minified versions of the dist files.

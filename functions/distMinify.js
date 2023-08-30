@@ -1,5 +1,5 @@
 const gulpConfig = require('../gulp.config.js')
-const minifyFor = require('./minifyFor')
+const minifyFor = require('./partials/minifyFor')
 
 /**
  * Creates minified versions of the dist files.

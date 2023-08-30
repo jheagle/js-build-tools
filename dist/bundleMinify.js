@@ -2,7 +2,7 @@
 
 require('core-js/modules/es.array.concat.js')
 var gulpConfig = require('../gulp.config.js')
-var minifyFor = require('./minifyFor')
+var minifyFor = require('./partials/minifyFor')
 
 /**
  * Creates the minified bundle file.

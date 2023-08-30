@@ -1,9 +1,9 @@
 const fs = require('fs')
-const setUp = require('./test-helpers/setUp')
+const setUp = require('../test-helpers/setUp')
 setUp.setDefaults('test-minify-for')
 const gulpConfig = setUp.gulpConfig
 const minifyFor = require('./minifyFor')
-const { countMatches } = require('./testHelpers')
+const { countMatches } = require('../testHelpers')
 
 const rawContents = 'const { dest, src } = require(\'gulp\')\n' +
   'const { default: uglify } = require(\'gulp-uglify-es\')\n' +
@@ -32,12 +32,12 @@ describe('minifyFor', () => {
     const expectedFilePath = `${srcPath}/minifyFor.min.js`
     expect.assertions(3)
     const oldContents = fs.readFileSync(filePath).toString()
-    expect(countMatches(oldContents, "\n")).toBe(14)
+    expect(countMatches(oldContents, '\n')).toBe(14)
     minifyFor(filePath, srcPath)
       .on('finish', () => {
         expect(fs.existsSync(expectedFilePath)).toBeTruthy()
         const minifiedContents = fs.readFileSync(expectedFilePath).toString()
-        expect(countMatches(minifiedContents, "\n")).toBe(0)
+        expect(countMatches(minifiedContents, '\n')).toBe(0)
         done()
       })
       .on('error', error => {

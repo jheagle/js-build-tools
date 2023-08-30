@@ -1,9 +1,10 @@
 'use strict'
 
-var addToReadme = require('./addToReadme')
-var readmeTemplate = require('./readmeTemplate')
-var _require = require('gulp')
-var series = _require.series
+var _require = require('./partials')
+var addToReadme = _require.addToReadme
+var readmeTemplate = _require.readmeTemplate
+var _require2 = require('gulp')
+var series = _require2.series
 
 /**
  * Generate the README.md file based off of the template, then append the generated documentation.

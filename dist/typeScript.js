@@ -1,6 +1,6 @@
 'use strict'
 
-var tsFor = require('./tsFor')
+var tsFor = require('./partials/tsFor')
 
 /**
  * Simplified typescript task using tsFor.

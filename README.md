@@ -138,21 +138,8 @@ Run any of the above commands with `gulp` or `npm run`.
 <dt><a href="#module_testHelpers">testHelpers</a></dt>
 <dd><p>An assortment of objects that can be used in tests and some functions to help debug and write tests.</p>
 </dd>
-</dl>
-
-## Constants
-
-<dl>
-<dt><a href="#defaultSrc">defaultSrc</a> : <code>string</code> | <code>array</code></dt>
-<dd><p>By default, with typescript the files will have been copied into dist already, otherwise use actual src.</p>
-</dd>
-</dl>
-
-## Functions
-
-<dl>
-<dt><a href="#distSeries">distSeries()</a> ⇒ <code>function</code></dt>
-<dd><p>When using TypeScript, ensure that we process the ts first then run babel (dist)</p>
+<dt><a href="#module_partials">partials</a></dt>
+<dd><p>Micro-functions used as components for the main gulp functions.</p>
 </dd>
 </dl>
 
@@ -169,22 +156,16 @@ Export these functions to your own project in order to customize your build pipe
     * [.compileReadme](#module_js-build-tools.compileReadme)
     * [.build](#module_js-build-tools.build)
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
-    * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>\*</code>
+    * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
     * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>stream.Stream</code>
-    * [.tsFor([srcPath], [distPath])](#module_js-build-tools.tsFor) ⇒ <code>stream.Stream</code>
     * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
-    * [.readmeTemplate()](#module_js-build-tools.readmeTemplate) ⇒ <code>\*</code>
-    * [.minifyFor()](#module_js-build-tools.minifyFor) ⇒ <code>\*</code>
     * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
     * [.distLint()](#module_js-build-tools.distLint) ⇒ <code>\*</code>
-    * [.distFor([srcPath], [destPath])](#module_js-build-tools.distFor) ⇒ <code>\*</code>
     * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
-    * [.clean([done], [paths])](#module_js-build-tools.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
     * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
     * [.bundleLint()](#module_js-build-tools.bundleLint) ⇒ <code>\*</code>
     * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>\*</code>
-    * [.addToReadme([done])](#module_js-build-tools.addToReadme) ⇒ <code>string</code> \| <code>Uint8Array</code>
 
 <a name="module_js-build-tools.defaultCmd"></a>
 
@@ -212,33 +193,16 @@ Watch for changes and run the tests.
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.watchFull"></a>
 
-### js-build-tools.watchFull() ⇒ <code>\*</code>
-Watch for changes and run the distribution for the changed files, then bundle and test the changed files.1. Find the sub-folders within src path2. Maintain the folders, but use distPath for base3. Remove base folder and return dist path with correct sub-folders
+### js-build-tools.watchFull() ⇒ <code>FSWatcher</code>
+Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-**Example**  
-```js
-// Configured pathsdistPath = 'dist'srcPath = 'functions'// Path parameterpath = 'functions/some/path/file.js'// Generated regex using configured srcPathpathRegex = '/^functions(.*\/).+\.js$/i'// Replace value using the configured distPathreplacePath = 'dist$1'// The resulting replaced path for the destination folderdistPathResult = 'dist/some/path/'
-```
 <a name="module_js-build-tools.typeScript"></a>
 
 ### js-build-tools.typeScript() ⇒ <code>stream.Stream</code>
 Simplified typescript task using tsFor.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.tsFor"></a>
-
-### js-build-tools.tsFor([srcPath], [distPath]) ⇒ <code>stream.Stream</code>
-Starting at the source directory, find all the ts files and convert them into the distribution directory.
-
-**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-**See**: `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
-| [distPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
-
 <a name="module_js-build-tools.testQuick"></a>
 
 ### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -249,18 +213,6 @@ Run the Jest tests for files which have been modified (based on git status).
 
 ### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
 Run all tests with jest.
-
-**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.readmeTemplate"></a>
-
-### js-build-tools.readmeTemplate() ⇒ <code>\*</code>
-Copy a readme template into the README.md file.
-
-**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.minifyFor"></a>
-
-### js-build-tools.minifyFor() ⇒ <code>\*</code>
-Minify files and rename the output with '.min' extension.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.distMinify"></a>
@@ -275,36 +227,12 @@ Creates minified versions of the dist files.
 Applies Standard code style linting to distribution files.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.distFor"></a>
-
-### js-build-tools.distFor([srcPath], [destPath]) ⇒ <code>\*</code>
-Build the distribution for a given source pattern.
-
-**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
-| [destPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
-
 <a name="module_js-build-tools.dist"></a>
 
 ### js-build-tools.dist() ⇒ <code>\*</code>
 Simplified distribution tasks which will use arguments from distFor.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.clean"></a>
-
-### js-build-tools.clean([done], [paths]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
-Deletes all the distribution and browser files (used before create a new build).
-
-**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> | <code></code> | 
-| [paths] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | 
-
 <a name="module_js-build-tools.bundleMinify"></a>
 
 ### js-build-tools.bundleMinify() ⇒ <code>\*</code>
@@ -323,17 +251,6 @@ Applies Standard code style linting to bundled file.
 Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.addToReadme"></a>
-
-### js-build-tools.addToReadme([done]) ⇒ <code>string</code> \| <code>Uint8Array</code>
-Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
-
-**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> \| <code>null</code> | <code></code> | 
-
 <a name="module_gulpConfig"></a>
 
 ## gulpConfig
@@ -344,7 +261,6 @@ Modify these configurations to match your project specifications.
 
 * [gulpConfig](#module_gulpConfig)
     * _static_
-        * [.gulpConfigurations](#module_gulpConfig.gulpConfigurations) : <code>Configurations</code>
         * [.defaultConfig([config], [path], [defaultValue])](#module_gulpConfig.defaultConfig) ⇒ <code>\*</code> \| <code>null</code>
         * [.get(path, defaultValue)](#module_gulpConfig.get) ⇒ <code>\*</code> \| <code>null</code>
         * [.set(path, value)](#module_gulpConfig.set) ⇒ <code>\*</code>
@@ -358,12 +274,6 @@ Modify these configurations to match your project specifications.
         * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
         * [~Configurations](#module_gulpConfig..Configurations) : <code>Object.&lt;string, Setting&gt;</code>
 
-<a name="module_gulpConfig.gulpConfigurations"></a>
-
-### gulpConfig.gulpConfigurations : <code>Configurations</code>
-All the available configuration setting options for running the build.
-
-**Kind**: static property of [<code>gulpConfig</code>](#module_gulpConfig)  
 <a name="module_gulpConfig.defaultConfig"></a>
 
 ### gulpConfig.defaultConfig([config], [path], [defaultValue]) ⇒ <code>\*</code> \| <code>null</code>
@@ -610,15 +520,157 @@ Simple way to count string occurrences for testing.
 | content | <code>string</code> | 
 | search | <code>string</code> | 
 
-<a name="defaultSrc"></a>
+<a name="module_partials"></a>
 
-## defaultSrc : <code>string</code> \| <code>array</code>
-By default, with typescript the files will have been copied into dist already, otherwise use actual src.
+## partials
+Micro-functions used as components for the main gulp functions.
 
-**Kind**: global constant  
-<a name="distSeries"></a>
+**Version**: 2.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
-## distSeries() ⇒ <code>function</code>
+* [partials](#module_partials)
+    * [.tsFor([srcPath], [distPath])](#module_partials.tsFor) ⇒ <code>stream.Stream</code>
+    * [.runOnChange(path)](#module_partials.runOnChange) ⇒ <code>stream.Stream</code>
+        * [~pathRegex](#module_partials.runOnChange..pathRegex)
+    * [.readmeTemplate()](#module_partials.readmeTemplate) ⇒ <code>\*</code>
+    * [.minifyFor()](#module_partials.minifyFor) ⇒ <code>\*</code>
+    * [.distSeries([srcPath], [distFinalPath], [tsSearch])](#module_partials.distSeries) ⇒ <code>function</code>
+    * [.distForSrc([useTs])](#module_partials.distForSrc) ⇒ <code>string</code>
+    * [.distFor([srcPath], [destPath])](#module_partials.distFor) ⇒ <code>\*</code>
+    * [.clean([done], [paths])](#module_partials.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+    * [.beginWatcher()](#module_partials.beginWatcher) ⇒ <code>FSWatcher</code>
+    * [.addToReadme([done])](#module_partials.addToReadme) ⇒ <code>string</code> \| <code>Uint8Array</code>
+
+<a name="module_partials.tsFor"></a>
+
+### partials.tsFor([srcPath], [distPath]) ⇒ <code>stream.Stream</code>
+Starting at the source directory, find all the ts files and convert them into the distribution directory.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+**See**: `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
+| [distPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
+
+<a name="module_partials.runOnChange"></a>
+
+### partials.runOnChange(path) ⇒ <code>stream.Stream</code>
+Run this function when the watched files are modified.
+1. Find the sub-folders within src path
+2. Maintain the folders, but use distPath for base
+3. Remove base folder and return dist path with correct sub-folders
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type |
+| --- | --- |
+| path | <code>string</code> | 
+
+**Example**  
+```js
+// Configured paths
+distPath = 'dist'
+srcPath = 'functions'
+
+// Path parameter
+path = 'functions/some/path/file.js'
+
+// Generated regex using configured srcPath
+pathRegex = '/^functions(.*\/).+\.js$/i'
+
+// Replace value using the configured distPath
+replacePath = 'dist$1'
+
+// The resulting replaced path for the destination folder
+distPathResult = 'dist/some/path/'
+```
+<a name="module_partials.runOnChange..pathRegex"></a>
+
+#### runOnChange~pathRegex
+1. The original path comes in from src and is a .ts
+2. Discover the outgoing dist path where that file should go
+3. Use the path and dist in tsFor
+4. Take the original path, convert to full file path in dist
+5. Use the dist path found previously in #2
+6. Use the full dist path and the dist outgoing path in distFor
+
+**Kind**: inner constant of [<code>runOnChange</code>](#module_partials.runOnChange)  
+<a name="module_partials.readmeTemplate"></a>
+
+### partials.readmeTemplate() ⇒ <code>\*</code>
+Copy a readme template into the README.md file.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+<a name="module_partials.minifyFor"></a>
+
+### partials.minifyFor() ⇒ <code>\*</code>
+Minify files and rename the output with '.min' extension.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+<a name="module_partials.distSeries"></a>
+
+### partials.distSeries([srcPath], [distFinalPath], [tsSearch]) ⇒ <code>function</code>
 When using TypeScript, ensure that we process the ts first then run babel (dist)
 
-**Kind**: global function  
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [srcPath] | <code>string</code> | <code>&quot;&#x27;src/config/path/dist/for&#x27;&quot;</code> | 
+| [distFinalPath] | <code>string</code> | <code>&quot;&#x27;dist/config/path&#x27;&quot;</code> | 
+| [tsSearch] | <code>string</code> | <code>&quot;&#x27;ts/search/config/path&#x27;&quot;</code> | 
+
+<a name="module_partials.distForSrc"></a>
+
+### partials.distForSrc([useTs]) ⇒ <code>string</code>
+Retrieve the correct distFor search path based on TS Config.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [useTs] | [<code>FlagStringSetting</code>](#module_gulpConfig..FlagStringSetting) | <code>&#x27;config/for/ts&#x27;</code> | 
+
+<a name="module_partials.distFor"></a>
+
+### partials.distFor([srcPath], [destPath]) ⇒ <code>\*</code>
+Build the distribution for a given source pattern.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;src/config/path/dist/for&#x27;&quot;</code> | 
+| [destPath] | <code>string</code> | <code>&quot;&#x27;dist/config/path&#x27;&quot;</code> | 
+
+<a name="module_partials.clean"></a>
+
+### partials.clean([done], [paths]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+Deletes all the distribution and browser files (used before create a new build).
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+| [paths] | <code>Array.&lt;string&gt;</code> | <code>[&#x27;dist/config/path&#x27;, &#x27;browser/config/path&#x27;]</code> | 
+
+<a name="module_partials.beginWatcher"></a>
+
+### partials.beginWatcher() ⇒ <code>FSWatcher</code>
+Create a chokidar instance which watches and triggers change when the globed files are modified.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+<a name="module_partials.addToReadme"></a>
+
+### partials.addToReadme([done]) ⇒ <code>string</code> \| <code>Uint8Array</code>
+Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> \| <code>null</code> | <code></code> | 
+

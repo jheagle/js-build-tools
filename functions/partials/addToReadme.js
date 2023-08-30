@@ -1,12 +1,12 @@
 const fs = require('fs')
-const gulpConfig = require('../gulp.config.js')
+const gulpConfig = require('../../gulp.config.js')
 const jsdoc2md = require('jsdoc-to-markdown')
 const { globSync } = require('glob')
 
 /**
  * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
  * @function
- * @memberOf module:js-build-tools
+ * @memberOf module:partials
  * @param {function|null} [done=null]
  * @returns {string|Uint8Array}
  */

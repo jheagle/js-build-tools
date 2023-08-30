@@ -1,5 +1,5 @@
 const fs = require('fs')
-const setUp = require('./test-helpers/setUp')
+const setUp = require('../test-helpers/setUp')
 setUp.setDefaults('test-readme-template')
 const gulpConfig = setUp.gulpConfig
 const readmeTemplate = require('./readmeTemplate')
