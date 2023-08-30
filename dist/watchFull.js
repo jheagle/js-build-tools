@@ -1,8 +1,9 @@
 'use strict'
 
-var _require = require('./partials')
-var beginWatcher = _require.beginWatcher
-var runOnChange = _require.runOnChange
+const {
+  beginWatcher,
+  runOnChange
+} = require('./partials')
 
 /**
  * Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
@@ -10,7 +11,5 @@ var runOnChange = _require.runOnChange
  * @memberOf module:js-build-tools
  * @returns {FSWatcher}
  */
-var watchFull = function watchFull () {
-  return beginWatcher().on('change', runOnChange)
-}
+const watchFull = () => beginWatcher().on('change', runOnChange)
 module.exports = watchFull

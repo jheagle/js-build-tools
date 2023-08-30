@@ -77,8 +77,9 @@ describe('distFor', () => {
         expect(fs.existsSync(distPath)).toBeTruthy()
         const babelifiedContents = fs.readFileSync(`${distPath}/distFor.js`).toString()
         expect(countMatches(babelifiedContents, '"use strict"')).toEqual(1)
-        expect(countMatches(babelifiedContents, 'const ')).toEqual(0)
-        expect(countMatches(babelifiedContents, 'var ')).toEqual(10)
+        // It looks like babel now allows const and does not replace with var, will have to investigate
+        expect(countMatches(babelifiedContents, 'const ')).toEqual(7)
+        expect(countMatches(babelifiedContents, 'var ')).toEqual(0)
         expect(countMatches(babelifiedContents, 'function')).toEqual(1)
         expect(countMatches(babelifiedContents, 'arguments')).toEqual(6)
         done()

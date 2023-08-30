@@ -5,7 +5,7 @@
  * @memberOf module:testHelpers
  * @type {Object.<string, string|number|Array|Object>}
  */
-var jsonDom = {
+const jsonDom = {
   tagName: 'div',
   attributes: {
     style: {},

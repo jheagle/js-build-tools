@@ -557,10 +557,7 @@ Starting at the source directory, find all the ts files and convert them into th
 <a name="module_partials.runOnChange"></a>
 
 ### partials.runOnChange(path) ⇒ <code>stream.Stream</code>
-Run this function when the watched files are modified.
-1. Find the sub-folders within src path
-2. Maintain the folders, but use distPath for base
-3. Remove base folder and return dist path with correct sub-folders
+Run this function when the watched files are modified.1. Find the sub-folders within src path2. Maintain the folders, but use distPath for base3. Remove base folder and return dist path with correct sub-folders
 
 **Kind**: static method of [<code>partials</code>](#module_partials)  
 
@@ -570,31 +567,12 @@ Run this function when the watched files are modified.
 
 **Example**  
 ```js
-// Configured paths
-distPath = 'dist'
-srcPath = 'functions'
-
-// Path parameter
-path = 'functions/some/path/file.js'
-
-// Generated regex using configured srcPath
-pathRegex = '/^functions(.*\/).+\.js$/i'
-
-// Replace value using the configured distPath
-replacePath = 'dist$1'
-
-// The resulting replaced path for the destination folder
-distPathResult = 'dist/some/path/'
+// Configured pathsdistPath = 'dist'srcPath = 'functions'// Path parameterpath = 'functions/some/path/file.js'// Generated regex using configured srcPathpathRegex = '/^functions(.*\/).+\.js$/i'// Replace value using the configured distPathreplacePath = 'dist$1'// The resulting replaced path for the destination folderdistPathResult = 'dist/some/path/'
 ```
 <a name="module_partials.runOnChange..pathRegex"></a>
 
 #### runOnChange~pathRegex
-1. The original path comes in from src and is a .ts
-2. Discover the outgoing dist path where that file should go
-3. Use the path and dist in tsFor
-4. Take the original path, convert to full file path in dist
-5. Use the dist path found previously in #2
-6. Use the full dist path and the dist outgoing path in distFor
+1. The original path comes in from src and is a .ts2. Discover the outgoing dist path where that file should go3. Use the path and dist in tsFor4. Take the original path, convert to full file path in dist5. Use the dist path found previously in #26. Use the full dist path and the dist outgoing path in distFor
 
 **Kind**: inner constant of [<code>runOnChange</code>](#module_partials.runOnChange)  
 <a name="module_partials.readmeTemplate"></a>

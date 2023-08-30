@@ -5,7 +5,7 @@
  * @memberOf module:testHelpers
  * @type {Object.<string, string|number|Array|Object>}
  */
-var domItem = [{
+const domItem = [{
   attributes: {
     className: 'row',
     style: {}
