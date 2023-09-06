@@ -31,20 +31,44 @@ module.exports = {
   distPath: 'dist',
 
   // The search pattern used for retrieving compiled distribution files.
-  distSearch: 'dist/**/*.js',
+  distSearch: 'dist/**/*.js',]\
+  
+  // 'true' to only generate node environment files.
+  nodeOnly: false,
+  
+  // The name of the output documentation markdown file.
+  readmeFile: 'README.md',
+  
+  // The directory to output the readme file in.
+  readmePath: './',
+  
+  // Options for formatting the output readme.
+  readmeOptions: 'utf8',
 
   // The file which will be pre-fixed to your README.md output.
   readmeTemplate: 'MAIN.md',
+  
+  // Location of files to use for compiling documentation into the readme.
+  readmeSearch: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
 
+  // Base directory of the project.
+  rootPath: './',
+  
   // The directory where your source files are stored (the files you manually created).
   srcPath: 'src',
 
   // The search pattern used for gathering source files for distribution.
   srcSearch: 'src/**/!(*.test).js',
+  
+  // Additional flags for programatically running Jest Cli.
+  testOptions: null,
 
   // The directory where Jest test files are stored.
   // By default stored as *.test.js adjacent with the files they are testing).
   testPath: 'src',
+  
+  // The path the tsconfig file for running typescript or false if no ts file given.
+  useTsConfig: 'tsconfig.json',
   
   // The search pattern for watching files for changes.
   watchSearch: 'src/**/*.js',
@@ -102,252 +126,551 @@ Run any of the above commands with `gulp` or `npm run`.
 
 # Available functions documentation
 
-## Constants
+## Modules
 
 <dl>
-<dt><a href="#logObject">logObject</a></dt>
-<dd><p>Log out an object in a nicely formatted way.</p>
+<dt><a href="#module_js-build-tools">js-build-tools</a></dt>
+<dd><p>Export these functions to your own project in order to customize your build pipeline.</p>
 </dd>
-<dt><a href="#circularObject">circularObject</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
-<dd><p>Multilayered node tree-like structure with parent references</p>
+<dt><a href="#module_gulpConfig">gulpConfig</a></dt>
+<dd><p>Modify these configurations to match your project specifications.</p>
 </dd>
-<dt><a href="#deepReferenceObject">deepReferenceObject</a> : <code>Object.&lt;string, (string|number|Object)&gt;</code></dt>
-<dd><p>Sample object with deep references.</p>
+<dt><a href="#module_testHelpers">testHelpers</a></dt>
+<dd><p>An assortment of objects that can be used in tests and some functions to help debug and write tests.</p>
 </dd>
-<dt><a href="#linkedList">linkedList</a> : <code>Object.&lt;string, (string|Object)&gt;</code></dt>
-<dd><p>Sample LinkedList for testing circular references.</p>
-</dd>
-<dt><a href="#jsonDom">jsonDom</a></dt>
-<dd><p>Sample of jsonDom object containing empty nested array and objects</p>
-</dd>
-<dt><a href="#domItem">domItem</a></dt>
-<dd><p>Sample of domItem child with nested child and optional details</p>
-</dd>
-<dt><a href="#multiReferenceObject">multiReferenceObject</a> : <code>Object.&lt;string, (string|number|Object)&gt;</code></dt>
-<dd><p>Sample of object containing multiple references.</p>
-</dd>
-<dt><a href="#nodeTree">nodeTree</a> : <code>Object.&lt;string, (string|Object|Array)&gt;</code></dt>
-<dd><p>Sample NodeTree for testing circular references and arrays.</p>
-</dd>
-<dt><a href="#defaultCmd">defaultCmd</a></dt>
-<dd><p>Recommended as the default task, runs the simple dist and bundle tasks.</p>
-</dd>
-<dt><a href="#compileReadme">compileReadme</a></dt>
-<dd><p>Generate the README.md file based off of the template, then append the generated documentation.</p>
-</dd>
-<dt><a href="#build">build</a></dt>
-<dd><p>Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.</p>
+<dt><a href="#module_partials">partials</a></dt>
+<dd><p>Micro-functions used as components for the main gulp functions.</p>
 </dd>
 </dl>
 
-## Functions
+<a name="module_js-build-tools"></a>
 
-<dl>
-<dt><a href="#watchTest">watchTest()</a> ⇒ <code>*</code></dt>
-<dd><p>Watch for changes and run the tests.</p>
-</dd>
-<dt><a href="#watchFull">watchFull()</a> ⇒ <code>*</code></dt>
-<dd><p>Watch for changes and run the distribution for the changed files, then bundle and test the changed files.</p>
-</dd>
-<dt><a href="#testQuick">testQuick()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd><p>Run the Jest tests for files which have been modified (based on git status).</p>
-</dd>
-<dt><a href="#testFull">testFull()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd><p>Run all tests with jest.</p>
-</dd>
-<dt><a href="#readmeTemplate">readmeTemplate()</a> ⇒ <code>*</code></dt>
-<dd><p>Copy a readme template into the README.md file.</p>
-</dd>
-<dt><a href="#distMinify">distMinify()</a> ⇒ <code>*</code></dt>
-<dd><p>Creates minified versions of the dist files.</p>
-</dd>
-<dt><a href="#distLint">distLint()</a> ⇒ <code>*</code></dt>
-<dd><p>Applies Standard code style linting to distribution files.</p>
-</dd>
-<dt><a href="#distFor">distFor(srcPath, destPath)</a> ⇒ <code>*</code></dt>
-<dd><p>Build the distribution for a given source pattern.</p>
-</dd>
-<dt><a href="#dist">dist()</a> ⇒ <code>*</code></dt>
-<dd><p>Simplified distribution tasks which will use arguments from distFor.</p>
-</dd>
-<dt><a href="#clean">clean()</a> ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> | <code>*</code></dt>
-<dd><p>Deletes all the distribution and browser files (used before create a new build).</p>
-</dd>
-<dt><a href="#bundleMinify">bundleMinify()</a> ⇒ <code>*</code></dt>
-<dd><p>Creates the minified bundle file.</p>
-</dd>
-<dt><a href="#bundleLint">bundleLint()</a> ⇒ <code>*</code></dt>
-<dd><p>Applies Standard code style linting to bundled file.</p>
-</dd>
-<dt><a href="#bundle">bundle()</a> ⇒ <code>*</code></dt>
-<dd><p>Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.</p>
-</dd>
-<dt><a href="#addToReadme">addToReadme()</a> ⇒ <code>string</code> | <code>Uint8Array</code></dt>
-<dd><p>Appends all the jsdoc comments to the readme file. Assumes empty or templated file.</p>
-</dd>
-</dl>
+## js-build-tools
+Export these functions to your own project in order to customize your build pipeline.
 
-<a name="logObject"></a>
+**Version**: 2.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
-## logObject
+* [js-build-tools](#module_js-build-tools)
+    * [.compileReadme](#module_js-build-tools.compileReadme) ⇒ <code>stream.Stream</code>
+    * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
+    * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
+    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>stream.Stream</code>
+    * [.testQuick([done], [testPath])](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testFull([done], [testPath])](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
+    * [.distLint()](#module_js-build-tools.distLint) ⇒ <code>\*</code>
+    * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
+    * [.defaultCmd([done])](#module_js-build-tools.defaultCmd) ⇒ <code>stream.Stream</code>
+    * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
+    * [.bundleLint()](#module_js-build-tools.bundleLint) ⇒ <code>stream.Stream</code>
+    * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>stream.Stream</code>
+    * [.build([done])](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
+
+<a name="module_js-build-tools.compileReadme"></a>
+
+### js-build-tools.compileReadme ⇒ <code>stream.Stream</code>
+Generate the README.md file based off of the template, then append the generated documentation.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.watchTest"></a>
+
+### js-build-tools.watchTest() ⇒ <code>\*</code>
+Watch for changes and run the tests.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.watchFull"></a>
+
+### js-build-tools.watchFull() ⇒ <code>FSWatcher</code>
+Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.typeScript"></a>
+
+### js-build-tools.typeScript() ⇒ <code>stream.Stream</code>
+Simplified typescript task using tsFor.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.testQuick"></a>
+
+### js-build-tools.testQuick([done], [testPath]) ⇒ <code>Promise.&lt;\*&gt;</code>
+Run the Jest tests for files which have been modified (based on git status).
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+| [testPath] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>&#x27;path/config/test/files&#x27;</code> | 
+
+<a name="module_js-build-tools.testFull"></a>
+
+### js-build-tools.testFull([done], [testPath]) ⇒ <code>Promise.&lt;\*&gt;</code>
+Run all tests with jest.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+| [testPath] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>&#x27;path/config/test/files&#x27;</code> | 
+
+<a name="module_js-build-tools.distMinify"></a>
+
+### js-build-tools.distMinify() ⇒ <code>\*</code>
+Creates minified versions of the dist files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.distLint"></a>
+
+### js-build-tools.distLint() ⇒ <code>\*</code>
+Applies Standard code style linting to distribution files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.dist"></a>
+
+### js-build-tools.dist() ⇒ <code>\*</code>
+Simplified distribution tasks which will use arguments from distFor.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.defaultCmd"></a>
+
+### js-build-tools.defaultCmd([done]) ⇒ <code>stream.Stream</code>
+Recommended as the default task, runs the simple dist and bundle tasks.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
+<a name="module_js-build-tools.bundleMinify"></a>
+
+### js-build-tools.bundleMinify() ⇒ <code>\*</code>
+Creates the minified bundle file.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundleLint"></a>
+
+### js-build-tools.bundleLint() ⇒ <code>stream.Stream</code>
+Applies Standard code style linting to bundled file.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundle"></a>
+
+### js-build-tools.bundle() ⇒ <code>stream.Stream</code>
+Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.build"></a>
+
+### js-build-tools.build([done]) ⇒ <code>stream.Stream</code>
+Runs several processes to build and validate the project.Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
+<a name="module_gulpConfig"></a>
+
+## gulpConfig
+Modify these configurations to match your project specifications.
+
+**Version**: 2.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
+
+* [gulpConfig](#module_gulpConfig)
+    * _static_
+        * [.defaultConfig([config], [path], [defaultValue])](#module_gulpConfig.defaultConfig) ⇒ <code>\*</code> \| <code>null</code>
+        * [.get(path, defaultValue)](#module_gulpConfig.get) ⇒ <code>\*</code> \| <code>null</code>
+        * [.set(path, value)](#module_gulpConfig.set) ⇒ <code>\*</code>
+    * _inner_
+        * [~ArrayableSetting](#module_gulpConfig..ArrayableSetting) : <code>Array.&lt;string&gt;</code> \| <code>string</code>
+        * [~BooleanSetting](#module_gulpConfig..BooleanSetting) : <code>boolean</code>
+        * [~FlagStringSetting](#module_gulpConfig..FlagStringSetting) : <code>false</code> \| <code>StringSetting</code>
+        * [~FlagsSetting](#module_gulpConfig..FlagsSetting) : <code>Object.&lt;string, BooleanSetting&gt;</code>
+        * [~JestTestFlags](#module_gulpConfig..JestTestFlags) : <code>FlagsSetting</code>
+        * [~StringSetting](#module_gulpConfig..StringSetting) : <code>string</code>
+        * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+        * [~Configurations](#module_gulpConfig..Configurations) : <code>Object.&lt;string, Setting&gt;</code>
+
+<a name="module_gulpConfig.defaultConfig"></a>
+
+### gulpConfig.defaultConfig([config], [path], [defaultValue]) ⇒ <code>\*</code> \| <code>null</code>
+Retrieve a value from an object with the path (key), return a given default if the key is not found.
+
+**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [config] | <code>Object.&lt;string, \*&gt;</code> | <code>[]</code> | 
+| [path] | <code>string</code> \| <code>null</code> | <code>null</code> | 
+| [defaultValue] | <code>\*</code> | <code></code> | 
+
+<a name="module_gulpConfig.get"></a>
+
+### gulpConfig.get(path, defaultValue) ⇒ <code>\*</code> \| <code>null</code>
+Retrieve a value from teh configurations, default may be returned.
+
+**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| path | <code>string</code> \| <code>null</code> | <code>null</code> | 
+| defaultValue | <code>\*</code> | <code></code> | 
+
+<a name="module_gulpConfig.set"></a>
+
+### gulpConfig.set(path, value) ⇒ <code>\*</code>
+Specify a value for the configurations to use.
+
+**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
+
+| Param |
+| --- |
+| path | 
+| value | 
+
+<a name="module_gulpConfig..ArrayableSetting"></a>
+
+### gulpConfig~ArrayableSetting : <code>Array.&lt;string&gt;</code> \| <code>string</code>
+A setting that may be an array of strings or a string only.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..BooleanSetting"></a>
+
+### gulpConfig~BooleanSetting : <code>boolean</code>
+A setting that may be true or false.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..FlagStringSetting"></a>
+
+### gulpConfig~FlagStringSetting : <code>false</code> \| <code>StringSetting</code>
+A setting that may be flag 'false' or provide a StringSetting
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..FlagsSetting"></a>
+
+### gulpConfig~FlagsSetting : <code>Object.&lt;string, BooleanSetting&gt;</code>
+An object of boolean settings used as flags.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..JestTestFlags"></a>
+
+### gulpConfig~JestTestFlags : <code>FlagsSetting</code>
+Configure cli options for running Jest.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| clearCache | <code>BooleanSetting</code> | 
+| debug | <code>BooleanSetting</code> | 
+| ignoreProjects: | <code>BooleanSetting</code> | 
+| json | <code>BooleanSetting</code> | 
+| selectProjects | <code>BooleanSetting</code> | 
+| showConfig | <code>BooleanSetting</code> | 
+| useStderr | <code>BooleanSetting</code> | 
+| watch | <code>BooleanSetting</code> | 
+| watchAll | <code>BooleanSetting</code> | 
+
+<a name="module_gulpConfig..StringSetting"></a>
+
+### gulpConfig~StringSetting : <code>string</code>
+A setting that may only be a string.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..Setting"></a>
+
+### gulpConfig~Setting : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+Any single configuration option is a Setting.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..Configurations"></a>
+
+### gulpConfig~Configurations : <code>Object.&lt;string, Setting&gt;</code>
+A set of Configurations options defined by Settings.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| browserName | <code>StringSetting</code> | 
+| browserPath | <code>StringSetting</code> | 
+| distMain | <code>StringSetting</code> | 
+| distPath | <code>StringSetting</code> | 
+| distSearch | <code>ArrayableSetting</code> | 
+| nodeOnly | <code>BooleanSetting</code> | 
+| readmeTemplate | <code>StringSetting</code> | 
+| readmeOptions | <code>ArrayableSetting</code> | 
+| readmeFile | <code>StringSetting</code> | 
+| readmePath | <code>StringSetting</code> | 
+| readmeSearch | <code>ArrayableSetting</code> | 
+| rootPath | <code>StringSetting</code> | 
+| srcPath | <code>StringSetting</code> | 
+| srcSearch | <code>ArrayableSetting</code> | 
+| testOptions | <code>JestTestFlags</code> | 
+| testPath | <code>ArrayableSetting</code> | 
+| useTsConfig | <code>FlagStringSetting</code> | 
+| watchSearch | <code>ArrayableSetting</code> | 
+
+<a name="module_testHelpers"></a>
+
+## testHelpers
+An assortment of objects that can be used in tests and some functions to help debug and write tests.
+
+**Version**: 2.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
+
+* [testHelpers](#module_testHelpers)
+    * [.nodeTree](#module_testHelpers.nodeTree) : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+    * [.multiReferenceObject](#module_testHelpers.multiReferenceObject) : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+    * [.linkedList](#module_testHelpers.linkedList) : <code>Object.&lt;string, (string\|Object)&gt;</code>
+    * [.jsonDom](#module_testHelpers.jsonDom) : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
+    * [.domItem](#module_testHelpers.domItem) : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
+    * [.deepReferenceObject](#module_testHelpers.deepReferenceObject) : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+    * [.circularObject](#module_testHelpers.circularObject) : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+    * [.setDefaults(testDir)](#module_testHelpers.setDefaults)
+    * [.createTempDir([exists])](#module_testHelpers.createTempDir) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+    * [.exports.beforeEach()](#module_testHelpers.exports.beforeEach) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+    * [.exports.afterEach()](#module_testHelpers.exports.afterEach) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.logObject(object, [label], [outputType])](#module_testHelpers.logObject) ⇒ <code>string</code> \| <code>undefined</code>
+    * [.countMatches(content, search)](#module_testHelpers.countMatches) ⇒ <code>number</code>
+
+<a name="module_testHelpers.nodeTree"></a>
+
+### testHelpers.nodeTree : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+Sample NodeTree for testing circular references and arrays.
+
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.multiReferenceObject"></a>
+
+### testHelpers.multiReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+Sample of object containing multiple references.
+
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.linkedList"></a>
+
+### testHelpers.linkedList : <code>Object.&lt;string, (string\|Object)&gt;</code>
+Sample LinkedList for testing circular references.
+
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.jsonDom"></a>
+
+### testHelpers.jsonDom : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
+Sample of jsonDom object containing empty nested array and objects
+
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.domItem"></a>
+
+### testHelpers.domItem : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
+Sample of domItem child with nested child and optional details
+
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.deepReferenceObject"></a>
+
+### testHelpers.deepReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
+Sample object with deep references.
+
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.circularObject"></a>
+
+### testHelpers.circularObject : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+Multilayered node tree-like structure with parent references
+
+**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.setDefaults"></a>
+
+### testHelpers.setDefaults(testDir)
+Update the gulp configurations with the test data. Set the test directory where temp files will be created for testing.
+
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| testDir | <code>string</code> | <code>&quot;test-temp&quot;</code> | 
+
+<a name="module_testHelpers.createTempDir"></a>
+
+### testHelpers.createTempDir([exists]) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+Ensure that the del has completed, recursively attempt to delete and recreate
+
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [exists] | <code>boolean</code> | <code>true</code> | 
+
+<a name="module_testHelpers.exports.beforeEach"></a>
+
+### testHelpers.exports.beforeEach() ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+In the Jest.beforeEach function call this one to set up the temp directory.
+
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.exports.afterEach"></a>
+
+### testHelpers.exports.afterEach() ⇒ <code>Promise.&lt;\*&gt;</code>
+In the Jest.afterEach function call this one to clean up and remove the temp directory.
+
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.logObject"></a>
+
+### testHelpers.logObject(object, [label], [outputType]) ⇒ <code>string</code> \| <code>undefined</code>
 Log out an object in a nicely formatted way.
 
-**Kind**: global constant  
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
 
 | Param | Type | Default |
 | --- | --- | --- |
 | object | <code>Object</code> |  | 
-| [label] | <code>string</code> | <code>&quot;&#x27;logging&#x27;&quot;</code> | 
+| [label] | <code>string</code> | <code>&quot;logging&quot;</code> | 
+| [outputType] | <code>string</code> | <code>&quot;log&quot;</code> | 
 
-<a name="circularObject"></a>
+<a name="module_testHelpers.countMatches"></a>
 
-## circularObject : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
-Multilayered node tree-like structure with parent references
+### testHelpers.countMatches(content, search) ⇒ <code>number</code>
+Simple way to count string occurrences for testing.
 
-**Kind**: global constant  
-<a name="deepReferenceObject"></a>
-
-## deepReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
-Sample object with deep references.
-
-**Kind**: global constant  
-<a name="linkedList"></a>
-
-## linkedList : <code>Object.&lt;string, (string\|Object)&gt;</code>
-Sample LinkedList for testing circular references.
-
-**Kind**: global constant  
-<a name="jsonDom"></a>
-
-## jsonDom
-Sample of jsonDom object containing empty nested array and objects
-
-**Kind**: global constant  
-<a name="domItem"></a>
-
-## domItem
-Sample of domItem child with nested child and optional details
-
-**Kind**: global constant  
-<a name="multiReferenceObject"></a>
-
-## multiReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
-Sample of object containing multiple references.
-
-**Kind**: global constant  
-<a name="nodeTree"></a>
-
-## nodeTree : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
-Sample NodeTree for testing circular references and arrays.
-
-**Kind**: global constant  
-<a name="defaultCmd"></a>
-
-## defaultCmd
-Recommended as the default task, runs the simple dist and bundle tasks.
-
-**Kind**: global constant  
-<a name="compileReadme"></a>
-
-## compileReadme
-Generate the README.md file based off of the template, then append the generated documentation.
-
-**Kind**: global constant  
-<a name="build"></a>
-
-## build
-Runs several processes to build and validate the project.
-Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
-
-**Kind**: global constant  
-<a name="watchTest"></a>
-
-## watchTest() ⇒ <code>\*</code>
-Watch for changes and run the tests.
-
-**Kind**: global function  
-<a name="watchFull"></a>
-
-## watchFull() ⇒ <code>\*</code>
-Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
-
-**Kind**: global function  
-<a name="testQuick"></a>
-
-## testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
-Run the Jest tests for files which have been modified (based on git status).
-
-**Kind**: global function  
-<a name="testFull"></a>
-
-## testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
-Run all tests with jest.
-
-**Kind**: global function  
-<a name="readmeTemplate"></a>
-
-## readmeTemplate() ⇒ <code>\*</code>
-Copy a readme template into the README.md file.
-
-**Kind**: global function  
-<a name="distMinify"></a>
-
-## distMinify() ⇒ <code>\*</code>
-Creates minified versions of the dist files.
-
-**Kind**: global function  
-<a name="distLint"></a>
-
-## distLint() ⇒ <code>\*</code>
-Applies Standard code style linting to distribution files.
-
-**Kind**: global function  
-<a name="distFor"></a>
-
-## distFor(srcPath, destPath) ⇒ <code>\*</code>
-Build the distribution for a given source pattern.
-
-**Kind**: global function  
+**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
 
 | Param | Type |
 | --- | --- |
-| srcPath | <code>string</code> \| <code>array</code> | 
-| destPath | <code>string</code> | 
+| content | <code>string</code> | 
+| search | <code>string</code> | 
 
-<a name="dist"></a>
+<a name="module_partials"></a>
 
-## dist() ⇒ <code>\*</code>
-Simplified distribution tasks which will use arguments from distFor.
+## partials
+Micro-functions used as components for the main gulp functions.
 
-**Kind**: global function  
-<a name="clean"></a>
+**Version**: 2.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
-## clean() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+* [partials](#module_partials)
+    * [.tsFor([srcPath], [distPath])](#module_partials.tsFor) ⇒ <code>stream.Stream</code>
+    * [.runOnChange(path)](#module_partials.runOnChange) ⇒ <code>stream.Stream</code>
+        * [~pathRegex](#module_partials.runOnChange..pathRegex)
+    * [.readmeTemplate()](#module_partials.readmeTemplate) ⇒ <code>\*</code>
+    * [.minifyFor()](#module_partials.minifyFor) ⇒ <code>\*</code>
+    * [.distSeries([srcPath], [distFinalPath], [tsSearch])](#module_partials.distSeries) ⇒ <code>function</code>
+    * [.distForSrc([useTs])](#module_partials.distForSrc) ⇒ <code>string</code>
+    * [.distFor([srcPath], [destPath])](#module_partials.distFor) ⇒ <code>\*</code>
+    * [.clean([done], [paths])](#module_partials.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+    * [.beginWatcher()](#module_partials.beginWatcher) ⇒ <code>FSWatcher</code>
+    * [.addToReadme([done])](#module_partials.addToReadme) ⇒ <code>string</code> \| <code>Uint8Array</code>
+
+<a name="module_partials.tsFor"></a>
+
+### partials.tsFor([srcPath], [distPath]) ⇒ <code>stream.Stream</code>
+Starting at the source directory, find all the ts files and convert them into the distribution directory.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+**See**: `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
+| [distPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
+
+<a name="module_partials.runOnChange"></a>
+
+### partials.runOnChange(path) ⇒ <code>stream.Stream</code>
+Run this function when the watched files are modified.1. Find the sub-folders within src path2. Maintain the folders, but use distPath for base3. Remove base folder and return dist path with correct sub-folders
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type |
+| --- | --- |
+| path | <code>string</code> | 
+
+**Example**  
+```js
+// Configured pathsdistPath = 'dist'srcPath = 'functions'// Path parameterpath = 'functions/some/path/file.js'// Generated regex using configured srcPathpathRegex = '/^functions(.*\/).+\.js$/i'// Replace value using the configured distPathreplacePath = 'dist$1'// The resulting replaced path for the destination folderdistPathResult = 'dist/some/path/'
+```
+<a name="module_partials.runOnChange..pathRegex"></a>
+
+#### runOnChange~pathRegex
+1. The original path comes in from src and is a .ts2. Discover the outgoing dist path where that file should go3. Use the path and dist in tsFor4. Take the original path, convert to full file path in dist5. Use the dist path found previously in #26. Use the full dist path and the dist outgoing path in distFor
+
+**Kind**: inner constant of [<code>runOnChange</code>](#module_partials.runOnChange)  
+<a name="module_partials.readmeTemplate"></a>
+
+### partials.readmeTemplate() ⇒ <code>\*</code>
+Copy a readme template into the README.md file.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+<a name="module_partials.minifyFor"></a>
+
+### partials.minifyFor() ⇒ <code>\*</code>
+Minify files and rename the output with '.min' extension.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+<a name="module_partials.distSeries"></a>
+
+### partials.distSeries([srcPath], [distFinalPath], [tsSearch]) ⇒ <code>function</code>
+When using TypeScript, ensure that we process the ts first then run babel (dist)
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [srcPath] | <code>string</code> | <code>&quot;&#x27;src/config/path/dist/for&#x27;&quot;</code> | 
+| [distFinalPath] | <code>string</code> | <code>&quot;&#x27;dist/config/path&#x27;&quot;</code> | 
+| [tsSearch] | <code>string</code> | <code>&quot;&#x27;ts/search/config/path&#x27;&quot;</code> | 
+
+<a name="module_partials.distForSrc"></a>
+
+### partials.distForSrc([useTs]) ⇒ <code>string</code>
+Retrieve the correct distFor search path based on TS Config.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [useTs] | [<code>FlagStringSetting</code>](#module_gulpConfig..FlagStringSetting) | <code>&#x27;config/for/ts&#x27;</code> | 
+
+<a name="module_partials.distFor"></a>
+
+### partials.distFor([srcPath], [destPath]) ⇒ <code>\*</code>
+Build the distribution for a given source pattern.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;src/config/path/dist/for&#x27;&quot;</code> | 
+| [destPath] | <code>string</code> | <code>&quot;&#x27;dist/config/path&#x27;&quot;</code> | 
+
+<a name="module_partials.clean"></a>
+
+### partials.clean([done], [paths]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
 Deletes all the distribution and browser files (used before create a new build).
 
-**Kind**: global function  
-<a name="bundleMinify"></a>
+**Kind**: static method of [<code>partials</code>](#module_partials)  
 
-## bundleMinify() ⇒ <code>\*</code>
-Creates the minified bundle file.
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+| [paths] | <code>Array.&lt;string&gt;</code> | <code>[&#x27;dist/config/path&#x27;, &#x27;browser/config/path&#x27;]</code> | 
 
-**Kind**: global function  
-<a name="bundleLint"></a>
+<a name="module_partials.beginWatcher"></a>
 
-## bundleLint() ⇒ <code>\*</code>
-Applies Standard code style linting to bundled file.
+### partials.beginWatcher() ⇒ <code>FSWatcher</code>
+Create a chokidar instance which watches and triggers change when the globed files are modified.
 
-**Kind**: global function  
-<a name="bundle"></a>
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+<a name="module_partials.addToReadme"></a>
 
-## bundle() ⇒ <code>\*</code>
-Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
-
-**Kind**: global function  
-<a name="addToReadme"></a>
-
-## addToReadme() ⇒ <code>string</code> \| <code>Uint8Array</code>
+### partials.addToReadme([done]) ⇒ <code>string</code> \| <code>Uint8Array</code>
 Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
 
-**Kind**: global function  
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> \| <code>null</code> | <code></code> | 
+

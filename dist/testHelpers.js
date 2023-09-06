@@ -1,198 +1,33 @@
 'use strict'
 
-Object.defineProperty(exports, '__esModule', {
-  value: true
-})
-exports.nodeTree = exports.multiReferenceObject = exports.logObject = exports.linkedList = exports.jsonDom = exports.domItem = exports.deepReferenceObject = exports.circularObject = void 0
 /**
- * Log out an object in a nicely formatted way.
- * @param {Object} object
- * @param {string} [label='logging']
+ * An assortment of objects that can be used in tests and some functions to help debug and write tests.
+ * @file
+ * @author Joshua Heagle <joshuaheagle@gmail.com>
+ * @version 2.0.0
+ * @module testHelpers
+ * @memberOf module:js-build-tools
  */
-const logObject = function (object) {
-  const label = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logging'
-  if (typeof require === 'undefined') {
-    console.log(label, object)
-    return
-  }
-  console.log(label, require('util').inspect(object, false, null, true))
-}
 
-/**
- * Multilayered node tree-like structure with parent references
- * @type {Object.<string, string|Object|Array>}
- */
-exports.logObject = logObject
-const circularObject = {
-  name: 'root',
-  parent: {},
-  body: {},
-  head: {},
-  children: []
-}
-exports.circularObject = circularObject
-circularObject.children = [{
-  name: 'body',
-  parent: {},
-  children: []
-}, {
-  name: 'head',
-  parent: {},
-  children: []
-}]
-circularObject.body = circularObject.children[0]
-circularObject.head = circularObject.children[1]
-circularObject.body.parent = circularObject
-circularObject.head.parent = circularObject
-circularObject.body.children = [{
-  name: 'body child one',
-  parent: {},
-  children: []
-}, {
-  name: 'body child two',
-  parent: {},
-  children: []
-}]
-circularObject.body.children[0].parent = circularObject.body
-circularObject.body.children[1].parent = circularObject.body
-circularObject.head.children = [{
-  name: 'head child one',
-  parent: {},
-  children: []
-}, {
-  name: 'head child two',
-  parent: {},
-  children: []
-}]
-circularObject.head.children[0].parent = circularObject.head
-circularObject.head.children[1].parent = circularObject.head
-
-/**
- * Sample object with deep references.
- * @type {Object.<string, string|number|Object>}
- */
-const deepReferenceObject = {
-  object1: {
-    name: 'someName',
-    object2: {
-      age: 12,
-      array1: ['someString', 'anotherString']
-    },
-    array2: [89, 32]
-  },
-  title: 'Some Title',
-  item: 45
-}
-
-/**
- * Sample LinkedList for testing circular references.
- * @type {Object.<string, string|Object>}
- */
-exports.deepReferenceObject = deepReferenceObject
-const linkedList = {
-  name: 'one',
-  prev: null,
-  next: null
-}
-exports.linkedList = linkedList
-linkedList.next = {
-  name: 'two',
-  prev: linkedList,
-  next: null
-}
-linkedList.next.next = {
-  name: 'three',
-  prev: linkedList.next,
-  next: null
-}
-
-/**
- * Sample of jsonDom object containing empty nested array and objects
- */
-const jsonDom = {
-  tagName: 'div',
-  attributes: {
-    style: {},
-    className: 'column'
-  },
-  element: null,
-  eventListeners: {},
-  parentItem: {},
-  children: [],
-  axis: 'x'
-}
-
-/**
- * Sample of domItem child with nested child and optional details
- */
-exports.jsonDom = jsonDom
-const domItem = [{
-  attributes: {
-    className: 'row',
-    style: {}
-  },
-  axis: 'y',
-  children: [{
-    attributes: {
-      style: {}
-    },
-    axis: 'x',
-    children: [],
-    element: {},
-    eventListeners: {},
-    hasShip: false,
-    isHit: false,
-    parentItem: {},
-    point: {},
-    tagName: 'div'
-  }],
-  element: null,
-  eventListeners: {},
-  parentItem: {},
-  tagName: 'div'
-}]
-
-/**
- * Sample of object containing multiple references.
- * @type {Object.<string, string|number|Object>}
- */
-exports.domItem = domItem
-const multiReferenceObject = {
-  object1: {
-    name: 'someName'
-  },
-  object2: {
-    age: 12
-  },
-  array1: ['someString', 'anotherString'],
-  array2: [89, 32],
-  title: 'Some Title',
-  item: 45
-}
-
-/**
- * Sample NodeTree for testing circular references and arrays.
- * @type {Object.<string, string|Object|Array>}
- */
-exports.multiReferenceObject = multiReferenceObject
-const nodeTree = {
-  name: 'one',
-  parent: null,
-  children: []
-}
-exports.nodeTree = nodeTree
-nodeTree.children[0] = {
-  name: 'child one',
-  parent: nodeTree,
-  children: []
-}
-nodeTree.children[1] = {
-  name: 'child two',
-  parent: nodeTree,
-  children: []
-}
-nodeTree.children[0].children[0] = {
-  name: 'grandchild one',
-  parent: nodeTree.children[0],
-  children: []
+var circularObject = require('./test-helpers/circularObject')
+var countMatches = require('./test-helpers/countMatches')
+var deepReferenceObject = require('./test-helpers/deepReferenceObject')
+var domItem = require('./test-helpers/domItem')
+var jsonDom = require('./test-helpers/jsonDom')
+var linkedList = require('./test-helpers/linkedList')
+var logObject = require('./test-helpers/logObject')
+var multiReferenceObject = require('./test-helpers/multiReferenceObject')
+var nodeTree = require('./test-helpers/nodeTree')
+var setUp = require('./test-helpers/setUp')
+module.exports = {
+  circularObject: circularObject,
+  countMatches: countMatches,
+  deepReferenceObject: deepReferenceObject,
+  domItem: domItem,
+  jsonDom: jsonDom,
+  linkedList: linkedList,
+  logObject: logObject,
+  multiReferenceObject: multiReferenceObject,
+  nodeTree: nodeTree,
+  setUp: setUp
 }

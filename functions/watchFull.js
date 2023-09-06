@@ -1,18 +1,12 @@
-const bundle = require('./bundle')
-const distFor = require('./distFor')
-const gulpConfig = require('../gulp.config.js')
-const { parallel, series, watch } = require('gulp')
-const testQuick = require('./testQuick')
+const { beginWatcher, runOnChange } = require('./partials')
 
 /**
  * Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
- * @returns {*}
+ * @function
+ * @memberOf module:js-build-tools
+ * @returns {FSWatcher}
  */
-const watchFull = () => watch(gulpConfig.watchSearch)
-  .on('change', path => {
-    const pathRegex = new RegExp(`^${gulpConfig.srcPath}(.*\\/).+\\.js$`, 'i')
-    const distForPath = () => distFor(path, path.replace(pathRegex, `${gulpConfig.distPath}$1`))
-    return parallel(testQuick, series(distForPath, bundle))()
-  })
+const watchFull = () => beginWatcher()
+  .on('change', runOnChange)
 
 module.exports = watchFull
