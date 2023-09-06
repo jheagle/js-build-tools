@@ -13,7 +13,7 @@ var gulpConfig = require('../../gulp.config.js');
  * @memberOf module:partials
  * @param {string|array} [srcPath='src/config/path/dist/for']
  * @param {string} [destPath='dist/config/path']
- * @returns {*}
+ * @returns {stream.Stream}
  */
 var distFor = function distFor() {
   var srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : distForSrc();

@@ -14,8 +14,8 @@ const tsProject = ts.createProject(gulpConfig.get('useTsConfig'))
  * @see `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info
  */
 const tsFor = (srcPath = gulpConfig.get('tsSearch'), distPath = gulpConfig.get('distPath')) => src(srcPath)
-  .pipe(tsProject())
-  .js
-  .pipe(dest(distPath))
+    .pipe(tsProject())
+    .js
+    .pipe(dest(distPath))
 
 module.exports = tsFor

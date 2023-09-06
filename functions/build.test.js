@@ -20,7 +20,7 @@ jest.mock('./compileReadme', () => jest.fn(genericFunction))
 jest.mock('./dist', () => jest.fn(genericFunction))
 jest.mock('./distLint', () => jest.fn(genericFunction))
 jest.mock('./distMinify', () => jest.fn(genericFunction))
-jest.mock('./partials/distSeries', () => jest.fn(genericFunction))
+jest.mock('./partials/distSeries', () => jest.fn(() => genericFunction))
 jest.mock('./testFull', () => jest.fn(genericFunction))
 
 describe('build', () => {

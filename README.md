@@ -558,7 +558,7 @@ Micro-functions used as components for the main gulp functions.
     * [.minifyFor()](#module_partials.minifyFor) ⇒ <code>\*</code>
     * [.distSeries([srcPath], [distFinalPath], [tsSearch])](#module_partials.distSeries) ⇒ <code>function</code>
     * [.distForSrc([useTs])](#module_partials.distForSrc) ⇒ <code>string</code>
-    * [.distFor([srcPath], [destPath])](#module_partials.distFor) ⇒ <code>\*</code>
+    * [.distFor([srcPath], [destPath])](#module_partials.distFor) ⇒ <code>stream.Stream</code>
     * [.clean([done], [paths])](#module_partials.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
     * [.beginWatcher()](#module_partials.beginWatcher) ⇒ <code>FSWatcher</code>
     * [.addToReadme([done])](#module_partials.addToReadme) ⇒ <code>string</code> \| <code>Uint8Array</code>
@@ -635,7 +635,7 @@ Retrieve the correct distFor search path based on TS Config.
 
 <a name="module_partials.distFor"></a>
 
-### partials.distFor([srcPath], [destPath]) ⇒ <code>\*</code>
+### partials.distFor([srcPath], [destPath]) ⇒ <code>stream.Stream</code>
 Build the distribution for a given source pattern.
 
 **Kind**: static method of [<code>partials</code>](#module_partials)  

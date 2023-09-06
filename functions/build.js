@@ -20,7 +20,7 @@ const testFull = require('./testFull')
 const build = (done = null) => parallel(
   gulpConfig.get('nodeOnly')
     ? series(clean, dist, parallel(distLint, distMinify))
-    : series(clean, distSeries, parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)),
+    : series(clean, distSeries(), parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)),
   compileReadme,
   testFull
 )(done)

@@ -25,6 +25,6 @@ var testFull = require('./testFull')
  */
 var build = function build () {
   var done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
-  return parallel(gulpConfig.get('nodeOnly') ? series(clean, dist, parallel(distLint, distMinify)) : series(clean, distSeries, parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)), compileReadme, testFull)(done)
+  return parallel(gulpConfig.get('nodeOnly') ? series(clean, dist, parallel(distLint, distMinify)) : series(clean, distSeries(), parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)), compileReadme, testFull)(done)
 }
 module.exports = build

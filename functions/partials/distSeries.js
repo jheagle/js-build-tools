@@ -11,11 +11,11 @@ const tsFor = require('./tsFor')
  * @param {string} [srcPath='src/config/path/dist/for']
  * @param {string} [distFinalPath='dist/config/path']
  * @param {string} [tsSearch='ts/search/config/path']
- * @returns {Function}
+ * @returns {function(null=): stream.Stream}
  */
 const distSeries = (srcPath = distForSrc(), distFinalPath = gulpConfig.get('distPath'), tsSearch = gulpConfig.get('tsSearch')) =>
-  gulpConfig.get('useTsConfig')
-    ? series(() => tsFor(tsSearch, distFinalPath), () => distFor(srcPath, distFinalPath))
-    : () => distFor(srcPath, distFinalPath)
+  (done = null) => gulpConfig.get('useTsConfig')
+    ? series(() => tsFor(tsSearch, distFinalPath), () => distFor(srcPath, distFinalPath))(done)
+    : distFor(srcPath, distFinalPath)
 
 module.exports = distSeries

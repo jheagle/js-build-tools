@@ -9,7 +9,7 @@ const gulpConfig = require('../../gulp.config.js')
  * @memberOf module:partials
  * @param {string|array} [srcPath='src/config/path/dist/for']
  * @param {string} [destPath='dist/config/path']
- * @returns {*}
+ * @returns {stream.Stream}
  */
 const distFor = (srcPath = distForSrc(), destPath = gulpConfig.get('distPath')) => src(srcPath)
   .pipe(babel())
