@@ -31,20 +31,44 @@ module.exports = {
   distPath: 'dist',
 
   // The search pattern used for retrieving compiled distribution files.
-  distSearch: 'dist/**/*.js',
+  distSearch: 'dist/**/*.js',]\
+  
+  // 'true' to only generate node environment files.
+  nodeOnly: false,
+  
+  // The name of the output documentation markdown file.
+  readmeFile: 'README.md',
+  
+  // The directory to output the readme file in.
+  readmePath: './',
+  
+  // Options for formatting the output readme.
+  readmeOptions: 'utf8',
 
   // The file which will be pre-fixed to your README.md output.
   readmeTemplate: 'MAIN.md',
+  
+  // Location of files to use for compiling documentation into the readme.
+  readmeSearch: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
 
+  // Base directory of the project.
+  rootPath: './',
+  
   // The directory where your source files are stored (the files you manually created).
   srcPath: 'src',
 
   // The search pattern used for gathering source files for distribution.
   srcSearch: 'src/**/!(*.test).js',
+  
+  // Additional flags for programatically running Jest Cli.
+  testOptions: null,
 
   // The directory where Jest test files are stored.
   // By default stored as *.test.js adjacent with the files they are testing).
   testPath: 'src',
+  
+  // The path the tsconfig file for running typescript or false if no ts file given.
+  useTsConfig: 'tsconfig.json',
   
   // The search pattern for watching files for changes.
   watchSearch: 'src/**/*.js',

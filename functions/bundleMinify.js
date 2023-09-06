@@ -1,15 +1,12 @@
-const { dest, src } = require('gulp')
 const gulpConfig = require('../gulp.config.js')
-const { default: uglify } = require('gulp-uglify-es')
-const rename = require('gulp-rename')
+const minifyFor = require('./partials/minifyFor')
 
 /**
  * Creates the minified bundle file.
+ * @function
+ * @memberOf module:js-build-tools
  * @returns {*}
  */
-const bundleMinify = () => src(`${gulpConfig.browserPath}/${gulpConfig.browserName}.js`)
-  .pipe(uglify())
-  .pipe(rename({ extname: '.min.js' }))
-  .pipe(dest(gulpConfig.browserPath))
+const bundleMinify = () => minifyFor(`${gulpConfig.get('browserPath')}/${gulpConfig.get('browserName')}.js`, gulpConfig.get('browserPath'))
 
 module.exports = bundleMinify

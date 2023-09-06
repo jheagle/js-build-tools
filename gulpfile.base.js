@@ -1,3 +1,12 @@
+/**
+ * Export these functions to your own project in order to customize your build pipeline.
+ * @file
+ * @author Joshua Heagle <joshuaheagle@gmail.com>
+ * @version 2.0.0
+ * @module js-build-tools
+ */
+
+const gulpConfig = require('./gulp.config.js')
 const build = require('./functions/build.js')
 const compileReadme = require('./functions/compileReadme.js')
 const defaultCmd = require('./functions/default.js')
