@@ -1,9 +1,8 @@
 "use strict";
 
-const gulpConfig = require('../../gulp.config.js');
-const {
-  watch
-} = require('gulp');
+var gulpConfig = require('../../gulp.config.js');
+var _require = require('gulp'),
+  watch = _require.watch;
 
 /**
  * Create a chokidar instance which watches and triggers change when the globed files are modified.
@@ -11,5 +10,7 @@ const {
  * @memberOf module:partials
  * @returns {FSWatcher}
  */
-const beginWatcher = () => watch(gulpConfig.get('watchSearch'));
+var beginWatcher = function beginWatcher() {
+  return watch(gulpConfig.get('watchSearch'));
+};
 module.exports = beginWatcher;

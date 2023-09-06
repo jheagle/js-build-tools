@@ -152,37 +152,25 @@ Export these functions to your own project in order to customize your build pipe
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [js-build-tools](#module_js-build-tools)
-    * [.defaultCmd](#module_js-build-tools.defaultCmd)
-    * [.compileReadme](#module_js-build-tools.compileReadme)
-    * [.build](#module_js-build-tools.build)
+    * [.compileReadme](#module_js-build-tools.compileReadme) ⇒ <code>stream.Stream</code>
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
     * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>stream.Stream</code>
-    * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
-    * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testQuick([done], [testPath])](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testFull([done], [testPath])](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
     * [.distLint()](#module_js-build-tools.distLint) ⇒ <code>\*</code>
     * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
+    * [.defaultCmd([done])](#module_js-build-tools.defaultCmd) ⇒ <code>stream.Stream</code>
     * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
-    * [.bundleLint()](#module_js-build-tools.bundleLint) ⇒ <code>\*</code>
-    * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>\*</code>
+    * [.bundleLint()](#module_js-build-tools.bundleLint) ⇒ <code>stream.Stream</code>
+    * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>stream.Stream</code>
+    * [.build([done])](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
 
-<a name="module_js-build-tools.defaultCmd"></a>
-
-### js-build-tools.defaultCmd
-Recommended as the default task, runs the simple dist and bundle tasks.
-
-**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.compileReadme"></a>
 
-### js-build-tools.compileReadme
+### js-build-tools.compileReadme ⇒ <code>stream.Stream</code>
 Generate the README.md file based off of the template, then append the generated documentation.
-
-**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.build"></a>
-
-### js-build-tools.build
-Runs several processes to build and validate the project.Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
 
 **Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.watchTest"></a>
@@ -205,16 +193,28 @@ Simplified typescript task using tsFor.
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.testQuick"></a>
 
-### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
+### js-build-tools.testQuick([done], [testPath]) ⇒ <code>Promise.&lt;\*&gt;</code>
 Run the Jest tests for files which have been modified (based on git status).
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+| [testPath] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>&#x27;path/config/test/files&#x27;</code> | 
+
 <a name="module_js-build-tools.testFull"></a>
 
-### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
+### js-build-tools.testFull([done], [testPath]) ⇒ <code>Promise.&lt;\*&gt;</code>
 Run all tests with jest.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+| [testPath] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>&#x27;path/config/test/files&#x27;</code> | 
+
 <a name="module_js-build-tools.distMinify"></a>
 
 ### js-build-tools.distMinify() ⇒ <code>\*</code>
@@ -233,6 +233,17 @@ Applies Standard code style linting to distribution files.
 Simplified distribution tasks which will use arguments from distFor.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.defaultCmd"></a>
+
+### js-build-tools.defaultCmd([done]) ⇒ <code>stream.Stream</code>
+Recommended as the default task, runs the simple dist and bundle tasks.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
 <a name="module_js-build-tools.bundleMinify"></a>
 
 ### js-build-tools.bundleMinify() ⇒ <code>\*</code>
@@ -241,16 +252,27 @@ Creates the minified bundle file.
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.bundleLint"></a>
 
-### js-build-tools.bundleLint() ⇒ <code>\*</code>
+### js-build-tools.bundleLint() ⇒ <code>stream.Stream</code>
 Applies Standard code style linting to bundled file.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.bundle"></a>
 
-### js-build-tools.bundle() ⇒ <code>\*</code>
+### js-build-tools.bundle() ⇒ <code>stream.Stream</code>
 Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.build"></a>
+
+### js-build-tools.build([done]) ⇒ <code>stream.Stream</code>
+Runs several processes to build and validate the project.Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
 <a name="module_gulpConfig"></a>
 
 ## gulpConfig

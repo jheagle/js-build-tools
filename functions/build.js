@@ -14,13 +14,15 @@ const testFull = require('./testFull')
  * Runs several processes to build and validate the project.
  * Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
  * @memberOf module:js-build-tools
+ * @param {function} [done=null]
+ * @returns {stream.Stream}
  */
-const build = parallel(
+const build = (done = null) => parallel(
   gulpConfig.get('nodeOnly')
     ? series(clean, dist, parallel(distLint, distMinify))
     : series(clean, distSeries, parallel(distLint, distMinify), bundle, parallel(bundleLint, bundleMinify)),
   compileReadme,
   testFull
-)
+)(done)
 
 module.exports = build

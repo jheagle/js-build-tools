@@ -9,25 +9,25 @@
  * @memberOf module:js-build-tools
  */
 
-const circularObject = require('./test-helpers/circularObject')
-const countMatches = require('./test-helpers/countMatches')
-const deepReferenceObject = require('./test-helpers/deepReferenceObject')
-const domItem = require('./test-helpers/domItem')
-const jsonDom = require('./test-helpers/jsonDom')
-const linkedList = require('./test-helpers/linkedList')
-const logObject = require('./test-helpers/logObject')
-const multiReferenceObject = require('./test-helpers/multiReferenceObject')
-const nodeTree = require('./test-helpers/nodeTree')
-const setUp = require('./test-helpers/setUp')
+var circularObject = require('./test-helpers/circularObject')
+var countMatches = require('./test-helpers/countMatches')
+var deepReferenceObject = require('./test-helpers/deepReferenceObject')
+var domItem = require('./test-helpers/domItem')
+var jsonDom = require('./test-helpers/jsonDom')
+var linkedList = require('./test-helpers/linkedList')
+var logObject = require('./test-helpers/logObject')
+var multiReferenceObject = require('./test-helpers/multiReferenceObject')
+var nodeTree = require('./test-helpers/nodeTree')
+var setUp = require('./test-helpers/setUp')
 module.exports = {
-  circularObject,
-  countMatches,
-  deepReferenceObject,
-  domItem,
-  jsonDom,
-  linkedList,
-  logObject,
-  multiReferenceObject,
-  nodeTree,
-  setUp
+  circularObject: circularObject,
+  countMatches: countMatches,
+  deepReferenceObject: deepReferenceObject,
+  domItem: domItem,
+  jsonDom: jsonDom,
+  linkedList: linkedList,
+  logObject: logObject,
+  multiReferenceObject: multiReferenceObject,
+  nodeTree: nodeTree,
+  setUp: setUp
 }

@@ -5,7 +5,7 @@
  * @memberOf module:testHelpers
  * @type {Object.<string, string|number|Object>}
  */
-const deepReferenceObject = {
+var deepReferenceObject = {
   object1: {
     name: 'someName',
     object2: {

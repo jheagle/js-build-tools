@@ -1,12 +1,11 @@
 "use strict";
 
-const gulpConfig = require('../../gulp.config');
-const distFor = require('./distFor');
-const distForSrc = require('./distForSrc');
-const {
-  series
-} = require('gulp');
-const tsFor = require('./tsFor');
+var gulpConfig = require('../../gulp.config');
+var distFor = require('./distFor');
+var distForSrc = require('./distForSrc');
+var _require = require('gulp'),
+  series = _require.series;
+var tsFor = require('./tsFor');
 
 /**
  * When using TypeScript, ensure that we process the ts first then run babel (dist)
@@ -17,10 +16,16 @@ const tsFor = require('./tsFor');
  * @param {string} [tsSearch='ts/search/config/path']
  * @returns {Function}
  */
-const distSeries = function () {
-  let srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : distForSrc();
-  let distFinalPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('distPath');
-  let tsSearch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : gulpConfig.get('tsSearch');
-  return gulpConfig.get('useTsConfig') ? series(() => tsFor(tsSearch, distFinalPath), () => distFor(srcPath, distFinalPath)) : () => distFor(srcPath, distFinalPath);
+var distSeries = function distSeries() {
+  var srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : distForSrc();
+  var distFinalPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('distPath');
+  var tsSearch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : gulpConfig.get('tsSearch');
+  return gulpConfig.get('useTsConfig') ? series(function () {
+    return tsFor(tsSearch, distFinalPath);
+  }, function () {
+    return distFor(srcPath, distFinalPath);
+  }) : function () {
+    return distFor(srcPath, distFinalPath);
+  };
 };
 module.exports = distSeries;

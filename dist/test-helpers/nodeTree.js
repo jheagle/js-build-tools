@@ -5,7 +5,7 @@
  * @memberOf module:testHelpers
  * @type {Object.<string, string|Object|Array>}
  */
-const nodeTree = {
+var nodeTree = {
   name: 'one',
   parent: null,
   children: []

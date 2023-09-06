@@ -5,7 +5,7 @@
  * @memberOf module:testHelpers
  * @type {Object.<string, string|Object|Array>}
  */
-const circularObject = {
+var circularObject = {
   name: 'root',
   parent: {},
   body: {},

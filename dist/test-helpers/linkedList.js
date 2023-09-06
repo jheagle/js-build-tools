@@ -5,7 +5,7 @@
  * @memberOf module:testHelpers
  * @type {Object.<string, string|Object>}
  */
-const linkedList = {
+var linkedList = {
   name: 'one',
   prev: null,
   next: null

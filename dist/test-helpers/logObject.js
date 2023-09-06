@@ -1,5 +1,6 @@
 "use strict";
 
+require("core-js/modules/es.json.stringify.js");
 /**
  * Log out an object in a nicely formatted way.
  * @function
@@ -9,10 +10,12 @@
  * @param {string} [outputType=log]
  * @returns {string|undefined}
  */
-const logObject = function (object) {
-  let label = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logging';
-  let outputType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'log';
-  const logger = outputType === 'string' ? (label, object) => "'".concat(label, "' | ") + JSON.stringify(object) : console[outputType];
+var logObject = function logObject(object) {
+  var label = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logging';
+  var outputType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'log';
+  var logger = outputType === 'string' ? function (label, object) {
+    return "'".concat(label, "' | ") + JSON.stringify(object);
+  } : console[outputType];
   if (typeof require === 'undefined' || outputType === 'string') {
     return logger(label, object);
   }

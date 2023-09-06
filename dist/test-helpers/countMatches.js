@@ -1,5 +1,7 @@
 "use strict";
 
+require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.string.split.js");
 /**
  * Simple way to count string occurrences for testing.
  * @function
@@ -8,5 +10,7 @@
  * @param {string} search
  * @returns {number}
  */
-const countMatches = (content, search) => content.split(search).length - 1;
+var countMatches = function countMatches(content, search) {
+  return content.split(search).length - 1;
+};
 module.exports = countMatches;

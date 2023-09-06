@@ -9,25 +9,25 @@
  * @memberOf module:js-build-tools
  */
 
-const addToReadme = require('./partials/addToReadme')
-const beginWatcher = require('./partials/beginWatcher')
-const clean = require('./partials/clean')
-const distFor = require('./partials/distFor')
-const distForSrc = require('./partials/distForSrc')
-const distSeries = require('./partials/distSeries')
-const minifyFor = require('./partials/minifyFor')
-const readmeTemplate = require('./partials/readmeTemplate')
-const runOnChange = require('./partials/runOnChange')
-const tsFor = require('./partials/tsFor')
+var addToReadme = require('./partials/addToReadme')
+var beginWatcher = require('./partials/beginWatcher')
+var clean = require('./partials/clean')
+var distFor = require('./partials/distFor')
+var distForSrc = require('./partials/distForSrc')
+var distSeries = require('./partials/distSeries')
+var minifyFor = require('./partials/minifyFor')
+var readmeTemplate = require('./partials/readmeTemplate')
+var runOnChange = require('./partials/runOnChange')
+var tsFor = require('./partials/tsFor')
 module.exports = {
-  addToReadme,
-  beginWatcher,
-  clean,
-  distFor,
-  distForSrc,
-  distSeries,
-  minifyFor,
-  readmeTemplate,
-  runOnChange,
-  tsFor
+  addToReadme: addToReadme,
+  beginWatcher: beginWatcher,
+  clean: clean,
+  distFor: distFor,
+  distForSrc: distForSrc,
+  distSeries: distSeries,
+  minifyFor: minifyFor,
+  readmeTemplate: readmeTemplate,
+  runOnChange: runOnChange,
+  tsFor: tsFor
 }

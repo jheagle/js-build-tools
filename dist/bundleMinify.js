@@ -1,7 +1,8 @@
 'use strict'
 
-const gulpConfig = require('../gulp.config.js')
-const minifyFor = require('./partials/minifyFor')
+require('core-js/modules/es.array.concat.js')
+var gulpConfig = require('../gulp.config.js')
+var minifyFor = require('./partials/minifyFor')
 
 /**
  * Creates the minified bundle file.
@@ -9,5 +10,7 @@ const minifyFor = require('./partials/minifyFor')
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const bundleMinify = () => minifyFor(''.concat(gulpConfig.get('browserPath'), '/').concat(gulpConfig.get('browserName'), '.js'), gulpConfig.get('browserPath'))
+var bundleMinify = function bundleMinify () {
+  return minifyFor(''.concat(gulpConfig.get('browserPath'), '/').concat(gulpConfig.get('browserName'), '.js'), gulpConfig.get('browserPath'))
+}
 module.exports = bundleMinify

@@ -1,7 +1,7 @@
 'use strict'
 
-const gulpConfig = require('../gulp.config.js')
-const minifyFor = require('./partials/minifyFor')
+var gulpConfig = require('../gulp.config.js')
+var minifyFor = require('./partials/minifyFor')
 
 /**
  * Creates minified versions of the dist files.
@@ -9,5 +9,7 @@ const minifyFor = require('./partials/minifyFor')
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const distMinify = () => minifyFor(gulpConfig.get('distSearch'), gulpConfig.get('distPath'))
+var distMinify = function distMinify () {
+  return minifyFor(gulpConfig.get('distSearch'), gulpConfig.get('distPath'))
+}
 module.exports = distMinify

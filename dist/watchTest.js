@@ -1,10 +1,9 @@
 'use strict'
 
-const gulpConfig = require('../gulp.config.js')
-const {
-  watch
-} = require('gulp')
-const testQuick = require('./testQuick')
+var gulpConfig = require('../gulp.config.js')
+var _require = require('gulp')
+var watch = _require.watch
+var testQuick = require('./testQuick')
 
 /**
  * Watch for changes and run the tests.
@@ -12,7 +11,9 @@ const testQuick = require('./testQuick')
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const watchTest = () => watch(gulpConfig.get('watchSearch'), {
-  ignoreInitial: false
-}, testQuick)
+var watchTest = function watchTest () {
+  return watch(gulpConfig.get('watchSearch'), {
+    ignoreInitial: false
+  }, testQuick)
+}
 module.exports = watchTest

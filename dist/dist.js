@@ -1,6 +1,6 @@
 'use strict'
 
-const distFor = require('./partials/distFor.js')
+var distFor = require('./partials/distFor.js')
 
 /**
  * Simplified distribution tasks which will use arguments from distFor.
@@ -8,5 +8,7 @@ const distFor = require('./partials/distFor.js')
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const dist = () => distFor()
+var dist = function dist () {
+  return distFor()
+}
 module.exports = dist
