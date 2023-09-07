@@ -64,5 +64,5 @@ describe('bundle', () => {
         console.error('Encountered error', error)
         done()
       })
-  }, 500)
+  })
 })

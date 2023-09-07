@@ -14,7 +14,7 @@ describe('clean', () => {
     const srcPath = gulpConfig.get('srcPath')
     expect(fs.readdirSync(srcPath)).toBeTruthy()
     // Run the clean script to empty the directories
-    await clean(null, [srcPath])
+    await clean()
     expect(fs.existsSync(srcPath)).toBeFalsy()
   })
 })

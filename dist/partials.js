@@ -17,6 +17,7 @@ var distForSrc = require('./partials/distForSrc')
 var distSeries = require('./partials/distSeries')
 var minifyFor = require('./partials/minifyFor')
 var readmeTemplate = require('./partials/readmeTemplate')
+var removeDirectory = require('./partials/removeDirectory')
 var runOnChange = require('./partials/runOnChange')
 var tsFor = require('./partials/tsFor')
 module.exports = {
@@ -28,6 +29,7 @@ module.exports = {
   distSeries: distSeries,
   minifyFor: minifyFor,
   readmeTemplate: readmeTemplate,
+  removeDirectory: removeDirectory,
   runOnChange: runOnChange,
   tsFor: tsFor
 }

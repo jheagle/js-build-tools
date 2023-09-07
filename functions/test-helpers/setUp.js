@@ -1,7 +1,7 @@
 const fs = require('fs')
-const del = require('del')
 // Import the configurations and override some of them in order to direct to the temp directory.
 const gulpConfig = require('../../gulp.config.js')
+const { removeDirectory } = require('../partials')
 
 let tempDir = 'test-temp/'
 let srcPath = `${tempDir}src`
@@ -16,6 +16,7 @@ const setDefaults = (testDir = 'test-temp') => {
   tempDir = `${testDir}/`
   srcPath = `${tempDir}src`
   gulpConfig.set('browserPath', `${tempDir}browser`)
+  gulpConfig.set('cleanPaths', [srcPath])
   gulpConfig.set('distMain', `${tempDir}dist/main`)
   gulpConfig.set('distPath', `${tempDir}dist`)
   gulpConfig.set('distSearch', `${tempDir}dist/**/*.js`)
@@ -41,11 +42,11 @@ exports.gulpConfig = gulpConfig
  */
 const createTempDir = async (exists = true) => {
   if (exists) {
-    return del(tempDir)
-      .then(() => createTempDir(fs.existsSync(tempDir)))
+    return removeDirectory(tempDir)
+      .then(removedDir => createTempDir(fs.existsSync(removedDir)))
+      .catch(error => console.error('Error: ', error))
   }
-  await fs.mkdirSync(tempDir)
-  return fs.mkdirSync(srcPath)
+  return fs.mkdirSync(srcPath, { recursive: true })
 }
 
 exports.createTempDir = createTempDir
@@ -64,4 +65,4 @@ exports.beforeEach = () => createTempDir()
  * @memberOf module:testHelpers
  * @returns {Promise<*>}
  */
-exports.afterEach = async () => await del(tempDir)
+exports.afterEach = () => removeDirectory(tempDir)

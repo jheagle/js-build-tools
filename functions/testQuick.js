@@ -3,13 +3,13 @@ const { runCLI } = require('jest')
 
 /**
  * Run the Jest tests for files which have been modified (based on git status).
+ * Configure where tests are located by using 'testPath'.
  * @function
  * @memberOf module:js-build-tools
- * @param {function} [done=null]
- * @param {Array.<string>|string} [testPath='path/config/test/files']
  * @returns {Promise<*>}
  */
-const testQuick = (done = null, testPath = gulpConfig.get('testPath')) => {
+const testQuick = () => {
+  let testPath = gulpConfig.get('testPath')
   if (!Array.isArray(testPath)) {
     // The testPath must be an array of strings
     testPath = [testPath]

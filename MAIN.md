@@ -23,6 +23,9 @@ module.exports = {
 
   // The output directory for browser-bundled files.
   browserPath: 'browser',
+  
+  // The paths for directories to delete before build.
+  cleanPaths: ['dist', 'browser'],
 
   // The name of entry the distribution file.
   distMain: 'dist/main',

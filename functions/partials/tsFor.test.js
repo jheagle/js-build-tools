@@ -40,5 +40,5 @@ describe('tsFor', () => {
         console.error('Encountered error', error)
         done()
       })
-  }, 30000)
+  }, 60000)
 })

@@ -1,14 +1,16 @@
-const del = require('del')
 const gulpConfig = require('../../gulp.config.js')
+const removeDirectory = require('./removeDirectory')
 
 /**
  * Deletes all the distribution and browser files (used before create a new build).
+ * Configure array of directories to remove with 'cleanPaths'.
  * @function
  * @memberOf module:partials
- * @param {function} [done=null]
- * @param {string[]} [paths=['dist/config/path', 'browser/config/path']]
  * @returns {Promise<string[]> | *}
  */
-const clean = (done = null, paths = [gulpConfig.get('distPath'), gulpConfig.get('browserPath')]) => del(paths).then(() => done && done())
+const clean = () => gulpConfig.get('cleanPaths').reduce(
+    (promise, path) => promise.then(() => removeDirectory(path)),
+    Promise.resolve()
+  )
 
 module.exports = clean

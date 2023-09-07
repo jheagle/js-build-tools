@@ -23,6 +23,9 @@ module.exports = {
 
   // The output directory for browser-bundled files.
   browserPath: 'browser',
+  
+  // The paths for directories to delete before build.
+  cleanPaths: ['dist', 'browser'],
 
   // The name of entry the distribution file.
   distMain: 'dist/main',
@@ -156,8 +159,8 @@ Export these functions to your own project in order to customize your build pipe
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
     * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>stream.Stream</code>
-    * [.testQuick([done], [testPath])](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
-    * [.testFull([done], [testPath])](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
     * [.distLint()](#module_js-build-tools.distLint) ⇒ <code>\*</code>
     * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
@@ -193,28 +196,16 @@ Simplified typescript task using tsFor.
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.testQuick"></a>
 
-### js-build-tools.testQuick([done], [testPath]) ⇒ <code>Promise.&lt;\*&gt;</code>
-Run the Jest tests for files which have been modified (based on git status).
+### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run the Jest tests for files which have been modified (based on git status).Configure where tests are located by using 'testPath'.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> | <code></code> | 
-| [testPath] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>&#x27;path/config/test/files&#x27;</code> | 
-
 <a name="module_js-build-tools.testFull"></a>
 
-### js-build-tools.testFull([done], [testPath]) ⇒ <code>Promise.&lt;\*&gt;</code>
-Run all tests with jest.
+### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run all tests with jest.Configure where tests are located by using 'testPath'.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> | <code></code> | 
-| [testPath] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>&#x27;path/config/test/files&#x27;</code> | 
-
 <a name="module_js-build-tools.distMinify"></a>
 
 ### js-build-tools.distMinify() ⇒ <code>\*</code>
@@ -554,14 +545,15 @@ Micro-functions used as components for the main gulp functions.
     * [.tsFor([srcPath], [distPath])](#module_partials.tsFor) ⇒ <code>stream.Stream</code>
     * [.runOnChange(path)](#module_partials.runOnChange) ⇒ <code>stream.Stream</code>
         * [~pathRegex](#module_partials.runOnChange..pathRegex)
+    * [.removeDirectory(dirPath)](#module_partials.removeDirectory) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.readmeTemplate()](#module_partials.readmeTemplate) ⇒ <code>\*</code>
     * [.minifyFor()](#module_partials.minifyFor) ⇒ <code>\*</code>
     * [.distSeries([srcPath], [distFinalPath], [tsSearch])](#module_partials.distSeries) ⇒ <code>function</code>
     * [.distForSrc([useTs])](#module_partials.distForSrc) ⇒ <code>string</code>
     * [.distFor([srcPath], [destPath])](#module_partials.distFor) ⇒ <code>stream.Stream</code>
-    * [.clean([done], [paths])](#module_partials.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+    * [.clean()](#module_partials.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
     * [.beginWatcher()](#module_partials.beginWatcher) ⇒ <code>FSWatcher</code>
-    * [.addToReadme([done])](#module_partials.addToReadme) ⇒ <code>string</code> \| <code>Uint8Array</code>
+    * [.addToReadme()](#module_partials.addToReadme) ⇒ <code>string</code> \| <code>Uint8Array</code>
 
 <a name="module_partials.tsFor"></a>
 
@@ -597,6 +589,17 @@ Run this function when the watched files are modified.1. Find the sub-folders w
 1. The original path comes in from src and is a .ts2. Discover the outgoing dist path where that file should go3. Use the path and dist in tsFor4. Take the original path, convert to full file path in dist5. Use the dist path found previously in #26. Use the full dist path and the dist outgoing path in distFor
 
 **Kind**: inner constant of [<code>runOnChange</code>](#module_partials.runOnChange)  
+<a name="module_partials.removeDirectory"></a>
+
+### partials.removeDirectory(dirPath) ⇒ <code>Promise.&lt;\*&gt;</code>
+Return a promise to be completed once the specified directory is deleted.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type |
+| --- | --- |
+| dirPath | <code>string</code> | 
+
 <a name="module_partials.readmeTemplate"></a>
 
 ### partials.readmeTemplate() ⇒ <code>\*</code>
@@ -647,16 +650,10 @@ Build the distribution for a given source pattern.
 
 <a name="module_partials.clean"></a>
 
-### partials.clean([done], [paths]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
-Deletes all the distribution and browser files (used before create a new build).
+### partials.clean() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
+Deletes all the distribution and browser files (used before create a new build).Configure array of directories to remove with 'cleanPaths'.
 
 **Kind**: static method of [<code>partials</code>](#module_partials)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> | <code></code> | 
-| [paths] | <code>Array.&lt;string&gt;</code> | <code>[&#x27;dist/config/path&#x27;, &#x27;browser/config/path&#x27;]</code> | 
-
 <a name="module_partials.beginWatcher"></a>
 
 ### partials.beginWatcher() ⇒ <code>FSWatcher</code>
@@ -665,12 +662,7 @@ Create a chokidar instance which watches and triggers change when the globed fil
 **Kind**: static method of [<code>partials</code>](#module_partials)  
 <a name="module_partials.addToReadme"></a>
 
-### partials.addToReadme([done]) ⇒ <code>string</code> \| <code>Uint8Array</code>
-Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
+### partials.addToReadme() ⇒ <code>string</code> \| <code>Uint8Array</code>
+Appends all the jsdoc comments to the readme file. Assumes empty or templated file.Configure this with 'readmeSearch', 'readmePath', 'readmeFile', and 'readmeOptions'.
 
 **Kind**: static method of [<code>partials</code>](#module_partials)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> \| <code>null</code> | <code></code> | 
-

@@ -1,6 +1,7 @@
 module.exports = {
   browserName: 'js-build-tools',
   browserPath: 'browser',
+  cleanPaths: ['dist', 'browser'],
   distMain: 'gulpfile.base.js',
   distPath: 'dist',
   distSearch: 'dist/*.js',

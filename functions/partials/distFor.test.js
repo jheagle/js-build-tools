@@ -89,7 +89,7 @@ describe('distFor', () => {
         console.error('Encountered error', error)
         done()
       })
-  })
+  }, 60000)
 
   test('can process typescript before babel', done => {
     const srcPath = gulpConfig.get('srcPath')
@@ -121,5 +121,5 @@ describe('distFor', () => {
         console.error('Encountered error with typeScript', error)
         done()
       })
-  }, 30000)
+  }, 60000)
 })

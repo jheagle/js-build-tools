@@ -8,18 +8,16 @@ var _require = require('glob'),
 
 /**
  * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
+ * Configure this with 'readmeSearch', 'readmePath', 'readmeFile', and 'readmeOptions'.
  * @function
  * @memberOf module:partials
- * @param {function|null} [done=null]
  * @returns {string|Uint8Array}
  */
 var addToReadme = function addToReadme() {
-  var done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  var files = globSync(gulpConfig.get('readmeSearch'));
-  var readme = jsdoc2md.renderSync({
-    files: files
+  return jsdoc2md.render({
+    files: globSync(gulpConfig.get('readmeSearch'))
+  }).then(function (readme) {
+    return fs.appendFileSync(gulpConfig.get('readmePath') + gulpConfig.get('readmeFile'), readme, gulpConfig.get('readmeOptions'));
   });
-  fs.appendFileSync(gulpConfig.get('readmePath') + gulpConfig.get('readmeFile'), readme, gulpConfig.get('readmeOptions'));
-  return done && done();
 };
 module.exports = addToReadme;

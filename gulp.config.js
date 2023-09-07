@@ -112,6 +112,7 @@ try {
 const setDefaults = {
   browserName: 'default',
   browserPath: 'browser',
+  cleanPaths: ['dist', 'browser'],
   distMain: 'dist/main',
   distPath: 'dist',
   distSearch: 'dist/**/*.js',

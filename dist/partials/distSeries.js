@@ -14,7 +14,7 @@ var tsFor = require('./tsFor');
  * @param {string} [srcPath='src/config/path/dist/for']
  * @param {string} [distFinalPath='dist/config/path']
  * @param {string} [tsSearch='ts/search/config/path']
- * @returns {Function}
+ * @returns {function(null=): stream.Stream}
  */
 var distSeries = function distSeries() {
   var srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : distForSrc();

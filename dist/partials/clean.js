@@ -1,21 +1,26 @@
 "use strict";
 
-var del = require('del');
+require("core-js/modules/es.array.reduce.js");
+require("core-js/modules/es.object.to-string.js");
+require("core-js/modules/esnext.async-iterator.reduce.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.reduce.js");
+require("core-js/modules/es.promise.js");
 var gulpConfig = require('../../gulp.config.js');
+var removeDirectory = require('./removeDirectory');
 
 /**
  * Deletes all the distribution and browser files (used before create a new build).
+ * Configure array of directories to remove with 'cleanPaths'.
  * @function
  * @memberOf module:partials
- * @param {function} [done=null]
- * @param {string[]} [paths=['dist/config/path', 'browser/config/path']]
  * @returns {Promise<string[]> | *}
  */
 var clean = function clean() {
-  var done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  var paths = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [gulpConfig.get('distPath'), gulpConfig.get('browserPath')];
-  return del(paths).then(function () {
-    return done && done();
-  });
+  return gulpConfig.get('cleanPaths').reduce(function (promise, path) {
+    return promise.then(function () {
+      return removeDirectory(path);
+    });
+  }, Promise.resolve());
 };
 module.exports = clean;
