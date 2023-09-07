@@ -1,6 +1,6 @@
 {
   "name": "js-build-tools",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
   "scripts": {
