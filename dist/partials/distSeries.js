@@ -20,13 +20,12 @@ var distSeries = function distSeries() {
   var srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : distForSrc();
   var distFinalPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('distPath');
   var tsSearch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : gulpConfig.get('tsSearch');
-  return function () {
-    var done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    return gulpConfig.get('useTsConfig') ? series(function () {
-      return tsFor(tsSearch, distFinalPath);
-    }, function () {
-      return distFor(srcPath, distFinalPath);
-    })(done) : distFor(srcPath, distFinalPath);
+  var typescript = function typescript() {
+    return tsFor(tsSearch, distFinalPath);
   };
+  var dist = function dist() {
+    return distFor(srcPath, distFinalPath);
+  };
+  return gulpConfig.get('useTsConfig') ? series(typescript, dist) : dist;
 };
 module.exports = distSeries;

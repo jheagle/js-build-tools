@@ -6,21 +6,40 @@
  * @module js-build-tools
  */
 
-const gulpConfig = require('./gulp.config.js')
 const build = require('./functions/build.js')
+const bundle = require('./functions/bundle.js')
+const bundleLint = require('./functions/bundleLint.js')
+const bundleMinify = require('./functions/bundleMinify.js')
 const compileReadme = require('./functions/compileReadme.js')
 const defaultCmd = require('./functions/default.js')
+const dist = require('./functions/dist.js')
+const distLint = require('./functions/distLint.js')
+const distMinify = require('./functions/distMinify.js')
+const gulpConfig = require('./gulp.config.js')
+const partials = require('./functions/partials.js')
 const testFull = require('./functions/testFull.js')
+const testHelpers = require('./functions/testHelpers.js')
 const testQuick = require('./functions/testQuick.js')
+const typescript = require('./functions/typeScript')
 const watchFull = require('./functions/watchFull.js')
 const watchTest = require('./functions/watchTest.js')
 
 module.exports = {
   build,
+  bundle,
+  bundleLint,
+  bundleMinify,
   defaultCmd,
+  dist,
+  distLint,
+  distMinify,
+  gulpConfig,
+  partials,
   readme: compileReadme,
   testFull,
+  testHelpers,
   testQuick,
+  typescript,
   watchFull,
   watchTest
 }
