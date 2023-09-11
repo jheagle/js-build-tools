@@ -15,18 +15,21 @@ let srcPath = `${tempDir}src`
 const setDefaults = (testDir = 'test-temp') => {
   tempDir = `${testDir}/`
   srcPath = `${tempDir}src`
-  gulpConfig.set('browserPath', `${tempDir}browser`)
-  gulpConfig.set('cleanPaths', [srcPath])
-  gulpConfig.set('distMain', `${tempDir}dist/main`)
-  gulpConfig.set('distPath', `${tempDir}dist`)
-  gulpConfig.set('distSearch', `${tempDir}dist/**/*.js`)
+  const distPath = `${tempDir}dist`
+  const browserPath = `${tempDir}browser`
+  gulpConfig.set('browserPath', browserPath)
+  gulpConfig.set('cleanPaths', [distPath, browserPath])
+  gulpConfig.set('distMain', `${distPath}/main`)
+  gulpConfig.set('distPath', distPath)
+  gulpConfig.set('distSearch', `${distPath}/**/*.js`)
   gulpConfig.set('readmeTemplate', `${tempDir}MAIN.md`)
   gulpConfig.set('readmePath', tempDir)
+  gulpConfig.set('readmeSearch', `${srcPath}/**/!(*.test).js`)
   gulpConfig.set('rootPath', tempDir)
   gulpConfig.set('srcPath', srcPath)
-  gulpConfig.set('srcSearch', `${tempDir}src/**/!(*.test).js`)
-  gulpConfig.set('tsSearch', `${tempDir}src/**/*.ts`)
-  gulpConfig.set('watchSearch', `${tempDir}src/**/*.js`)
+  gulpConfig.set('srcSearch', `${srcPath}/**/!(*.test).js`)
+  gulpConfig.set('tsSearch', `${srcPath}/**/*.ts`)
+  gulpConfig.set('watchSearch', `${srcPath}/**/*.js`)
 }
 
 exports.setDefaults = setDefaults

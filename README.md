@@ -168,7 +168,7 @@ Export these functions to your own project in order to customize your build pipe
     * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
     * [.bundleLint()](#module_js-build-tools.bundleLint) ⇒ <code>stream.Stream</code>
     * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>stream.Stream</code>
-    * [.build([done])](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
+    * [.build()](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
 
 <a name="module_js-build-tools.compileReadme"></a>
 
@@ -255,15 +255,10 @@ Starting at the distribution entry point, bundle all the files into a single fil
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.build"></a>
 
-### js-build-tools.build([done]) ⇒ <code>stream.Stream</code>
+### js-build-tools.build() ⇒ <code>stream.Stream</code>
 Runs several processes to build and validate the project.Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [done] | <code>function</code> | <code></code> | 
-
 <a name="module_gulpConfig"></a>
 
 ## gulpConfig

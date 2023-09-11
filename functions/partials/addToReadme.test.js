@@ -5,9 +5,14 @@ const gulpConfig = setUp.gulpConfig
 gulpConfig.set('srcSearch', 'test-temp/src/addToReadme.js')
 const addToReadme = require('./addToReadme')
 
-const rawContents = 'export function sayHello(name: string) {\n' +
-  '  return `Hello from ${name}`;\n' +
-  '}'
+const rawContents = '/**\n' +
+  ' * Say hello with a given name.\n' +
+  ' * @param {string} name\n' +
+  ' * @returns {string}\n' +
+  ' */\n' +
+  'const sayHello = name => `Hello from ${name}`\n' +
+  '\n' +
+  'module.exports = sayHello\n'
 
 beforeEach(() => setUp.beforeEach()
   .then(() => fs.writeFileSync(gulpConfig.get('srcPath') + '/addToReadme.js', rawContents)))
@@ -22,6 +27,6 @@ describe('addToReadme', () => {
     await expect(fs.existsSync(readmeFilePath)).toBeTruthy()
     const readme = await fs.readFileSync(readmeFilePath)
     // At least the documentation will have the addToReadme documentation
-    await expect(readme.includes('addToReadme')).toBeTruthy()
+    await expect(readme.includes('sayHello')).toBeTruthy()
   })
 })
