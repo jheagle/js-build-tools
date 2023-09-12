@@ -27,14 +27,17 @@ var build = function build () {
   var bundleLintMinify = parallel(bundleLint, bundleMinify)
   var buildActions = [clean, distSeries(), distLintMinify]
   if (gulpConfig.get('useTsConfig')) {
+    // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(compileReadme)
   }
   if (!gulpConfig.get('nodeOnly')) {
+    // If not 'nodeOnly' then we also want to bundle for browser after we complete the dist directory
     buildActions.push(bundle)
     buildActions.push(bundleLintMinify)
   }
   var runActions = [series.apply(void 0, buildActions)]
   if (!gulpConfig.get('useTsConfig')) {
+    // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
     runActions.push(compileReadme)
   }
   runActions.push(testFull)
