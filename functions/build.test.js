@@ -12,14 +12,6 @@ const genericFunction = () => Promise.resolve(true)
 jest.mock('./partials/clean', () => jest.fn(genericFunction))
 jest.mock('./testFull', () => jest.fn(genericFunction))
 
-const file1Typescript = '/**\n' +
-  ' * Console log out a greeting with given input.\n' +
-  ' * @param {string} input\n' +
-  ' */\n' +
-  'const file1 = (input: string): void => console.log(`Hello from file1 with ${input}`)\n' +
-  '\n' +
-  'module.exports = file1\n'
-
 const file1Contents = '/**\n' +
   ' * Console log out a greeting with given input.\n' +
   ' * @param {string} input\n' +
@@ -27,20 +19,6 @@ const file1Contents = '/**\n' +
   'const file1 = input => console.log(`Hello from file1 with ${input}`)\n' +
   '\n' +
   'module.exports = file1\n'
-
-const file2Typescript = '/**\n' +
-  ' * Farewell with a summation of two numbers returned.\n' +
-  ' * @param {number} a\n' +
-  ' * @param {number} b\n' +
-  ' * @returns {number}\n' +
-  ' */\n' +
-  'const file2 = (a: number, b: number): number => {\n' +
-  '  const sum = a + b\n' +
-  '  console.log(`Good-bye from file2 with sum ${sum}`)\n' +
-  '  return sum\n' +
-  '}\n' +
-  '\n' +
-  'module.exports = file2\n'
 
 const file2Contents = '/**\n' +
   ' * Farewell with a summation of two numbers returned.\n' +
@@ -94,7 +72,9 @@ const tsConfigContents = '{\n' +
   '  "files": ["test-build/src/**/*.ts"],\n' +
   '  "compilerOptions": {\n' +
   '    "noImplicitAny": true,\n' +
-  '    "target": "es5"\n' +
+  '    "target": "es6",\n' +
+  '    "moduleResolution": "node",\n' +
+  '    "declaration": true,\n' +
   '  }\n' +
   '}'
 
@@ -228,13 +208,15 @@ describe('build', () => {
     gulpConfig.set('nodeOnly', true)
     gulpConfig.set('useTsConfig', tsConfig)
     gulpConfig.set('readmeSearch', `${distPath}/**/*.js`)
-    expect.assertions(7)
+    expect.assertions(8)
     build(() => {
       // Called 'clean'
       expect(clean).toHaveBeenCalled()
 
       // Created dist directory (distSeries)
       expect(fs.existsSync(distPath)).toBeTruthy()
+      // Created declaration file
+      expect(fs.existsSync(`${distPath}/main.d.ts`)).toBeTruthy()
 
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
@@ -253,7 +235,7 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when nodeOnly false and useTsConfig false: calls clean, tsFor, distFor, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull', done => {
+  test('when nodeOnly false and useTsConfig set: calls clean, tsFor, distFor, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const rootPath = gulpConfig.get('rootPath')
     const tsConfig = `${rootPath}/tsconfig.json`
@@ -268,13 +250,15 @@ describe('build', () => {
     gulpConfig.set('nodeOnly', false)
     gulpConfig.set('useTsConfig', tsConfig)
     gulpConfig.set('readmeSearch', `${distPath}/**/*.js`)
-    expect.assertions(10)
+    expect.assertions(11)
     build(() => {
       // Called 'clean'
       expect(clean).toHaveBeenCalled()
 
       // Created dist directory (distSeries)
       expect(fs.existsSync(distPath)).toBeTruthy()
+      // Created declaration file
+      expect(fs.existsSync(`${distPath}/main.d.ts`)).toBeTruthy()
 
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()

@@ -7,7 +7,7 @@ const distFor = require('./distFor')
 const genericFunction = () => Promise.resolve(true)
 
 jest.mock('./distFor', () => jest.fn(genericFunction))
-jest.mock('./tsFor', () => jest.fn(genericFunction))
+jest.mock('./tsFor', () => jest.fn(() => genericFunction))
 
 describe('distSeries', () => {
   test('when not using ts config only returns runnable distFor', done => {

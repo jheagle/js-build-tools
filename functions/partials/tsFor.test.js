@@ -29,16 +29,11 @@ describe('tsFor', () => {
     expect.assertions(3)
     const oldContents = fs.readFileSync(srcFile).toString()
     expect(countMatches(oldContents, 'sayHello(name: string)')).toEqual(1)
-    tsFor(srcFile, distPath)
-      .on('finish', () => {
-        expect(fs.existsSync(distPath)).toBeTruthy()
-        const compiledContents = fs.readFileSync(`${distPath}/typeScript.js`).toString()
-        expect(countMatches(compiledContents, 'sayHello(name)')).toEqual(1)
-        done()
-      })
-      .on('error', error => {
-        console.error('Encountered error', error)
-        done()
-      })
+    tsFor(srcFile, distPath)(() => {
+      expect(fs.existsSync(distPath)).toBeTruthy()
+      const compiledContents = fs.readFileSync(`${distPath}/typeScript.js`).toString()
+      expect(countMatches(compiledContents, 'sayHello(name)')).toEqual(1)
+      done()
+    })
   }, 60000)
 })

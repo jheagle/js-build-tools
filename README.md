@@ -148,13 +148,15 @@ Create a `tsconfig.json` file in your project root with the following:
   "compilerOptions": {
     "noImplicitAny": true,
     "target": "es6",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "declaration": true
   }
 }
 ```
 
 The pattern for `"files"` should match your .ts files, but the essential thing is that it is wrapped in an array.
-The actual pattern used comes from `babel.config.js` as `'tsSearch'` setting.
+The actual pattern used comes from `babel.config.js` as `'tsSearch'` setting. In order to create the ts declaration
+files you must add the `"declaration": true`.
 
 Add the following to the exports in your `babel.config.js`:
 
@@ -230,7 +232,7 @@ Export these functions to your own project in order to customize your build pipe
     * [.compileReadme](#module_js-build-tools.compileReadme) ⇒ <code>stream.Stream</code>
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
-    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>stream.Stream</code>
+    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>function</code>
     * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
@@ -262,7 +264,7 @@ Watch for changes and run the distribution for the changed files, then bundle an
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.typeScript"></a>
 
-### js-build-tools.typeScript() ⇒ <code>stream.Stream</code>
+### js-build-tools.typeScript() ⇒ <code>function</code>
 Simplified typescript task using tsFor.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
@@ -609,7 +611,7 @@ Micro-functions used as components for the main gulp functions.
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [partials](#module_partials)
-    * [.tsFor([srcPath], [distPath])](#module_partials.tsFor) ⇒ <code>stream.Stream</code>
+    * [.tsFor([srcPath], [distPath])](#module_partials.tsFor) ⇒ <code>function</code>
     * [.runOnChange(path)](#module_partials.runOnChange) ⇒ <code>stream.Stream</code>
         * [~pathRegex](#module_partials.runOnChange..pathRegex)
     * [.removeDirectory(dirPath)](#module_partials.removeDirectory) ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -624,7 +626,7 @@ Micro-functions used as components for the main gulp functions.
 
 <a name="module_partials.tsFor"></a>
 
-### partials.tsFor([srcPath], [distPath]) ⇒ <code>stream.Stream</code>
+### partials.tsFor([srcPath], [distPath]) ⇒ <code>function</code>
 Starting at the source directory, find all the ts files and convert them into the distribution directory.
 
 **Kind**: static method of [<code>partials</code>](#module_partials)  

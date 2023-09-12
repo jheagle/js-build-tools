@@ -6,9 +6,7 @@ var tsFor = require('./partials/tsFor')
  * Simplified typescript task using tsFor.
  * @function
  * @memberOf module:js-build-tools
- * @returns {stream.Stream}
+ * @returns {Function}
  */
-var typeScript = function typeScript () {
-  return tsFor()
-}
+var typeScript = tsFor()
 module.exports = typeScript

@@ -148,13 +148,15 @@ Create a `tsconfig.json` file in your project root with the following:
   "compilerOptions": {
     "noImplicitAny": true,
     "target": "es6",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "declaration": true
   }
 }
 ```
 
 The pattern for `"files"` should match your .ts files, but the essential thing is that it is wrapped in an array.
-The actual pattern used comes from `babel.config.js` as `'tsSearch'` setting.
+The actual pattern used comes from `babel.config.js` as `'tsSearch'` setting. In order to create the ts declaration
+files you must add the `"declaration": true`.
 
 Add the following to the exports in your `babel.config.js`:
 

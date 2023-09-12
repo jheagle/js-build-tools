@@ -14,7 +14,7 @@ const tsFor = require('./tsFor')
  * @returns {function(null=): stream.Stream}
  */
 const distSeries = (srcPath = distForSrc(), distFinalPath = gulpConfig.get('distPath'), tsSearch = gulpConfig.get('tsSearch')) => {
-  const typescript = () => tsFor(tsSearch, distFinalPath)
+  const typescript = tsFor(tsSearch, distFinalPath)
   const dist = () => distFor(srcPath, distFinalPath)
   return gulpConfig.get('useTsConfig')
     ? series(typescript, dist)

@@ -12,7 +12,7 @@ const genericFunction = () => Promise.resolve(true)
 
 jest.mock('../bundle', () => jest.fn(genericFunction))
 jest.mock('./distFor', () => jest.fn(genericFunction))
-jest.mock('./tsFor', () => jest.fn(genericFunction))
+jest.mock('./tsFor', () => jest.fn(() => genericFunction))
 jest.mock('../testQuick', () => jest.fn(genericFunction))
 
 const rawContents = 'export function sayHello(name: string) {\n' +
