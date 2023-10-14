@@ -33,11 +33,11 @@
     ]
   },
   "dependencies": {
-    "@babel/core": "^7.23.0",
+    "@babel/core": "^7.23.2",
     "@babel/plugin-proposal-throw-expressions": "^7.22.5",
-    "@babel/preset-env": "^7.22.20",
-    "@babel/preset-typescript": "^7.23.0",
-    "@babel/runtime-corejs3": "^7.23.1",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-typescript": "^7.23.2",
+    "@babel/runtime-corejs3": "^7.23.2",
     "babel-jest": "^29.7.0",
     "browserify": "^17.0.0",
     "core-js": "^3.33.0",

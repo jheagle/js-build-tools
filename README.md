@@ -1,4 +1,4 @@
-# js-build-tools
+# [js-build-tools](https://www.npmjs.com/package/js-build-tools)
 
 Centralize the build process for Node.js, JS and TypeScript projects into a single tool suite.
 
@@ -83,7 +83,7 @@ module.exports = {
   tsSearch: 'src/**/*.ts',
 
   // The path the tsconfig file for running typescript or false if no ts file given.
-  useTsConfig: 'tsconfig.json',
+  useTsConfig: false,
 
   // The search pattern for watching files for changes.
   watchSearch: 'src/**/*.js',
