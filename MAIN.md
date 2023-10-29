@@ -155,10 +155,10 @@ Create a `tsconfig.json` file in your project root with the following:
 ```
 
 The pattern for `"files"` should match your .ts files, but the essential thing is that it is wrapped in an array.
-The actual pattern used comes from `babel.config.js` as `'tsSearch'` setting. In order to create the ts declaration
+The actual pattern used comes from `build-tools.config.js` as `'tsSearch'` setting. In order to create the ts declaration
 files you must add the `"declaration": true`.
 
-Add the following to the exports in your `babel.config.js`:
+Add the following to the exports in your `build-tools.config.js`:
 
 ```js
 module.exports = {
