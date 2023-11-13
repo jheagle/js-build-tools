@@ -78,7 +78,8 @@ describe('distFor', () => {
         const babelifiedContents = fs.readFileSync(`${distPath}/distFor.js`).toString()
         expect(countMatches(babelifiedContents, '"use strict"')).toEqual(1)
         // If the below assertion fails it is because 'const' no longer is replaced with 'var'
-        // To fix, change `.browserslistrc` set `> 0.21%` to a lower number. For example, last fix changed from `> 0.24%`
+        // To fix, change `.browserslistrc` set `> 0.16%` to a lower number. For example, last fix changed from `> 0.21%`
+        // Next time, lets just change this test since we cannot set this much lower
         expect(countMatches(babelifiedContents, 'const ')).toEqual(0)
         expect(countMatches(babelifiedContents, 'var ')).toEqual(10)
         expect(countMatches(babelifiedContents, 'function')).toEqual(1)

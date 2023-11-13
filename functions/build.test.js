@@ -180,8 +180,8 @@ describe('build', () => {
       // Minify the browser files (bundleMinify)
       expect(fs.existsSync(`${browserPath}/${browserFile}.min.js`)).toBeTruthy()
       const bundledContents = fs.readFileSync(bundledFile).toString()
-      expect(countMatches(bundledContents, 'file1')).toEqual(9)
-      expect(countMatches(bundledContents, 'file2')).toEqual(9)
+      expect(countMatches(bundledContents, 'file1')).toEqual(8)
+      expect(countMatches(bundledContents, 'file2')).toEqual(8)
 
       // Generated README.md (compileReadme)
       const readmeContents = fs.readFileSync(`${readmePath}/${readmeFile}`).toString()

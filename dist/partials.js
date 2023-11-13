@@ -21,15 +21,15 @@ var removeDirectory = require('./partials/removeDirectory')
 var runOnChange = require('./partials/runOnChange')
 var tsFor = require('./partials/tsFor')
 module.exports = {
-  addToReadme: addToReadme,
-  beginWatcher: beginWatcher,
-  clean: clean,
-  distFor: distFor,
-  distForSrc: distForSrc,
-  distSeries: distSeries,
-  minifyFor: minifyFor,
-  readmeTemplate: readmeTemplate,
-  removeDirectory: removeDirectory,
-  runOnChange: runOnChange,
-  tsFor: tsFor
+  addToReadme,
+  beginWatcher,
+  clean,
+  distFor,
+  distForSrc,
+  distSeries,
+  minifyFor,
+  readmeTemplate,
+  removeDirectory,
+  runOnChange,
+  tsFor
 }
