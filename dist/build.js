@@ -1,19 +1,21 @@
 'use strict'
 
-var bundle = require('./bundle')
-var bundleLint = require('./bundleLint')
-var bundleMinify = require('./bundleMinify')
-var _require = require('./partials')
-var clean = _require.clean
-var distSeries = _require.distSeries
-var compileReadme = require('./compileReadme')
-var distLint = require('./distLint')
-var distMinify = require('./distMinify')
-var _require2 = require('gulp')
-var parallel = _require2.parallel
-var series = _require2.series
-var gulpConfig = require('../gulp.config.js')
-var testFull = require('./testFull')
+const bundle = require('./bundle')
+const bundleLint = require('./bundleLint')
+const bundleMinify = require('./bundleMinify')
+const {
+  clean,
+  distSeries
+} = require('./partials')
+const compileReadme = require('./compileReadme')
+const distLint = require('./distLint')
+const distMinify = require('./distMinify')
+const {
+  parallel,
+  series
+} = require('gulp')
+const gulpConfig = require('../gulp.config.js')
+const testFull = require('./testFull')
 
 /**
  * Runs several processes to build and validate the project.
@@ -21,11 +23,11 @@ var testFull = require('./testFull')
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
-var build = function build () {
-  var done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
-  var distLintMinify = parallel(distLint, distMinify)
-  var bundleLintMinify = parallel(bundleLint, bundleMinify)
-  var buildActions = [clean, distSeries(), distLintMinify]
+const build = function () {
+  const done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
+  const distLintMinify = parallel(distLint, distMinify)
+  const bundleLintMinify = parallel(bundleLint, bundleMinify)
+  const buildActions = [clean, distSeries(), distLintMinify]
   if (gulpConfig.get('useTsConfig')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(compileReadme)
@@ -35,12 +37,12 @@ var build = function build () {
     buildActions.push(bundle)
     buildActions.push(bundleLintMinify)
   }
-  var runActions = [series.apply(void 0, buildActions)]
+  const runActions = [series(...buildActions)]
   if (!gulpConfig.get('useTsConfig')) {
     // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
     runActions.push(compileReadme)
   }
   runActions.push(testFull)
-  return parallel.apply(void 0, runActions)(done)
+  return parallel(...runActions)(done)
 }
 module.exports = build

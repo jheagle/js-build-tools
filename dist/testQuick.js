@@ -1,8 +1,9 @@
 'use strict'
 
-var gulpConfig = require('../gulp.config.js')
-var _require = require('jest')
-var runCLI = _require.runCLI
+const gulpConfig = require('../gulp.config.js')
+const {
+  runCLI
+} = require('jest')
 
 /**
  * Run the Jest tests for files which have been modified (based on git status).
@@ -11,8 +12,8 @@ var runCLI = _require.runCLI
  * @memberOf module:js-build-tools
  * @returns {Promise<*>}
  */
-var testQuick = function testQuick () {
-  var testPath = gulpConfig.get('testPath')
+const testQuick = () => {
+  let testPath = gulpConfig.get('testPath')
   if (!Array.isArray(testPath)) {
     // The testPath must be an array of strings
     testPath = [testPath]

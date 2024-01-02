@@ -9,17 +9,17 @@
  * @memberOf module:js-build-tools
  */
 
-var addToReadme = require('./partials/addToReadme')
-var beginWatcher = require('./partials/beginWatcher')
-var clean = require('./partials/clean')
-var distFor = require('./partials/distFor')
-var distForSrc = require('./partials/distForSrc')
-var distSeries = require('./partials/distSeries')
-var minifyFor = require('./partials/minifyFor')
-var readmeTemplate = require('./partials/readmeTemplate')
-var removeDirectory = require('./partials/removeDirectory')
-var runOnChange = require('./partials/runOnChange')
-var tsFor = require('./partials/tsFor')
+const addToReadme = require('./partials/addToReadme')
+const beginWatcher = require('./partials/beginWatcher')
+const clean = require('./partials/clean')
+const distFor = require('./partials/distFor')
+const distForSrc = require('./partials/distForSrc')
+const distSeries = require('./partials/distSeries')
+const minifyFor = require('./partials/minifyFor')
+const readmeTemplate = require('./partials/readmeTemplate')
+const removeDirectory = require('./partials/removeDirectory')
+const runOnChange = require('./partials/runOnChange')
+const tsFor = require('./partials/tsFor')
 module.exports = {
   addToReadme,
   beginWatcher,

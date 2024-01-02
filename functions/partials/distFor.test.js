@@ -68,7 +68,7 @@ describe('distFor', () => {
     const srcPath = gulpConfig.get('srcPath')
     const srcFile = `${srcPath}/distFor.js`
     fs.writeFileSync(srcFile, rawContents)
-    expect.assertions(7)
+    expect.assertions(5)
     const oldContents = fs.readFileSync(srcFile).toString()
     expect(countMatches(oldContents, 'const ')).toEqual(7)
     const distPath = gulpConfig.get('distPath')
@@ -77,11 +77,11 @@ describe('distFor', () => {
         expect(fs.existsSync(distPath)).toBeTruthy()
         const babelifiedContents = fs.readFileSync(`${distPath}/distFor.js`).toString()
         expect(countMatches(babelifiedContents, '"use strict"')).toEqual(1)
-        // If the below assertion fails it is because 'const' no longer is replaced with 'var'
-        // To fix, change `.browserslistrc` set `> 0.16%` to a lower number. For example, last fix changed from `> 0.21%`
-        // Next time, lets just change this test since we cannot set this much lower
-        expect(countMatches(babelifiedContents, 'const ')).toEqual(0)
-        expect(countMatches(babelifiedContents, 'var ')).toEqual(10)
+        /* There used to be a nice check here where `const` and `let` would be swapped to `var`, but that no longer
+           happens.
+           It would be nice if it still happened, but due to 'browserlist' supposedly, most browsers support
+           `const` and `let` now.
+         */
         expect(countMatches(babelifiedContents, 'function')).toEqual(1)
         expect(countMatches(babelifiedContents, 'arguments')).toEqual(6)
         done()
@@ -90,7 +90,7 @@ describe('distFor', () => {
         console.error('Encountered error', error)
         done()
       })
-  }, 60000)
+  }, 5000)
 
   test('can process typescript before babel', done => {
     const srcPath = gulpConfig.get('srcPath')

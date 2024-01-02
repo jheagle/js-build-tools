@@ -9,16 +9,16 @@
  * @memberOf module:js-build-tools
  */
 
-var circularObject = require('./test-helpers/circularObject')
-var countMatches = require('./test-helpers/countMatches')
-var deepReferenceObject = require('./test-helpers/deepReferenceObject')
-var domItem = require('./test-helpers/domItem')
-var jsonDom = require('./test-helpers/jsonDom')
-var linkedList = require('./test-helpers/linkedList')
-var logObject = require('./test-helpers/logObject')
-var multiReferenceObject = require('./test-helpers/multiReferenceObject')
-var nodeTree = require('./test-helpers/nodeTree')
-var setUp = require('./test-helpers/setUp')
+const circularObject = require('./test-helpers/circularObject')
+const countMatches = require('./test-helpers/countMatches')
+const deepReferenceObject = require('./test-helpers/deepReferenceObject')
+const domItem = require('./test-helpers/domItem')
+const jsonDom = require('./test-helpers/jsonDom')
+const linkedList = require('./test-helpers/linkedList')
+const logObject = require('./test-helpers/logObject')
+const multiReferenceObject = require('./test-helpers/multiReferenceObject')
+const nodeTree = require('./test-helpers/nodeTree')
+const setUp = require('./test-helpers/setUp')
 module.exports = {
   circularObject,
   countMatches,

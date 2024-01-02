@@ -1,10 +1,11 @@
 'use strict'
 
-var dist = require('./dist')
-var bundle = require('./bundle')
-var gulpConfig = require('../gulp.config')
-var _require = require('gulp')
-var series = _require.series
+const dist = require('./dist')
+const bundle = require('./bundle')
+const gulpConfig = require('../gulp.config')
+const {
+  series
+} = require('gulp')
 
 /**
  * Recommended as the default task, runs the simple dist and bundle tasks.
@@ -12,8 +13,8 @@ var series = _require.series
  * @param {function} [done=null]
  * @returns {stream.Stream}
  */
-var defaultCmd = function defaultCmd () {
-  var done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
+const defaultCmd = function () {
+  const done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
   return gulpConfig.get('nodeOnly') ? series(dist)(done) : series(dist, bundle)(done)
 }
 module.exports = defaultCmd

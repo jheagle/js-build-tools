@@ -5,7 +5,7 @@
  * @memberOf module:testHelpers
  * @type {Object.<string, string|number|Object>}
  */
-var multiReferenceObject = {
+const multiReferenceObject = {
   object1: {
     name: 'someName'
   },

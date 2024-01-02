@@ -1,10 +1,11 @@
 "use strict";
 
-var fs = require('fs');
-var gulpConfig = require('../../gulp.config.js');
-var jsdoc2md = require('jsdoc-to-markdown');
-var _require = require('glob'),
-  globSync = _require.globSync;
+const fs = require('fs');
+const gulpConfig = require('../../gulp.config.js');
+const jsdoc2md = require('jsdoc-to-markdown');
+const {
+  globSync
+} = require('glob');
 
 /**
  * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
@@ -13,11 +14,7 @@ var _require = require('glob'),
  * @memberOf module:partials
  * @returns {string|Uint8Array}
  */
-var addToReadme = function addToReadme() {
-  return jsdoc2md.render({
-    files: globSync(gulpConfig.get('readmeSearch'))
-  }).then(function (readme) {
-    return fs.appendFileSync(gulpConfig.get('readmePath') + gulpConfig.get('readmeFile'), readme, gulpConfig.get('readmeOptions'));
-  });
-};
+const addToReadme = () => jsdoc2md.render({
+  files: globSync(gulpConfig.get('readmeSearch'))
+}).then(readme => fs.appendFileSync(gulpConfig.get('readmePath') + gulpConfig.get('readmeFile'), readme, gulpConfig.get('readmeOptions')));
 module.exports = addToReadme;

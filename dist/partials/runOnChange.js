@@ -1,17 +1,13 @@
 "use strict";
 
-require("core-js/modules/es.regexp.constructor.js");
-require("core-js/modules/es.regexp.exec.js");
-require("core-js/modules/es.regexp.sticky.js");
-require("core-js/modules/es.regexp.to-string.js");
-require("core-js/modules/es.string.replace.js");
-var gulpConfig = require('../../gulp.config.js');
-var bundle = require('../bundle');
-var distSeries = require('./distSeries');
-var _require = require('gulp'),
-  parallel = _require.parallel,
-  series = _require.series;
-var testQuick = require('../testQuick');
+const gulpConfig = require('../../gulp.config.js');
+const bundle = require('../bundle');
+const distSeries = require('./distSeries');
+const {
+  parallel,
+  series
+} = require('gulp');
+const testQuick = require('../testQuick');
 
 /**
  * Run this function when the watched files are modified.
@@ -39,10 +35,10 @@ var testQuick = require('../testQuick');
  * @param {string} path
  * @returns {stream.Stream}
  */
-var runOnChange = function runOnChange(path) {
-  var useTs = gulpConfig.get('useTsConfig');
-  var distPath = gulpConfig.get('distPath');
-  var srcPath = gulpConfig.get('srcPath');
+const runOnChange = path => {
+  const useTs = gulpConfig.get('useTsConfig');
+  const distPath = gulpConfig.get('distPath');
+  const srcPath = gulpConfig.get('srcPath');
   /**
    * 1. The original path comes in from src and is a .ts
    * 2. Discover the outgoing dist path where that file should go
@@ -51,13 +47,13 @@ var runOnChange = function runOnChange(path) {
    * 5. Use the dist path found previously in #2
    * 6. Use the full dist path and the dist outgoing path in distFor
    */
-  var pathRegex = new RegExp("^".concat(srcPath, "(.*\\/)(.+)\\.(js|ts)$"), 'i');
-  var distPathResult = path.replace(pathRegex, "".concat(distPath, "$1"));
-  var distSrcPath = path;
+  const pathRegex = new RegExp(`^${srcPath}(.*\\/)(.+)\\.(js|ts)$`, 'i');
+  const distPathResult = path.replace(pathRegex, `${distPath}$1`);
+  let distSrcPath = path;
   if (useTs) {
-    distSrcPath = path.replace(pathRegex, "".concat(distPath, "$1$2.js"));
+    distSrcPath = path.replace(pathRegex, `${distPath}$1$2.js`);
   }
-  var runSeries = distSeries(distSrcPath, distPathResult, path);
+  const runSeries = distSeries(distSrcPath, distPathResult, path);
   return gulpConfig.get('nodeOnly') ? series(testQuick, runSeries)() : parallel(testQuick, series(runSeries, bundle))();
 };
 module.exports = runOnChange;

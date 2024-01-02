@@ -1,6 +1,6 @@
 'use strict'
 
-var tsFor = require('./partials/tsFor')
+const tsFor = require('./partials/tsFor')
 
 /**
  * Simplified typescript task using tsFor.
@@ -8,5 +8,5 @@ var tsFor = require('./partials/tsFor')
  * @memberOf module:js-build-tools
  * @returns {Function}
  */
-var typeScript = tsFor()
+const typeScript = tsFor()
 module.exports = typeScript
