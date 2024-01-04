@@ -36,6 +36,9 @@ module.exports = {
   // The paths for directories to delete before build.
   cleanPaths: ['dist', 'browser'],
 
+  // The destination path for where generated CSS (from SASS files) should go
+  cssPath: 'browser/css',
+
   // The name of entry the distribution file.
   distMain: 'dist/main',
 
@@ -66,6 +69,12 @@ module.exports = {
   // Base directory of the project.
   rootPath: './',
 
+  // The directory were sass files will be stored
+  sassPath: 'sass',
+  
+  // The pattern for finding all sass files
+  sassSearch: 'sass/**/*.+(scss|sass)',
+
   // The directory where your source files are stored (the files you manually created).
   srcPath: 'src',
 
@@ -81,6 +90,9 @@ module.exports = {
 
   // Pattern for finding the TypeScript files
   tsSearch: 'src/**/*.ts',
+  
+  // Toggle SASS to CSS process on
+  useSass: false,
 
   // The path the tsconfig file for running typescript or false if no ts file given.
   useTsConfig: false,
@@ -102,6 +114,7 @@ const {
   defaultCmd,
   partials,
   readme,
+  sass,
   testFull,
   testQuick,
   typescript,
@@ -115,6 +128,7 @@ const {
 exports.build = build
 exports.default = defaultCmd
 exports.readme = readme
+exports.sass = sass
 exports.testFull = testFull
 exports.testQuick = testQuick
 exports.watchFull = watchFull
@@ -134,6 +148,48 @@ Example:
 const babelConfig = require('js-build-tools/babel.config')
 // You may add additional configuration here. Example: babelConfig.presets.push('@babel/preset-env')
 module.exports = babelConfig
+```
+
+### Configure HTML JS Documentation (optional)
+
+It may be desirable to generate HTML documentation for your JS files.
+
+Create a `.jsdoc.conf.js` file and add the following:
+
+```js
+const jsDocBase = require('js-build-tools/jsdoc.base')
+/* You will get a jsdoc config object with the following:
+ * {
+ *    plugins: ['plugins/markdown'],
+ *    source: {
+ *      include: [your configured distPath],
+ *      includePattern: '.+\\.js(doc|x)?$',
+ *      excludePattern: '((^|\\/|\\\\)_|.+\\.test\\..*)'
+ *    }
+ *  }
+ * You can manipulate the properties before returning in module.exports.
+ * This searches the defined 'distPath' for building the HTML JS Documentation
+ */
+module.exports = jsDocBase
+```
+
+### Configure SASS (optional)
+
+SASS support is built-in, this enables conversion of SASS files to CSS for web projects.
+
+Add the following to the exports in your `build-tools.config.js`:
+
+```js
+module.exports = {
+  // Output directory for your compiled css files, recommend css directory within your browser output directory
+  css: 'browser/css',
+  // Optional but nice to add (future support), add the directory where your sass files exist
+  sassPath: 'sass',
+  // Search pattern to find your SASS files (the below would be files ending in .scss or .sass in a directory called 'sass')
+  sassSearch: 'sass/**/*.+(scss|sass)',
+  // Enable SASS process
+  useSass: true,
+}
 ```
 
 ### Configure TypeScript (optional)
@@ -188,7 +244,9 @@ In your `package.json` file, add the following scripts:
   "scripts": {
     "build": "gulp build",
     "dev": "gulp",
+    "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
     "readme": "gulp readme",
+    "sass": "gulp sass",
     "test": "gulp testFull",
     "test:quick": "gulp testQuick",
     "watch": "gulp watchFull",

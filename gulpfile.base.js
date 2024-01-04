@@ -17,6 +17,7 @@ const distLint = require('./functions/distLint.js')
 const distMinify = require('./functions/distMinify.js')
 const gulpConfig = require('./gulp.config.js')
 const partials = require('./functions/partials.js')
+const sass = require('./functions/sass.js')
 const testFull = require('./functions/testFull.js')
 const testHelpers = require('./functions/testHelpers.js')
 const testQuick = require('./functions/testQuick.js')
@@ -36,6 +37,7 @@ module.exports = {
   gulpConfig,
   partials,
   readme: compileReadme,
+  sass,
   testFull,
   testHelpers,
   testQuick,

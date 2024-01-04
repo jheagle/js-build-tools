@@ -15,6 +15,7 @@ const {
   series
 } = require('gulp')
 const gulpConfig = require('../gulp.config.js')
+const sass = require('./sass.js')
 const testFull = require('./testFull')
 
 /**
@@ -43,6 +44,10 @@ const build = function () {
     runActions.push(compileReadme)
   }
   runActions.push(testFull)
+  if (gulpConfig.get('useSass')) {
+    // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
+    runActions.push(sass)
+  }
   return parallel(...runActions)(done)
 }
 module.exports = build

@@ -113,6 +113,7 @@ const setDefaults = {
   browserName: 'default',
   browserPath: 'browser',
   cleanPaths: ['dist', 'browser'],
+  cssPath: 'browser/css',
   distMain: 'dist/main',
   distPath: 'dist',
   distSearch: 'dist/**/*.js',
@@ -123,6 +124,8 @@ const setDefaults = {
   readmePath: './',
   readmeSearch: 'src/**/!(*.test).js',
   rootPath: './',
+  sassPath: 'sass',
+  sassSearch: 'sass/**/*.+(scss|sass)',
   srcPath: 'src',
   srcSearch: 'src/**/!(*.test).js',
   testOptions: {
@@ -138,6 +141,7 @@ const setDefaults = {
   },
   testPath: ['src'],
   tsSearch: 'src/**/*.ts',
+  useSass: false,
   useTsConfig: false,
   watchSearch: 'src/**/*.js'
 }

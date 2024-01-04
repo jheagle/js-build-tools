@@ -4,6 +4,7 @@ setUp.setDefaults('test-build')
 const gulpConfig = setUp.gulpConfig
 const build = require('./build')
 const clean = require('./partials/clean')
+const sass = require('./sass')
 const testFull = require('./testFull')
 const { countMatches } = require('./testHelpers')
 
@@ -78,6 +79,27 @@ const tsConfigContents = '{\n' +
   '  }\n' +
   '}'
 
+const sassContents = 'html\n' +
+  '  font-size: 62.5%\n' +
+  '  color: #444\n' +
+  '  font-size: 1em\n' +
+  '  line-height: 1.4\n' +
+  '  background-color: #fff\n' +
+  '\n' +
+  'html, body\n' +
+  '  width: 100%\n' +
+  '  height: 100%\n' +
+  '  margin: 0\n' +
+  '  padding: 0\n' +
+  '  position: absolute\n' +
+  '  text-align: center\n' +
+  '\n' +
+  'a\n' +
+  '  outline: none\n' +
+  '  text-decoration: none'
+
+const sassPath = gulpConfig.get('sassPath')
+
 beforeEach(
   () => setUp.beforeEach()
     .then(
@@ -86,6 +108,7 @@ beforeEach(
         const readmePath = gulpConfig.get('readmePath')
         const sourcesPath = `${srcPath}/sources`
         await fs.mkdirSync(sourcesPath)
+        await fs.mkdirSync(sassPath, { recursive: true })
         return fs.writeFileSync(`${readmePath}/MAIN.md`, mainMd)
       }
     )
@@ -185,6 +208,66 @@ describe('build', () => {
 
       // Ran 'testFull'
       expect(testFull).toHaveBeenCalled()
+      done()
+    })
+  }, 30000)
+
+  test('when nodeOnly false and useSass true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, sass', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const sourcesPath = `${srcPath}/sources`
+    const distPath = gulpConfig.get('distPath')
+    const browserFile = gulpConfig.get('browserName')
+    const browserPath = gulpConfig.get('browserPath')
+    const bundledFile = `${browserPath}/${browserFile}.js`
+    const readmePath = gulpConfig.get('readmePath')
+    const readmeFile = gulpConfig.get('readmeFile')
+    const sassFile = `${sassPath}/sassFor.sass`
+    fs.writeFileSync(sassFile, sassContents)
+    fs.writeFileSync(`${sourcesPath}/file1.js`, file1Contents)
+    fs.writeFileSync(`${sourcesPath}/file2.js`, file2Contents)
+    fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
+    gulpConfig.set('nodeOnly', false)
+    gulpConfig.set('useSass', true)
+    expect.assertions(16)
+    build(() => {
+      // Called 'clean'
+      expect(clean).toHaveBeenCalled()
+
+      // Created dist directory (distSeries)
+      expect(fs.existsSync(distPath)).toBeTruthy()
+
+      // Minify the dist files (distMinify)
+      expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
+      const babelifiedMain = fs.readFileSync(`${distPath}/main.js`).toString()
+      // Used single quotes because of distLint
+      expect(countMatches(babelifiedMain, '\'use strict\'')).toEqual(1)
+
+      // Created browser directory (bundle)
+      expect(fs.existsSync(browserPath)).toBeTruthy()
+
+      // Minify the browser files (bundleMinify)
+      expect(fs.existsSync(`${browserPath}/${browserFile}.min.js`)).toBeTruthy()
+      const bundledContents = fs.readFileSync(bundledFile).toString()
+      expect(countMatches(bundledContents, 'file1')).toEqual(7)
+      expect(countMatches(bundledContents, 'file2')).toEqual(7)
+
+      // Generated README.md (compileReadme)
+      const readmeContents = fs.readFileSync(`${readmePath}/${readmeFile}`).toString()
+      expect(countMatches(readmeContents, mainMd)).toEqual(1)
+      expect(countMatches(readmeContents, 'test-build')).toEqual(4)
+      expect(countMatches(readmeContents, 'file1')).toEqual(4)
+      expect(countMatches(readmeContents, 'file2')).toEqual(4)
+
+      // Ran 'testFull'
+      expect(testFull).toHaveBeenCalled()
+
+      // Ran 'sass'
+      const cssPath = gulpConfig.get('cssPath')
+      const cssContents = fs.readFileSync(`${cssPath}/sassFor.css`).toString()
+      expect(countMatches(cssContents, ';')).toEqual(13)
+      expect(countMatches(cssContents, '{')).toEqual(3)
+      expect(countMatches(cssContents, '}')).toEqual(3)
+
       done()
     })
   }, 30000)

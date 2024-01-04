@@ -17,6 +17,7 @@ const minifyFor = require('./partials/minifyFor')
 const readmeTemplate = require('./partials/readmeTemplate')
 const removeDirectory = require('./partials/removeDirectory')
 const runOnChange = require('./partials/runOnChange')
+const sassFor = require('./partials/sassFor')
 const tsFor = require('./partials/tsFor')
 
 module.exports = {
@@ -30,5 +31,6 @@ module.exports = {
   readmeTemplate,
   removeDirectory,
   runOnChange,
+  sassFor,
   tsFor,
 }
