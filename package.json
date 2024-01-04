@@ -63,7 +63,8 @@
     "dist",
     "functions",
     "gulpfile.base.js",
-    "gulp.config.js"
+    "gulp.config.js",
+    "jsdoc.base.js"
   ],
   "funding": "https://www.paypal.com/donate/?business=LRYR6SZRWKXVY&no_recurring=0&item_name=Let%27s+build+together+today+to+simplify+our+jobs+tomorrow.&currency_code=CAD"
 }
