@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1><a href="https://www.npmjs.com/package/js-build-tools">js-build-tools</a></h1>
+<p>Centralize the build process for Node.js, JS and TypeScript projects into a single tool suite.</p>
+<h3>Goals</h3>
+<p>Using this tool suite, you can:</p>
+<ul>
+<li>Parse TypeScript into JS distribution files</li>
+<li>Create formatted distribution files to be used in a node / commonjs environment.</li>
+<li>Bundle your distribution files to be used in a browser environment.</li>
+<li>Run tests and watch for changes.</li>
+<li>Generate jsdoc readme files.</li>
+</ul>
+<h2>Installation</h2>
+<p>In your project's root directory, run: <code>npm install --save-dev gulp js-build-tools</code>
+(or <code>yarn add --dev gulp js-build-tools</code> if you use Yarn).</p>
+<p>It is recommended to install gulp with the <code>-g</code> flag, so that you can run it with <code>gulp</code> instead
+of <code>node_modules/.bin/gulp</code>.</p>
+<h2>Configuration</h2>
+<p>In your project's root directory, create a <code>build-tools.config.js</code> file. This can contain any of the following (values
+provided are the defaults):</p>
+<pre class="prettyprint source lang-js"><code>module.exports = {
+  // The name to use for the browser-bundled output file (.js will be appended).
+  browserName: 'my-package',
+
+  // The output directory for browser-bundled files.
+  browserPath: 'browser',
+
+  // The paths for directories to delete before build.
+  cleanPaths: ['dist', 'browser'],
+
+  // The destination path for where generated CSS (from SASS files) should go
+  cssPath: 'browser/css',
+
+  // The name of entry the distribution file.
+  distMain: 'dist/main',
+
+  // The output directory for the distribution files.
+  distPath: 'dist',
+
+  // The search pattern used for retrieving compiled distribution files.
+  distSearch: 'dist/**/*.js',
+
+  // 'true' to only generate node environment files.
+  nodeOnly: false,
+
+  // The name of the output documentation markdown file.
+  readmeFile: 'README.md',
+
+  // The directory to output the readme file in.
+  readmePath: './',
+
+  // Options for formatting the output readme.
+  readmeOptions: 'utf8',
+
+  // The file which will be pre-fixed to your README.md output.
+  readmeTemplate: 'MAIN.md',
+
+  // Location of files to use for compiling documentation into the readme.
+  readmeSearch: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
+
+  // Base directory of the project.
+  rootPath: './',
+
+  // The directory were sass files will be stored
+  sassPath: 'sass',
+  
+  // The pattern for finding all sass files
+  sassSearch: 'sass/**/*.+(scss|sass)',
+
+  // The directory where your source files are stored (the files you manually created).
+  srcPath: 'src',
+
+  // The search pattern used for gathering source files for distribution.
+  srcSearch: 'src/**/!(*.test).js',
+
+  // Additional flags for programatically running Jest Cli.
+  testOptions: null,
+
+  // The directory where Jest test files are stored.
+  // By default stored as *.test.js adjacent with the files they are testing).
+  testPath: 'src',
+
+  // Pattern for finding the TypeScript files
+  tsSearch: 'src/**/*.ts',
+  
+  // Toggle SASS to CSS process on
+  useSass: false,
+
+  // The path the tsconfig file for running typescript or false if no ts file given.
+  useTsConfig: false,
+
+  // The search pattern for watching files for changes.
+  watchSearch: 'src/**/*.js',
+}
+</code></pre>
+<h3>Create your local gulpfile.js</h3>
+<p>In your project's root directory, create a <code>gulpfile.js</code> file, in here you can require any of the functions you need.
+For example:</p>
+<pre class="prettyprint source lang-js"><code>// Your local gulpfile.js
+const {
+  build,
+  defaultCmd,
+  partials,
+  readme,
+  sass,
+  testFull,
+  testQuick,
+  typescript,
+  watchFull,
+  watchTest
+} = require('js-build-tools')
+
+// Everything you export will be created as a gulp task.
+// You can build your own tasks here as well by using some of the functions `js-build-tools/functions`.
+// You can list your available tasks by running `gulp --tasks`.
+exports.build = build
+exports.default = defaultCmd
+exports.readme = readme
+exports.sass = sass
+exports.testFull = testFull
+exports.testQuick = testQuick
+exports.watchFull = watchFull
+exports.watchTest = watchTest
+</code></pre>
+<p>Verify your tasks are available by running <code>gulp --tasks</code>.</p>
+<h3>Configure Babel</h3>
+<p>Depending on how you wrote your test files, Jest may require some Babel configuration.
+Create a <code>babel.config.js</code> file in the root directory of your project.
+You can then use the recommended configuration by requiring the <code>babel.config.js</code> file into your own configuration file.
+Example:</p>
+<pre class="prettyprint source lang-js"><code>const babelConfig = require('js-build-tools/babel.config')
+// You may add additional configuration here. Example: babelConfig.presets.push('@babel/preset-env')
+module.exports = babelConfig
+</code></pre>
+<h3>Configure HTML JS Documentation (optional)</h3>
+<p>It may be desirable to generate HTML documentation for your JS files.</p>
+<p>Create a <code>.jsdoc.conf.js</code> file and add the following:</p>
+<pre class="prettyprint source lang-js"><code>const jsDocBase = require('js-build-tools/jsdoc.base')
+/* You will get a jsdoc config object with the following:
+ * {
+ *    plugins: ['plugins/markdown'],
+ *    source: {
+ *      include: [your configured distPath],
+ *      includePattern: '.+\\.js(doc|x)?$',
+ *      excludePattern: '((^|\\/|\\\\)_|.+\\.test\\..*)'
+ *    }
+ *  }
+ * You can manipulate the properties before returning in module.exports.
+ * This searches the defined 'distPath' for building the HTML JS Documentation
+ */
+module.exports = jsDocBase
+</code></pre>
+<h3>Configure SASS (optional)</h3>
+<p>SASS support is built-in, this enables conversion of SASS files to CSS for web projects.</p>
+<p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
+<pre class="prettyprint source lang-js"><code>module.exports = {
+  // Output directory for your compiled css files, recommend css directory within your browser output directory
+  css: 'browser/css',
+  // Optional but nice to add (future support), add the directory where your sass files exist
+  sassPath: 'sass',
+  // Search pattern to find your SASS files (the below would be files ending in .scss or .sass in a directory called 'sass')
+  sassSearch: 'sass/**/*.+(scss|sass)',
+  // Enable SASS process
+  useSass: true,
+}
+</code></pre>
+<h3>Configure TypeScript (optional)</h3>
+<p>Create a <code>tsconfig.json</code> file in your project root with the following:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;files&quot;: [
+    &quot;src/**/*.ts&quot;
+  ],
+  &quot;compilerOptions&quot;: {
+    &quot;noImplicitAny&quot;: true,
+    &quot;target&quot;: &quot;es6&quot;,
+    &quot;moduleResolution&quot;: &quot;node&quot;,
+    &quot;declaration&quot;: true
+  }
+}
+</code></pre>
+<p>The pattern for <code>&quot;files&quot;</code> should match your .ts files, but the essential thing is that it is wrapped in an array.
+The actual pattern used comes from <code>build-tools.config.js</code> as <code>'tsSearch'</code> setting. In order to create the ts declaration
+files you must add the <code>&quot;declaration&quot;: true</code>.</p>
+<p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
+<pre class="prettyprint source lang-js"><code>module.exports = {
+  readmeSearch: 'dist/**/!(*.min).js',
+  useTsConfig: 'tsconfig.json',
+}
+</code></pre>
+<p>The <code>js-to-markdown</code> only works on .js files, so we run the readme search on the built dist files. Also, we want to
+register the tsconfig.json we created earlier and will alter the processes to build for TypeScript.</p>
+<p>Update <code>babel.config.js</code> with the following:</p>
+<pre class="prettyprint source lang-js"><code>const babelConfig = require('js-build-tools/babel.config')
+// This is the important line, we need to add compatibility for Jest to run tests on .ts files
+babelConfig.presets.push('@babel/preset-typescript')
+module.exports = babelConfig
+</code></pre>
+<h3>Configure Scripts</h3>
+<p>In your <code>package.json</code> file, add the following scripts:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;scripts&quot;: {
+    &quot;build&quot;: &quot;gulp build&quot;,
+    &quot;dev&quot;: &quot;gulp&quot;,
+    &quot;htmldocs&quot;: &quot;jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs&quot;,
+    &quot;readme&quot;: &quot;gulp readme&quot;,
+    &quot;sass&quot;: &quot;gulp sass&quot;,
+    &quot;test&quot;: &quot;gulp testFull&quot;,
+    &quot;test:quick&quot;: &quot;gulp testQuick&quot;,
+    &quot;watch&quot;: &quot;gulp watchFull&quot;,
+    &quot;watch:test&quot;: &quot;gulp watchTest&quot;
+  }
+}
+</code></pre>
+<h2>Usage</h2>
+<p>Run any of the above commands with <code>gulp</code> or <code>npm run</code>.</p>
+<h1>Available functions documentation</h1></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-partials.html">partials</a></li><li><a href="module-testHelpers.html">testHelpers</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Jan 04 2024 13:50:09 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

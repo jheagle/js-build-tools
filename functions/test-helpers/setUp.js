@@ -17,8 +17,10 @@ const setDefaults = (testDir = 'test-temp') => {
   srcPath = `${tempDir}src`
   const distPath = `${tempDir}dist`
   const browserPath = `${tempDir}browser`
+  const sassPath = `${tempDir}sass`
   gulpConfig.set('browserPath', browserPath)
   gulpConfig.set('cleanPaths', [distPath, browserPath])
+  gulpConfig.set('cssPath', `${browserPath}/css`)
   gulpConfig.set('distMain', `${distPath}/main`)
   gulpConfig.set('distPath', distPath)
   gulpConfig.set('distSearch', `${distPath}/**/*.js`)
@@ -26,6 +28,8 @@ const setDefaults = (testDir = 'test-temp') => {
   gulpConfig.set('readmePath', tempDir)
   gulpConfig.set('readmeSearch', `${srcPath}/**/!(*.test).js`)
   gulpConfig.set('rootPath', tempDir)
+  gulpConfig.set('sassPath', sassPath)
+  gulpConfig.set('sassSearch', `${sassPath}/**/*.+(scss|sass)`)
   gulpConfig.set('srcPath', srcPath)
   gulpConfig.set('srcSearch', `${srcPath}/**/!(*.test).js`)
   gulpConfig.set('tsSearch', `${srcPath}/**/*.ts`)
