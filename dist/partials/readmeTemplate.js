@@ -9,7 +9,6 @@ const rename = require('gulp-rename');
 
 /**
  * Copy a readme template into the README.md file.
- * @function
  * @memberOf module:partials
  * @returns {*}
  */

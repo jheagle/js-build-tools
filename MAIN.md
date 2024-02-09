@@ -47,6 +47,18 @@ module.exports = {
 
   // The search pattern used for retrieving compiled distribution files.
   distSearch: 'dist/**/*.js',
+  
+  // Path to output fonts
+  fontDest: 'browser/fonts',
+
+  // Path to search for fonts
+  fontSearch: 'src/fonts/**/*',
+
+  // Path to output images
+  imageDest: 'browser/img',
+
+  // Path to search for images
+  imageSearch: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
 
   // 'true' to only generate node environment files.
   nodeOnly: false,
@@ -90,6 +102,12 @@ module.exports = {
 
   // Pattern for finding the TypeScript files
   tsSearch: 'src/**/*.ts',
+
+  // Toggle copy directory of fonts on
+  useFonts: false,
+
+  // Toggle image minify and copy process
+  useImages: false,
   
   // Toggle SASS to CSS process on
   useSass: false,
@@ -171,6 +189,40 @@ const jsDocBase = require('js-build-tools/jsdoc.base')
  * This searches the defined 'distPath' for building the HTML JS Documentation
  */
 module.exports = jsDocBase
+```
+
+### Configure move fonts (optional)
+
+Be able to copy a source directory of fonts into the distribution path.
+
+Add the following to the exports in your `build-tools.config.js`:
+
+```js
+module.exports = {
+  // Output directory for your font files
+  fontDest: 'browser/fonts',
+  // Search pattern to find your font files
+  fontSearch: 'src/fonts/**/*',
+  // Enable fonts process
+  useFonts: true,
+}
+```
+
+### Configure move and minify images (optional)
+
+Be able to copy and reduce the file size of images into an output path.
+
+Add the following to the exports in your `build-tools.config.js`:
+
+```js
+module.exports = {
+  // Output directory for your images files
+  imageDest: 'browser/img',
+  // Search pattern to find your images
+  imageSearch: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+  // Enable image process
+  useImages: true,
+}
 ```
 
 ### Configure SASS (optional)

@@ -6,7 +6,6 @@ const sass = require('gulp-sass')(require('sass'))
 
 /**
  * Build the CSS for a given source pattern.
- * @function
  * @memberOf module:partials
  * @param {string|array} [srcSearch='src/config/path/sass/for']
  * @param {string} [cssPath='css/config/path']

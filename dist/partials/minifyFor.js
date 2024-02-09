@@ -11,7 +11,6 @@ const rename = require('gulp-rename');
 
 /**
  * Minify files and rename the output with '.min' extension.
- * @function
  * @memberOf module:partials
  * @returns {*}
  */

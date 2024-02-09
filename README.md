@@ -47,6 +47,18 @@ module.exports = {
 
   // The search pattern used for retrieving compiled distribution files.
   distSearch: 'dist/**/*.js',
+  
+  // Path to output fonts
+  fontDest: 'browser/fonts',
+
+  // Path to search for fonts
+  fontSearch: 'src/fonts/**/*',
+
+  // Path to output images
+  imageDest: 'browser/img',
+
+  // Path to search for images
+  imageSearch: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
 
   // 'true' to only generate node environment files.
   nodeOnly: false,
@@ -90,6 +102,12 @@ module.exports = {
 
   // Pattern for finding the TypeScript files
   tsSearch: 'src/**/*.ts',
+
+  // Toggle copy directory of fonts on
+  useFonts: false,
+
+  // Toggle image minify and copy process
+  useImages: false,
   
   // Toggle SASS to CSS process on
   useSass: false,
@@ -171,6 +189,40 @@ const jsDocBase = require('js-build-tools/jsdoc.base')
  * This searches the defined 'distPath' for building the HTML JS Documentation
  */
 module.exports = jsDocBase
+```
+
+### Configure move fonts (optional)
+
+Be able to copy a source directory of fonts into the distribution path.
+
+Add the following to the exports in your `build-tools.config.js`:
+
+```js
+module.exports = {
+  // Output directory for your font files
+  fontDest: 'browser/fonts',
+  // Search pattern to find your font files
+  fontSearch: 'src/fonts/**/*',
+  // Enable fonts process
+  useFonts: true,
+}
+```
+
+### Configure move and minify images (optional)
+
+Be able to copy and reduce the file size of images into an output path.
+
+Add the following to the exports in your `build-tools.config.js`:
+
+```js
+module.exports = {
+  // Output directory for your images files
+  imageDest: 'browser/img',
+  // Search pattern to find your images
+  imageSearch: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+  // Enable image process
+  useImages: true,
+}
 ```
 
 ### Configure SASS (optional)
@@ -271,7 +323,7 @@ Run any of the above commands with `gulp` or `npm run`.
 <dd><p>Modify these configurations to match your project specifications.</p>
 </dd>
 <dt><a href="#module_testHelpers">testHelpers</a></dt>
-<dd><p>An assortment of objects that can be used in tests and some functions to help debug and write tests.</p>
+<dd><p>Export the setUp helper.</p>
 </dd>
 <dt><a href="#module_partials">partials</a></dt>
 <dd><p>Micro-functions used as components for the main gulp functions.</p>
@@ -287,21 +339,29 @@ Export these functions to your own project in order to customize your build pipe
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [js-build-tools](#module_js-build-tools)
+    * [.typeScript](#module_js-build-tools.typeScript) ⇒ <code>function</code>
     * [.compileReadme](#module_js-build-tools.compileReadme) ⇒ <code>stream.Stream</code>
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
-    * [.typeScript()](#module_js-build-tools.typeScript) ⇒ <code>function</code>
     * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.images()](#module_js-build-tools.images) ⇒ <code>stream.Stream</code>
     * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
     * [.distLint()](#module_js-build-tools.distLint) ⇒ <code>\*</code>
     * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
     * [.defaultCmd([done])](#module_js-build-tools.defaultCmd) ⇒ <code>stream.Stream</code>
+    * [.copyFonts()](#module_js-build-tools.copyFonts) ⇒ <code>stream.Stream</code>
     * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
     * [.bundleLint()](#module_js-build-tools.bundleLint) ⇒ <code>stream.Stream</code>
     * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>stream.Stream</code>
     * [.build()](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
 
+<a name="module_js-build-tools.typeScript"></a>
+
+### js-build-tools.typeScript ⇒ <code>function</code>
+Simplified typescript task using tsFor.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.compileReadme"></a>
 
 ### js-build-tools.compileReadme ⇒ <code>stream.Stream</code>
@@ -320,12 +380,6 @@ Watch for changes and run the tests.
 Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.typeScript"></a>
-
-### js-build-tools.typeScript() ⇒ <code>function</code>
-Simplified typescript task using tsFor.
-
-**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.testQuick"></a>
 
 ### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -336,6 +390,12 @@ Run the Jest tests for files which have been modified (based on git status).Con
 
 ### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
 Run all tests with jest.Configure where tests are located by using 'testPath'.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.images"></a>
+
+### js-build-tools.images() ⇒ <code>stream.Stream</code>
+Move and optimize the images into the browser folder using configured settings.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.distMinify"></a>
@@ -367,6 +427,12 @@ Recommended as the default task, runs the simple dist and bundle tasks.
 | --- | --- | --- |
 | [done] | <code>function</code> | <code></code> | 
 
+<a name="module_js-build-tools.copyFonts"></a>
+
+### js-build-tools.copyFonts() ⇒ <code>stream.Stream</code>
+Move the font files into the browser directory.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.bundleMinify"></a>
 
 ### js-build-tools.bundleMinify() ⇒ <code>\*</code>
@@ -539,68 +605,40 @@ A set of Configurations options defined by Settings.
 <a name="module_testHelpers"></a>
 
 ## testHelpers
-An assortment of objects that can be used in tests and some functions to help debug and write tests.
+Export the setUp helper.
 
 **Version**: 2.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [testHelpers](#module_testHelpers)
-    * [.nodeTree](#module_testHelpers.nodeTree) : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
-    * [.multiReferenceObject](#module_testHelpers.multiReferenceObject) : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
-    * [.linkedList](#module_testHelpers.linkedList) : <code>Object.&lt;string, (string\|Object)&gt;</code>
-    * [.jsonDom](#module_testHelpers.jsonDom) : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
-    * [.domItem](#module_testHelpers.domItem) : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
-    * [.deepReferenceObject](#module_testHelpers.deepReferenceObject) : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
-    * [.circularObject](#module_testHelpers.circularObject) : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
+    * [.exports.createTempDir](#module_testHelpers.exports.createTempDir) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+    * [.exports.beforeEach](#module_testHelpers.exports.beforeEach) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+    * [.exports.afterEach](#module_testHelpers.exports.afterEach) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.setDefaults(testDir)](#module_testHelpers.setDefaults)
-    * [.createTempDir([exists])](#module_testHelpers.createTempDir) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
-    * [.exports.beforeEach()](#module_testHelpers.exports.beforeEach) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
-    * [.exports.afterEach()](#module_testHelpers.exports.afterEach) ⇒ <code>Promise.&lt;\*&gt;</code>
-    * [.logObject(object, [label], [outputType])](#module_testHelpers.logObject) ⇒ <code>string</code> \| <code>undefined</code>
-    * [.countMatches(content, search)](#module_testHelpers.countMatches) ⇒ <code>number</code>
 
-<a name="module_testHelpers.nodeTree"></a>
+<a name="module_testHelpers.exports.createTempDir"></a>
 
-### testHelpers.nodeTree : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
-Sample NodeTree for testing circular references and arrays.
+### testHelpers.exports.createTempDir ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+Ensure that the del has completed, recursively attempt to delete and recreate
 
-**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
-<a name="module_testHelpers.multiReferenceObject"></a>
+**Kind**: static property of [<code>testHelpers</code>](#module_testHelpers)  
 
-### testHelpers.multiReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
-Sample of object containing multiple references.
+| Param | Type | Default |
+| --- | --- | --- |
+| [exists] | <code>boolean</code> | <code>true</code> | 
 
-**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
-<a name="module_testHelpers.linkedList"></a>
+<a name="module_testHelpers.exports.beforeEach"></a>
 
-### testHelpers.linkedList : <code>Object.&lt;string, (string\|Object)&gt;</code>
-Sample LinkedList for testing circular references.
+### testHelpers.exports.beforeEach ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
+In the Jest.beforeEach function call this one to set up the temp directory.
 
-**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
-<a name="module_testHelpers.jsonDom"></a>
+**Kind**: static property of [<code>testHelpers</code>](#module_testHelpers)  
+<a name="module_testHelpers.exports.afterEach"></a>
 
-### testHelpers.jsonDom : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
-Sample of jsonDom object containing empty nested array and objects
+### testHelpers.exports.afterEach ⇒ <code>Promise.&lt;\*&gt;</code>
+In the Jest.afterEach function call this one to clean up and remove the temp directory.
 
-**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
-<a name="module_testHelpers.domItem"></a>
-
-### testHelpers.domItem : <code>Object.&lt;string, (string\|number\|Array\|Object)&gt;</code>
-Sample of domItem child with nested child and optional details
-
-**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
-<a name="module_testHelpers.deepReferenceObject"></a>
-
-### testHelpers.deepReferenceObject : <code>Object.&lt;string, (string\|number\|Object)&gt;</code>
-Sample object with deep references.
-
-**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
-<a name="module_testHelpers.circularObject"></a>
-
-### testHelpers.circularObject : <code>Object.&lt;string, (string\|Object\|Array)&gt;</code>
-Multilayered node tree-like structure with parent references
-
-**Kind**: static constant of [<code>testHelpers</code>](#module_testHelpers)  
+**Kind**: static property of [<code>testHelpers</code>](#module_testHelpers)  
 <a name="module_testHelpers.setDefaults"></a>
 
 ### testHelpers.setDefaults(testDir)
@@ -611,54 +649,6 @@ Update the gulp configurations with the test data. Set the test directory where 
 | Param | Type | Default |
 | --- | --- | --- |
 | testDir | <code>string</code> | <code>&quot;test-temp&quot;</code> | 
-
-<a name="module_testHelpers.createTempDir"></a>
-
-### testHelpers.createTempDir([exists]) ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
-Ensure that the del has completed, recursively attempt to delete and recreate
-
-**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [exists] | <code>boolean</code> | <code>true</code> | 
-
-<a name="module_testHelpers.exports.beforeEach"></a>
-
-### testHelpers.exports.beforeEach() ⇒ <code>Promise.&lt;(\*\|void)&gt;</code>
-In the Jest.beforeEach function call this one to set up the temp directory.
-
-**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
-<a name="module_testHelpers.exports.afterEach"></a>
-
-### testHelpers.exports.afterEach() ⇒ <code>Promise.&lt;\*&gt;</code>
-In the Jest.afterEach function call this one to clean up and remove the temp directory.
-
-**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
-<a name="module_testHelpers.logObject"></a>
-
-### testHelpers.logObject(object, [label], [outputType]) ⇒ <code>string</code> \| <code>undefined</code>
-Log out an object in a nicely formatted way.
-
-**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| object | <code>Object</code> |  | 
-| [label] | <code>string</code> | <code>&quot;logging&quot;</code> | 
-| [outputType] | <code>string</code> | <code>&quot;log&quot;</code> | 
-
-<a name="module_testHelpers.countMatches"></a>
-
-### testHelpers.countMatches(content, search) ⇒ <code>number</code>
-Simple way to count string occurrences for testing.
-
-**Kind**: static method of [<code>testHelpers</code>](#module_testHelpers)  
-
-| Param | Type |
-| --- | --- |
-| content | <code>string</code> | 
-| search | <code>string</code> | 
 
 <a name="module_partials"></a>
 
@@ -676,9 +666,11 @@ Micro-functions used as components for the main gulp functions.
     * [.removeDirectory(dirPath)](#module_partials.removeDirectory) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.readmeTemplate()](#module_partials.readmeTemplate) ⇒ <code>\*</code>
     * [.minifyFor()](#module_partials.minifyFor) ⇒ <code>\*</code>
+    * [.imagesFor([imageSrc], [imageDest])](#module_partials.imagesFor) ⇒ <code>stream.Stream</code>
     * [.distSeries([srcPath], [distFinalPath], [tsSearch])](#module_partials.distSeries) ⇒ <code>function</code>
     * [.distForSrc([useTs])](#module_partials.distForSrc) ⇒ <code>string</code>
     * [.distFor([srcPath], [destPath])](#module_partials.distFor) ⇒ <code>stream.Stream</code>
+    * [.copyFor(srcPath, destPath)](#module_partials.copyFor) ⇒ <code>stream.Stream</code>
     * [.clean()](#module_partials.clean) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> \| <code>\*</code>
     * [.beginWatcher()](#module_partials.beginWatcher) ⇒ <code>FSWatcher</code>
     * [.addToReadme()](#module_partials.addToReadme) ⇒ <code>string</code> \| <code>Uint8Array</code>
@@ -752,6 +744,18 @@ Copy a readme template into the README.md file.
 Minify files and rename the output with '.min' extension.
 
 **Kind**: static method of [<code>partials</code>](#module_partials)  
+<a name="module_partials.imagesFor"></a>
+
+### partials.imagesFor([imageSrc], [imageDest]) ⇒ <code>stream.Stream</code>
+Move and optimize images into the browser directory.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [imageSrc] | <code>string</code> \| <code>array</code> | <code>&quot;src/images/pattern&quot;</code> | 
+| [imageDest] | <code>string</code> | <code>&quot;dest/image/folder&quot;</code> | 
+
 <a name="module_partials.distSeries"></a>
 
 ### partials.distSeries([srcPath], [distFinalPath], [tsSearch]) ⇒ <code>function</code>
@@ -787,6 +791,18 @@ Build the distribution for a given source pattern.
 | --- | --- | --- |
 | [srcPath] | <code>string</code> \| <code>array</code> | <code>&quot;&#x27;src/config/path/dist/for&#x27;&quot;</code> | 
 | [destPath] | <code>string</code> | <code>&quot;&#x27;dist/config/path&#x27;&quot;</code> | 
+
+<a name="module_partials.copyFor"></a>
+
+### partials.copyFor(srcPath, destPath) ⇒ <code>stream.Stream</code>
+Copy some files to a different location.
+
+**Kind**: static method of [<code>partials</code>](#module_partials)  
+
+| Param | Type |
+| --- | --- |
+| srcPath | <code>string</code> \| <code>array</code> | 
+| destPath | <code>string</code> | 
 
 <a name="module_partials.clean"></a>
 

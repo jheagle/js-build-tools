@@ -12,9 +12,11 @@
 const addToReadme = require('./partials/addToReadme')
 const beginWatcher = require('./partials/beginWatcher')
 const clean = require('./partials/clean')
+const copyFor = require('./partials/copyFor')
 const distFor = require('./partials/distFor')
 const distForSrc = require('./partials/distForSrc')
 const distSeries = require('./partials/distSeries')
+const imagesFor = require('./partials/imagesFor.js')
 const minifyFor = require('./partials/minifyFor')
 const readmeTemplate = require('./partials/readmeTemplate')
 const removeDirectory = require('./partials/removeDirectory')
@@ -25,9 +27,11 @@ module.exports = {
   addToReadme,
   beginWatcher,
   clean,
+  copyFor,
   distFor,
   distForSrc,
   distSeries,
+  imagesFor,
   minifyFor,
   readmeTemplate,
   removeDirectory,

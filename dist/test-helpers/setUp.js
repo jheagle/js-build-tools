@@ -1,77 +1,68 @@
 "use strict";
 
-const fs = require('fs');
-// Import the configurations and override some of them in order to direct to the temp directory.
+// Import the configurations and override some of them to direct to the temp directory.
 const gulpConfig = require('../../gulp.config.js');
 const {
-  removeDirectory
-} = require('../partials');
+  setUp
+} = require('test-filesystem');
 let tempDir = 'test-temp/';
-let srcPath = `${tempDir}src`;
+let srcPath = "".concat(tempDir, "src");
 
 /**
  * Update the gulp configurations with the test data. Set the test directory where temp files will be created for testing.
- * @function
  * @memberOf module:testHelpers
  * @param {string} testDir
  */
 const setDefaults = function () {
   let testDir = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'test-temp';
-  tempDir = `${testDir}/`;
-  srcPath = `${tempDir}src`;
-  const distPath = `${tempDir}dist`;
-  const browserPath = `${tempDir}browser`;
-  const sassPath = `${tempDir}sass`;
+  tempDir = "".concat(testDir, "/");
+  srcPath = "".concat(tempDir, "src");
+  setUp.setDefaults(tempDir);
+  const distPath = "".concat(tempDir, "dist");
+  const browserPath = "".concat(tempDir, "browser");
+  const sassPath = "".concat(tempDir, "sass");
   gulpConfig.set('browserPath', browserPath);
   gulpConfig.set('cleanPaths', [distPath, browserPath]);
-  gulpConfig.set('cssPath', `${browserPath}/css`);
-  gulpConfig.set('distMain', `${distPath}/main`);
+  gulpConfig.set('cssPath', "".concat(browserPath, "/css"));
+  gulpConfig.set('distMain', "".concat(distPath, "/main"));
   gulpConfig.set('distPath', distPath);
-  gulpConfig.set('distSearch', `${distPath}/**/*.js`);
-  gulpConfig.set('readmeTemplate', `${tempDir}MAIN.md`);
+  gulpConfig.set('distSearch', "".concat(distPath, "/**/*.js"));
+  gulpConfig.set('fontDest', "".concat(browserPath, "/fonts"));
+  gulpConfig.set('fontSearch', "".concat(srcPath, "/fonts/**/*"));
+  gulpConfig.set('imageDest', "".concat(browserPath, "/img"));
+  gulpConfig.set('imageSearch', "".concat(srcPath, "/img/**/*.+(png|jpg|jpeg|gif|svg)"));
+  gulpConfig.set('readmeTemplate', "".concat(tempDir, "MAIN.md"));
   gulpConfig.set('readmePath', tempDir);
-  gulpConfig.set('readmeSearch', `${srcPath}/**/!(*.test).js`);
+  gulpConfig.set('readmeSearch', "".concat(srcPath, "/**/!(*.test).js"));
   gulpConfig.set('rootPath', tempDir);
   gulpConfig.set('sassPath', sassPath);
-  gulpConfig.set('sassSearch', `${sassPath}/**/*.+(scss|sass)`);
+  gulpConfig.set('sassSearch', "".concat(sassPath, "/**/*.+(scss|sass)"));
   gulpConfig.set('srcPath', srcPath);
-  gulpConfig.set('srcSearch', `${srcPath}/**/!(*.test).js`);
-  gulpConfig.set('tsSearch', `${srcPath}/**/*.ts`);
-  gulpConfig.set('watchSearch', `${srcPath}/**/*.js`);
+  gulpConfig.set('srcSearch', "".concat(srcPath, "/**/!(*.test).js"));
+  gulpConfig.set('tsSearch', "".concat(srcPath, "/**/*.ts"));
+  gulpConfig.set('watchSearch', "".concat(srcPath, "/**/*.js"));
 };
 exports.setDefaults = setDefaults;
 exports.gulpConfig = gulpConfig;
 
 /**
  * Ensure that the del has completed, recursively attempt to delete and recreate
- * @function
  * @memberOf module:testHelpers
  * @param {boolean} [exists=true]
  * @returns {Promise<*|void>}
  */
-const createTempDir = async function () {
-  let exists = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-  if (exists) {
-    return removeDirectory(tempDir).then(removedDir => createTempDir(fs.existsSync(removedDir))).catch(error => console.error('Error: ', error));
-  }
-  return fs.mkdirSync(srcPath, {
-    recursive: true
-  });
-};
-exports.createTempDir = createTempDir;
+exports.createTempDir = setUp.createTempDir;
 
 /**
  * In the Jest.beforeEach function call this one to set up the temp directory.
- * @function
  * @memberOf module:testHelpers
  * @returns {Promise<*|void>}
  */
-exports.beforeEach = () => createTempDir();
+exports.beforeEach = setUp.beforeEach;
 
 /**
  * In the Jest.afterEach function call this one to clean up and remove the temp directory.
- * @function
  * @memberOf module:testHelpers
  * @returns {Promise<*>}
  */
-exports.afterEach = () => removeDirectory(tempDir);
+exports.afterEach = setUp.afterEach;

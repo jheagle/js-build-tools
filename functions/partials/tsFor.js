@@ -4,7 +4,6 @@ const ts = require('gulp-typescript')
 
 /**
  * Starting at the source directory, find all the ts files and convert them into the distribution directory.
- * @function
  * @memberOf module:partials
  * @param {string|array} [srcPath='']
  * @param {string} [distPath='']

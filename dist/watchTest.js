@@ -8,7 +8,6 @@ const testQuick = require('./testQuick')
 
 /**
  * Watch for changes and run the tests.
- * @function
  * @memberOf module:js-build-tools
  * @returns {*}
  */

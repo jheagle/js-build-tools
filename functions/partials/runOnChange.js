@@ -25,7 +25,6 @@ const testQuick = require('../testQuick')
  *
  * // The resulting replaced path for the destination folder
  * distPathResult = 'dist/some/path/'
- * @function
  * @memberOf module:partials
  * @param {string} path
  * @returns {stream.Stream}
