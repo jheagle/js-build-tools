@@ -3,7 +3,7 @@ const setUp = require('./test-helpers/setUp')
 setUp.setDefaults('test-bundle')
 const gulpConfig = setUp.gulpConfig
 const bundle = require('./bundle')
-const { countMatches } = require('./testHelpers')
+const { countMatches } = require('test-filesystem')
 
 const file1Contents = 'function file1 () {\n' +
   '  console.log(\'Hello from file1\')\n' +

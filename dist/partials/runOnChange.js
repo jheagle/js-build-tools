@@ -1,5 +1,6 @@
 "use strict";
 
+require("core-js/modules/es.string.replace.js");
 const gulpConfig = require('../../gulp.config.js');
 const bundle = require('../bundle');
 const distSeries = require('./distSeries');
@@ -30,7 +31,6 @@ const testQuick = require('../testQuick');
  *
  * // The resulting replaced path for the destination folder
  * distPathResult = 'dist/some/path/'
- * @function
  * @memberOf module:partials
  * @param {string} path
  * @returns {stream.Stream}
@@ -47,11 +47,11 @@ const runOnChange = path => {
    * 5. Use the dist path found previously in #2
    * 6. Use the full dist path and the dist outgoing path in distFor
    */
-  const pathRegex = new RegExp(`^${srcPath}(.*\\/)(.+)\\.(js|ts)$`, 'i');
-  const distPathResult = path.replace(pathRegex, `${distPath}$1`);
+  const pathRegex = new RegExp("^".concat(srcPath, "(.*\\/)(.+)\\.(js|ts)$"), 'i');
+  const distPathResult = path.replace(pathRegex, "".concat(distPath, "$1"));
   let distSrcPath = path;
   if (useTs) {
-    distSrcPath = path.replace(pathRegex, `${distPath}$1$2.js`);
+    distSrcPath = path.replace(pathRegex, "".concat(distPath, "$1$2.js"));
   }
   const runSeries = distSeries(distSrcPath, distPathResult, path);
   return gulpConfig.get('nodeOnly') ? series(testQuick, runSeries)() : parallel(testQuick, series(runSeries, bundle))();

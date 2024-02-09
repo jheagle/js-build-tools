@@ -3,7 +3,6 @@ const minifyFor = require('./partials/minifyFor')
 
 /**
  * Creates the minified bundle file.
- * @function
  * @memberOf module:js-build-tools
  * @returns {*}
  */

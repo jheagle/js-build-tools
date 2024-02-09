@@ -3,7 +3,7 @@ const setUp = require('./test-helpers/setUp')
 setUp.setDefaults('test-dist-lint')
 const gulpConfig = setUp.gulpConfig
 const distLint = require('./distLint')
-const { countMatches } = require('./testHelpers')
+const { countMatches } = require('test-filesystem')
 
 const lintableContents = 'const gulpConfig = require("../gulp.config.js");\n' +
   'const { dest, src } = require("gulp");\n' +

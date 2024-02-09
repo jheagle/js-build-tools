@@ -3,7 +3,7 @@ const setUp = require('../test-helpers/setUp')
 setUp.setDefaults('test-sass-for')
 const gulpConfig = setUp.gulpConfig
 const sassFor = require('./sassFor')
-const { countMatches, logObject } = require('../testHelpers')
+const { countMatches } = require('test-filesystem')
 
 const sassContents = 'html\n' +
   '  font-size: 62.5%\n' +

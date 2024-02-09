@@ -11,11 +11,13 @@ const bundle = require('./functions/bundle.js')
 const bundleLint = require('./functions/bundleLint.js')
 const bundleMinify = require('./functions/bundleMinify.js')
 const compileReadme = require('./functions/compileReadme.js')
+const copyFonts = require('./functions/copyFonts.js')
 const defaultCmd = require('./functions/default.js')
 const dist = require('./functions/dist.js')
 const distLint = require('./functions/distLint.js')
 const distMinify = require('./functions/distMinify.js')
 const gulpConfig = require('./gulp.config.js')
+const images = require('./functions/images.js')
 const partials = require('./functions/partials.js')
 const sass = require('./functions/sass.js')
 const testFull = require('./functions/testFull.js')
@@ -30,11 +32,13 @@ module.exports = {
   bundle,
   bundleLint,
   bundleMinify,
+  copyFonts,
   defaultCmd,
   dist,
   distLint,
   distMinify,
   gulpConfig,
+  images,
   partials,
   readme: compileReadme,
   sass,

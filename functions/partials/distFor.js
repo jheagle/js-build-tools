@@ -5,7 +5,6 @@ const gulpConfig = require('../../gulp.config.js')
 
 /**
  * Build the distribution for a given source pattern.
- * @function
  * @memberOf module:partials
  * @param {string|array} [srcPath='src/config/path/dist/for']
  * @param {string} [destPath='dist/config/path']

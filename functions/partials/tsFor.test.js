@@ -3,7 +3,7 @@ const setUp = require('../test-helpers/setUp')
 setUp.setDefaults('test-ts-for')
 const gulpConfig = setUp.gulpConfig
 const tsFor = require('./tsFor')
-const { countMatches, logObject } = require('../testHelpers')
+const { countMatches } = require('test-filesystem')
 
 const rawContents = 'export function sayHello(name: string) {\n' +
   '  return `Hello from ${name}`;\n' +

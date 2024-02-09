@@ -7,7 +7,6 @@ const {
 
 /**
  * Return a promise to be completed once the specified directory is deleted.
- * @function
  * @memberOf module:partials
  * @param {string} dirPath
  * @returns {Promise<*>}
