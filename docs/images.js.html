@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: dist.js</title>
+    <title>JSDoc: Source: images.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: dist.js</h1>
+    <h1 class="page-title">Source: images.js</h1>
 
     
 
@@ -28,15 +28,15 @@
         <article>
             <pre class="prettyprint source linenums"><code>'use strict'
 
-const distFor = require('./partials/distFor.js')
+const imagesFor = require('./partials/imagesFor.js')
 
 /**
- * Simplified distribution tasks which will use arguments from distFor.
+ * Move and optimize the images into the browser folder using configured settings.
  * @memberOf module:js-build-tools
- * @returns {*}
+ * @return {stream.Stream}
  */
-const dist = () => distFor()
-module.exports = dist
+const images = () => imagesFor()
+module.exports = images
 </code></pre>
         </article>
     </section>
