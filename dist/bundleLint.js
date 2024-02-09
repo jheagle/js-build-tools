@@ -9,11 +9,10 @@ const standard = require('gulp-standard')
 
 /**
  * Applies Standard code style linting to bundled file.
- * @function
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
-const bundleLint = () => src(`${gulpConfig.get('browserPath')}/${gulpConfig.get('browserName')}.js`).pipe(standard({
+const bundleLint = () => src(''.concat(gulpConfig.get('browserPath'), '/').concat(gulpConfig.get('browserName'), '.js')).pipe(standard({
   fix: true
 })).pipe(standard.reporter('default', {
   fix: true,

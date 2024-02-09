@@ -3,7 +3,7 @@ const setUp = require('../test-helpers/setUp')
 setUp.setDefaults('test-dist-for')
 const gulpConfig = setUp.gulpConfig
 const distFor = require('./distFor')
-const { countMatches } = require('../testHelpers')
+const { countMatches } = require('test-filesystem')
 const typeScript = require('../typeScript')
 
 const rawContents = 'const babel = require(\'gulp-babel\')\n' +

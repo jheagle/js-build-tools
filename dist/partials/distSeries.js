@@ -10,7 +10,6 @@ const tsFor = require('./tsFor');
 
 /**
  * When using TypeScript, ensure that we process the ts first then run babel (dist)
- * @function
  * @memberOf module:partials
  * @param {string} [srcPath='src/config/path/dist/for']
  * @param {string} [distFinalPath='dist/config/path']

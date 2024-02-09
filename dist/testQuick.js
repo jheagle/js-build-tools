@@ -8,7 +8,6 @@ const {
 /**
  * Run the Jest tests for files which have been modified (based on git status).
  * Configure where tests are located by using 'testPath'.
- * @function
  * @memberOf module:js-build-tools
  * @returns {Promise<*>}
  */

@@ -4,7 +4,6 @@ const { runCLI } = require('jest')
 /**
  * Run all tests with jest.
  * Configure where tests are located by using 'testPath'.
- * @function
  * @memberOf module:js-build-tools
  * @returns {Promise<*>}
  */
