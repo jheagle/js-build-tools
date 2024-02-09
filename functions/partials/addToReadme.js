@@ -6,7 +6,6 @@ const { globSync } = require('glob')
 /**
  * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
  * Configure this with 'readmeSearch', 'readmePath', 'readmeFile', and 'readmeOptions'.
- * @function
  * @memberOf module:partials
  * @returns {string|Uint8Array}
  */

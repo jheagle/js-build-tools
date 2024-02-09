@@ -7,6 +7,8 @@ const distLint = require('./distLint')
 const distMinify = require('./distMinify')
 const { parallel, series } = require('gulp')
 const gulpConfig = require('../gulp.config.js')
+const copyFonts = require('./copyFonts.js')
+const images = require('./images.js')
 const sass = require('./sass.js')
 const testFull = require('./testFull')
 
@@ -37,8 +39,16 @@ const build = (done = null) => {
     runActions.push(compileReadme)
   }
   runActions.push(testFull)
+  if (gulpConfig.get('useFonts')) {
+    // Conditionally add Fonts process
+    runActions.push(copyFonts)
+  }
+  if (gulpConfig.get('useImages')) {
+    // Conditionally add Images process
+    runActions.push(images)
+  }
   if (gulpConfig.get('useSass')) {
-    // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
+    // Conditionally add SASS process
     runActions.push(sass)
   }
   return parallel(

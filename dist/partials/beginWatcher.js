@@ -7,7 +7,6 @@ const {
 
 /**
  * Create a chokidar instance which watches and triggers change when the globed files are modified.
- * @function
  * @memberOf module:partials
  * @returns {FSWatcher}
  */
