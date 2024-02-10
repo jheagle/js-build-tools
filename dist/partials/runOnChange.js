@@ -36,8 +36,8 @@ const testQuick = require('../testQuick');
  * @returns {stream.Stream}
  */
 const runOnChange = path => {
-  const useTs = gulpConfig.get('useTsConfig');
-  const distPath = gulpConfig.get('distPath');
+  const useTs = gulpConfig.get('typescript.enabled');
+  const distPath = gulpConfig.get('dist.to');
   const srcPath = gulpConfig.get('srcPath');
   /**
    * 1. The original path comes in from src and is a .ts
@@ -54,6 +54,6 @@ const runOnChange = path => {
     distSrcPath = path.replace(pathRegex, "".concat(distPath, "$1$2.js"));
   }
   const runSeries = distSeries(distSrcPath, distPathResult, path);
-  return gulpConfig.get('nodeOnly') ? series(testQuick, runSeries)() : parallel(testQuick, series(runSeries, bundle))();
+  return gulpConfig.get('browser.enabled') ? parallel(testQuick, series(runSeries, bundle))() : series(testQuick, runSeries)();
 };
 module.exports = runOnChange;

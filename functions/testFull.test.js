@@ -11,6 +11,6 @@ describe('testFull', () => {
   test('runs the Jest CLI with the configured options', () => {
     expect.assertions(1)
     testFull()
-    expect(runCLI).toHaveBeenCalledWith(gulpConfig.get('testOptions'), [gulpConfig.get('testPath')])
+    expect(runCLI).toHaveBeenCalledWith(gulpConfig.get('test.options'), [gulpConfig.get('test.path')])
   })
 })

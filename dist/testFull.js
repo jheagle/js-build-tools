@@ -12,11 +12,11 @@ const {
  * @returns {Promise<*>}
  */
 const testFull = () => {
-  let testPath = gulpConfig.get('testPath')
+  let testPath = gulpConfig.get('test.path')
   if (!Array.isArray(testPath)) {
     // The testPath must be an array of strings
     testPath = [testPath]
   }
-  return runCLI(gulpConfig.get('testOptions'), testPath)
+  return runCLI(gulpConfig.get('test.options'), testPath)
 }
 module.exports = testFull

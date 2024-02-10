@@ -2,7 +2,7 @@ const fs = require('fs')
 const setUp = require('../test-helpers/setUp')
 setUp.setDefaults('test-add-to-readme')
 const gulpConfig = setUp.gulpConfig
-gulpConfig.set('srcSearch', 'test-temp/src/addToReadme.js')
+gulpConfig.set('dist.from', 'test-temp/src/addToReadme.js')
 const addToReadme = require('./addToReadme')
 
 const rawContents = '/**\n' +
@@ -21,7 +21,7 @@ afterEach(setUp.afterEach)
 
 describe('addToReadme', () => {
   test('generates the documentation', async () => {
-    const readmeFilePath = gulpConfig.get('readmePath') + gulpConfig.get('readmeFile')
+    const readmeFilePath = gulpConfig.get('readme.to') + gulpConfig.get('readme.file')
     expect.assertions(2)
     await addToReadme()
     await expect(fs.existsSync(readmeFilePath)).toBeTruthy()

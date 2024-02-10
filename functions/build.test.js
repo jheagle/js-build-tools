@@ -4,7 +4,6 @@ setUp.setDefaults('test-build')
 const gulpConfig = setUp.gulpConfig
 const build = require('./build')
 const clean = require('./partials/clean')
-const sass = require('./sass')
 const testFull = require('./testFull')
 const { countMatches } = require('test-filesystem')
 
@@ -215,14 +214,14 @@ const sassContents = 'html\n' +
   '  outline: none\n' +
   '  text-decoration: none'
 
-const sassPath = gulpConfig.get('sassPath')
+const sassPath = gulpConfig.get('sass.path')
 
 beforeEach(
   () => setUp.beforeEach()
     .then(
       async () => {
         const srcPath = gulpConfig.get('srcPath')
-        const readmePath = gulpConfig.get('readmePath')
+        const readmePath = gulpConfig.get('readme.to')
         const sourcesPath = `${srcPath}/sources`
         await fs.mkdirSync(sourcesPath)
         await fs.mkdirSync(fontPath, { recursive: true })
@@ -236,17 +235,17 @@ beforeEach(
 afterEach(setUp.afterEach)
 
 describe('build', () => {
-  test('when nodeOnly true: calls clean, distSeries, distLint, distMinify, compileReadme, testFull', done => {
+  test('when browser.enabled false: calls clean, distSeries, distLint, distMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
-    const distPath = gulpConfig.get('distPath')
+    const distPath = gulpConfig.get('dist.to')
     const distSourcesPath = `${distPath}/sources`
-    const readmePath = gulpConfig.get('readmePath')
-    const readmeFile = gulpConfig.get('readmeFile')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
     fs.writeFileSync(`${sourcesPath}/file1.js`, file1Contents)
     fs.writeFileSync(`${sourcesPath}/file2.js`, file2Contents)
     fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
-    gulpConfig.set('nodeOnly', true)
+    gulpConfig.set('browser.enabled', false)
     expect.assertions(13)
     build(() => {
       // Called 'clean'
@@ -282,19 +281,19 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when nodeOnly false: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull', done => {
+  test('when browser.enabled true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
-    const distPath = gulpConfig.get('distPath')
-    const browserFile = gulpConfig.get('browserName')
-    const browserPath = gulpConfig.get('browserPath')
+    const distPath = gulpConfig.get('dist.to')
+    const browserFile = gulpConfig.get('browser.name')
+    const browserPath = gulpConfig.get('browser.to')
     const bundledFile = `${browserPath}/${browserFile}.js`
-    const readmePath = gulpConfig.get('readmePath')
-    const readmeFile = gulpConfig.get('readmeFile')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
     fs.writeFileSync(`${sourcesPath}/file1.js`, file1Contents)
     fs.writeFileSync(`${sourcesPath}/file2.js`, file2Contents)
     fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
-    gulpConfig.set('nodeOnly', false)
+    gulpConfig.set('browser.enabled', true)
     expect.assertions(13)
     build(() => {
       // Called 'clean'
@@ -331,22 +330,22 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when nodeOnly false and useFonts true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, copyFonts', done => {
+  test('when browser.enabled true and fonts.enabled true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, copyFonts', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
-    const distPath = gulpConfig.get('distPath')
-    const browserFile = gulpConfig.get('browserName')
-    const browserPath = gulpConfig.get('browserPath')
+    const distPath = gulpConfig.get('dist.to')
+    const browserFile = gulpConfig.get('browser.name')
+    const browserPath = gulpConfig.get('browser.to')
     const bundledFile = `${browserPath}/${browserFile}.js`
-    const readmePath = gulpConfig.get('readmePath')
-    const readmeFile = gulpConfig.get('readmeFile')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
     const fontFile = `${fontPath}/comic-sans.woff`
     fs.writeFileSync(fontFile, fontContent)
     fs.writeFileSync(`${sourcesPath}/file1.js`, file1Contents)
     fs.writeFileSync(`${sourcesPath}/file2.js`, file2Contents)
     fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
-    gulpConfig.set('nodeOnly', false)
-    gulpConfig.set('useFonts', true)
+    gulpConfig.set('browser.enabled', true)
+    gulpConfig.set('fonts.enabled', true)
     expect.assertions(14)
     build(() => {
       // Called 'clean'
@@ -381,7 +380,7 @@ describe('build', () => {
       expect(testFull).toHaveBeenCalled()
 
       // Ran 'fonts'
-      const fontDest = gulpConfig.get('fontDest')
+      const fontDest = gulpConfig.get('fonts.to')
       const movedFont = fs.readFileSync(`${fontDest}/comic-sans.woff`).toString()
       expect(movedFont).toEqual(fontContent)
 
@@ -389,22 +388,22 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when nodeOnly false and useImages true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, images', done => {
+  test('when browser.enabled true and images.enabled true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, images', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
-    const distPath = gulpConfig.get('distPath')
-    const browserFile = gulpConfig.get('browserName')
-    const browserPath = gulpConfig.get('browserPath')
+    const distPath = gulpConfig.get('dist.to')
+    const browserFile = gulpConfig.get('browser.name')
+    const browserPath = gulpConfig.get('browser.to')
     const bundledFile = `${browserPath}/${browserFile}.js`
-    const readmePath = gulpConfig.get('readmePath')
-    const readmeFile = gulpConfig.get('readmeFile')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
     const imageFile = `${imagePath}/logo.svg`
     fs.writeFileSync(imageFile, imageContent)
     fs.writeFileSync(`${sourcesPath}/file1.js`, file1Contents)
     fs.writeFileSync(`${sourcesPath}/file2.js`, file2Contents)
     fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
-    gulpConfig.set('nodeOnly', false)
-    gulpConfig.set('useImages', true)
+    gulpConfig.set('browser.enabled', true)
+    gulpConfig.set('images.enabled', true)
     expect.assertions(14)
     build(() => {
       // Called 'clean'
@@ -439,7 +438,7 @@ describe('build', () => {
       expect(testFull).toHaveBeenCalled()
 
       // Ran 'images'
-      const imageDest = gulpConfig.get('imageDest')
+      const imageDest = gulpConfig.get('images.to')
       const movedImage = fs.readFileSync(`${imageDest}/logo.svg`).toString()
       expect(movedImage).toEqual(imageCompressed)
 
@@ -447,22 +446,22 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when nodeOnly false and useSass true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, sass', done => {
+  test('when browser.enabled true and sass.enabled true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, sass', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
-    const distPath = gulpConfig.get('distPath')
-    const browserFile = gulpConfig.get('browserName')
-    const browserPath = gulpConfig.get('browserPath')
+    const distPath = gulpConfig.get('dist.to')
+    const browserFile = gulpConfig.get('browser.name')
+    const browserPath = gulpConfig.get('browser.to')
     const bundledFile = `${browserPath}/${browserFile}.js`
-    const readmePath = gulpConfig.get('readmePath')
-    const readmeFile = gulpConfig.get('readmeFile')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
     const sassFile = `${sassPath}/sassFor.sass`
     fs.writeFileSync(sassFile, sassContents)
     fs.writeFileSync(`${sourcesPath}/file1.js`, file1Contents)
     fs.writeFileSync(`${sourcesPath}/file2.js`, file2Contents)
     fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
-    gulpConfig.set('nodeOnly', false)
-    gulpConfig.set('useSass', true)
+    gulpConfig.set('browser.enabled', true)
+    gulpConfig.set('sass.enabled', true)
     expect.assertions(16)
     build(() => {
       // Called 'clean'
@@ -497,7 +496,7 @@ describe('build', () => {
       expect(testFull).toHaveBeenCalled()
 
       // Ran 'sass'
-      const cssPath = gulpConfig.get('cssPath')
+      const cssPath = gulpConfig.get('sass.to')
       const cssContents = fs.readFileSync(`${cssPath}/sassFor.css`).toString()
       expect(countMatches(cssContents, ';')).toEqual(13)
       expect(countMatches(cssContents, '{')).toEqual(3)
@@ -507,18 +506,19 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when nodeOnly true and useTsConfig set: calls clean, tsFor, distFor, distLint, distMinify, compileReadme, testFull', done => {
+  test('when browser.enabled false and typescript.enabled set: calls clean, tsFor, distFor, distLint, distMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const rootPath = gulpConfig.get('rootPath')
     const tsConfig = `${rootPath}/tsconfig.json`
-    const distPath = gulpConfig.get('distPath')
-    const readmePath = gulpConfig.get('readmePath')
-    const readmeFile = gulpConfig.get('readmeFile')
+    const distPath = gulpConfig.get('dist.to')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
     fs.writeFileSync(`${srcPath}/main.ts`, mainTypescript)
     fs.writeFileSync(tsConfig, tsConfigContents)
-    gulpConfig.set('nodeOnly', true)
-    gulpConfig.set('useTsConfig', tsConfig)
-    gulpConfig.set('readmeSearch', `${distPath}/**/*.js`)
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('typescript.config', tsConfig)
+    gulpConfig.set('typescript.enabled', true)
+    gulpConfig.set('readme.from', `${distPath}/**/*.js`)
     expect.assertions(8)
     build(() => {
       // Called 'clean'
@@ -546,21 +546,22 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when nodeOnly false and useTsConfig set: calls clean, tsFor, distFor, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull', done => {
+  test('when browser.enabled true and typescript.enabled set: calls clean, tsFor, distFor, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const rootPath = gulpConfig.get('rootPath')
     const tsConfig = `${rootPath}/tsconfig.json`
-    const distPath = gulpConfig.get('distPath')
-    const browserFile = gulpConfig.get('browserName')
-    const browserPath = gulpConfig.get('browserPath')
+    const distPath = gulpConfig.get('dist.to')
+    const browserFile = gulpConfig.get('browser.name')
+    const browserPath = gulpConfig.get('browser.to')
     const bundledFile = `${browserPath}/${browserFile}.js`
-    const readmePath = gulpConfig.get('readmePath')
-    const readmeFile = gulpConfig.get('readmeFile')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
     fs.writeFileSync(`${srcPath}/main.ts`, mainTypescript)
     fs.writeFileSync(tsConfig, tsConfigContents)
-    gulpConfig.set('nodeOnly', false)
-    gulpConfig.set('useTsConfig', tsConfig)
-    gulpConfig.set('readmeSearch', `${distPath}/**/*.js`)
+    gulpConfig.set('browser.enabled', true)
+    gulpConfig.set('typescript.config', tsConfig)
+    gulpConfig.set('typescript.enabled', true)
+    gulpConfig.set('readme.from', `${distPath}/**/*.js`)
     expect.assertions(11)
     build(() => {
       // Called 'clean'

@@ -127,7 +127,7 @@ describe('imagesFor', () => {
     expect.assertions(3)
     const oldContents = fs.readFileSync(imagesFile).toString()
     expect(oldContents).toEqual(imageContents)
-    const browserPath = gulpConfig.get('browserPath')
+    const browserPath = gulpConfig.get('browser.to')
     imagesFor(imagesFile, browserPath)
       .on('finish', () => {
         expect(fs.existsSync(browserPath)).toBeTruthy()

@@ -5,7 +5,7 @@ const gulpConfig = setUp.gulpConfig
 const readmeTemplate = require('./readmeTemplate')
 
 const mainMd = 'MAIN.md'
-const mainTestPath = gulpConfig.get('readmeTemplate')
+const mainTestPath = gulpConfig.get('readme.template')
 
 beforeEach(() => setUp.beforeEach()
   .then(() => fs.copyFileSync(mainMd, mainTestPath)))
@@ -14,7 +14,7 @@ afterEach(setUp.afterEach)
 
 describe('readmeTemplate', () => {
   test('copies the main contents into the new README.md', done => {
-    const readmeFilePath = gulpConfig.get('readmePath') + gulpConfig.get('readmeFile')
+    const readmeFilePath = gulpConfig.get('readme.to') + gulpConfig.get('readme.file')
     const mainContents = fs.readFileSync(mainTestPath)
     expect.assertions(2)
     readmeTemplate()

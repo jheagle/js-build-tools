@@ -8,5 +8,5 @@ const gulpConfig = require('../gulp.config.js')
  * @memberOf module:js-build-tools
  * @return {stream.Stream}
  */
-const copyFonts = () => copyFor(gulpConfig.get('fontSearch'), gulpConfig.get('fontDest'))
+const copyFonts = () => copyFor(gulpConfig.get('fonts.from'), gulpConfig.get('fonts.to'))
 module.exports = copyFonts

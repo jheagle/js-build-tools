@@ -8,24 +8,6 @@
  */
 
 /**
- * Retrieve a value from an object with the path (key), return a given default if the key is not found.
- * @memberOf module:gulpConfig
- * @param {Object<string, *>} [config=[]]
- * @param {string|null} [path=null]
- * @param {*} [defaultValue=null]
- * @returns {*|null}
- */
-const defaultConfig = (config = {}, path = null, defaultValue = null) => {
-  if (!path) {
-    return config
-  }
-  if (typeof config[path] === 'undefined') {
-    return defaultValue
-  }
-  return config[path]
-}
-
-/**
  * A setting that may be an array of strings or a string only.
  * @typedef {Array<string>|string} module:gulpConfig~ArrayableSetting
  */
@@ -92,6 +74,9 @@ const defaultConfig = (config = {}, path = null, defaultValue = null) => {
  * @property {ArrayableSetting} watchSearch
  */
 
+const dotGet = require('./functions/utilities/dotGet')
+const dotSet = require('./functions/utilities/dotSet')
+const dotNotate = require('./functions/utilities/dotNotate')
 /**
  * All the available configuration setting options for running the build.
  * @memberOf module:gulpConfig` `
@@ -110,77 +95,97 @@ try {
 }
 
 const setDefaults = {
-  browserName: 'default',
-  browserPath: 'browser',
-  cleanPaths: ['dist', 'browser'],
-  cssPath: 'browser/css',
-  distMain: 'dist/main',
-  distPath: 'dist',
-  distSearch: 'dist/**/*.js',
-  fontDest: 'browser/fonts',
-  fontSearch: 'src/fonts/**/*',
-  imageDest: 'browser/img',
-  imageSearch: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
-  nodeOnly: false,
-  readmeTemplate: 'MAIN.md',
-  readmeOptions: 'utf8',
-  readmeFile: 'README.md',
-  readmePath: './',
-  readmeSearch: 'src/**/!(*.test).js',
-  rootPath: './',
-  sassPath: 'sass',
-  sassSearch: 'sass/**/*.+(scss|sass)',
-  srcPath: 'src',
-  srcSearch: 'src/**/!(*.test).js',
-  testOptions: {
-    clearCache: false,
-    debug: false,
-    ignoreProjects: false,
-    json: false,
-    selectProjects: false,
-    showConfig: false,
-    useStderr: false,
-    watch: false,
-    watchAll: false,
+  browser: {
+    name: 'default',
+    from: 'dist/**/*.js',
+    to: 'browser',
+    enabled: true,
   },
-  testPath: ['src'],
-  tsSearch: 'src/**/*.ts',
-  useFonts: false,
-  useImages: false,
-  useSass: false,
-  useTsConfig: false,
-  watchSearch: 'src/**/*.js'
+  cleanPaths: ['dist', 'browser'],
+  dist: {
+    main: 'dist/main',
+    from: 'src/**/!(*.test).js',
+    to: 'dist',
+  },
+  fonts: {
+    from: 'src/fonts/**/*',
+    to: 'browser/fonts',
+    enabled: false
+  },
+  images: {
+    from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+    to: 'browser/img',
+    enabled: false
+  },
+  readme: {
+    template: 'MAIN.md',
+    options: 'utf8',
+    file: 'README.md',
+    from: 'src/**/!(*.test).js',
+    to: './'
+  },
+  rootPath: './',
+  sass: {
+    from: 'sass/**/*.+(scss|sass)',
+    path: 'sass',
+    to: 'browser/css',
+    enabled: false
+  },
+  srcPath: 'src',
+  test: {
+    options: {
+      clearCache: false,
+      debug: false,
+      ignoreProjects: false,
+      json: false,
+      selectProjects: false,
+      showConfig: false,
+      useStderr: false,
+      watch: false,
+      watchAll: false,
+    },
+    path: ['src'],
+    watch: 'src/**/*.js'
+  },
+  typescript: {
+    config: false,
+    from: 'src/**/*.ts',
+    to: 'dist',
+    enabled: false
+  },
 }
 
-Object.keys(setDefaults).forEach(parentKey => {
-  gulpConfigurations[parentKey] = defaultConfig(gulpConfigurations, parentKey, setDefaults[parentKey])
-})
+const notation = dotNotate(setDefaults)
+for(let notationKey in notation) {
+  const arrayEnding = /(\.\d+)$/
+  if (arrayEnding.test(notationKey)) {
+    // ends in number a key then it must be an array; use the entire array
+    notationKey = notationKey.replace(arrayEnding, '')
+  }
+  const defaultValue = dotGet(setDefaults, notationKey)
+  const existingConfig = dotGet(gulpConfigurations, notationKey, defaultValue)
+  dotSet(gulpConfigurations, notationKey, existingConfig)
+}
 
 /**
- * Retrieve a value from teh configurations, default may be returned.
- * @function
+ * Retrieve a value from the configurations, default may be returned.
  * @memberOf module:gulpConfig
  * @param {string|null} path
  * @param {*} defaultValue
  * @returns {*|null}
  */
-const get = (path = null, defaultValue = null) => defaultConfig(gulpConfigurations, path, defaultValue)
+const get = (path = null, defaultValue = null) => dotGet(gulpConfigurations, path, defaultValue)
 
 /**
  * Specify a value for the configurations to use.
- * @function
  * @memberOf module:gulpConfig
  * @param path
  * @param value
  * @returns {*}
  */
-const set = (path, value) => {
-  gulpConfigurations[path] = value
-  return value
-}
+const set = (path, value) => dotSet(gulpConfigurations, path, value)
 
 module.exports = {
-  defaultConfig,
   get,
   set
 }

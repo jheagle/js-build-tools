@@ -6,6 +6,6 @@ const minifyFor = require('./partials/minifyFor')
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const distMinify = () => minifyFor(gulpConfig.get('distSearch'), gulpConfig.get('distPath'))
+const distMinify = () => minifyFor(gulpConfig.get('browser.from'), gulpConfig.get('dist.to'))
 
 module.exports = distMinify

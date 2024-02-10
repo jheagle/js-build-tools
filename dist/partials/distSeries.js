@@ -18,10 +18,10 @@ const tsFor = require('./tsFor');
  */
 const distSeries = function () {
   let srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : distForSrc();
-  let distFinalPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('distPath');
-  let tsSearch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : gulpConfig.get('tsSearch');
+  let distFinalPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('dist.to');
+  let tsSearch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : gulpConfig.get('typescript.from');
   const typescript = tsFor(tsSearch, distFinalPath);
   const dist = () => distFor(srcPath, distFinalPath);
-  return gulpConfig.get('useTsConfig') ? series(typescript, dist) : dist;
+  return gulpConfig.get('typescript.enabled') ? series(typescript, dist) : dist;
 };
 module.exports = distSeries;

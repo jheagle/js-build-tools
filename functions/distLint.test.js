@@ -27,7 +27,7 @@ beforeEach(
   () => setUp.beforeEach()
     .then(
       async () => {
-        const distPath = gulpConfig.get('distPath')
+        const distPath = gulpConfig.get('dist.to')
         await fs.mkdirSync(distPath)
         return fs.writeFileSync(`${distPath}/distLint.js`, lintableContents)
       }
@@ -38,7 +38,7 @@ afterEach(setUp.afterEach)
 
 describe('distLint', () => {
   test('copies the src directory and babelifies it into the dist directory', done => {
-    const distPath = gulpConfig.get('distPath')
+    const distPath = gulpConfig.get('dist.to')
     const oldContents = fs.readFileSync(`${distPath}/distLint.js`).toString()
     expect.assertions(4)
     expect(countMatches(oldContents, '"')).toEqual(12)

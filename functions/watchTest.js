@@ -7,6 +7,6 @@ const testQuick = require('./testQuick')
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const watchTest = () => watch(gulpConfig.get('watchSearch'), { ignoreInitial: false }, testQuick)
+const watchTest = () => watch(gulpConfig.get('test.watch'), { ignoreInitial: false }, testQuick)
 
 module.exports = watchTest

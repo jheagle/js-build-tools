@@ -7,12 +7,12 @@ const standard = require('gulp-standard')
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
-const bundleLint = () => src(`${gulpConfig.get('browserPath')}/${gulpConfig.get('browserName')}.js`)
+const bundleLint = () => src(`${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`)
   .pipe(standard({ fix: true }))
   .pipe(standard.reporter('default', {
     fix: true,
     quiet: true
   }))
-  .pipe(dest(gulpConfig.get('browserPath')))
+  .pipe(dest(gulpConfig.get('browser.to')))
 
 module.exports = bundleLint

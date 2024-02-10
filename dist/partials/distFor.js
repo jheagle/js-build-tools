@@ -17,7 +17,7 @@ const gulpConfig = require('../../gulp.config.js');
  */
 const distFor = function () {
   let srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : distForSrc();
-  let destPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('distPath');
+  let destPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('dist.to');
   return src(srcPath).pipe(babel()).pipe(dest(destPath));
 };
 module.exports = distFor;

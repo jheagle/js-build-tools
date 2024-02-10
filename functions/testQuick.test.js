@@ -11,6 +11,6 @@ describe('testQuick', () => {
   test('runs the jest CLI with onlyChanged option', () => {
     expect.assertions(1)
     testQuick()
-    expect(runCLI).toHaveBeenCalledWith({ onlyChanged: true }, [gulpConfig.get('testPath')])
+    expect(runCLI).toHaveBeenCalledWith({ onlyChanged: true }, [gulpConfig.get('test.path')])
   })
 })

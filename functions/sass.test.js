@@ -6,7 +6,7 @@ const sass = require('./sass')
 
 beforeEach(() => setUp.beforeEach().then(
   () => {
-    const sassPath = gulpConfig.get('sassPath')
+    const sassPath = gulpConfig.get('sass.path')
     return fs.mkdirSync(sassPath, { recursive: true })
   }
 ))
@@ -15,7 +15,7 @@ afterEach(setUp.afterEach)
 
 describe('sass', () => {
   test('uses the configured paths', done => {
-    const sassPath = gulpConfig.get('sassPath')
+    const sassPath = gulpConfig.get('sass.path')
     expect.assertions(1)
     sass()
       .on('finish', () => {

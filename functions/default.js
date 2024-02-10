@@ -9,6 +9,6 @@ const { series } = require('gulp')
  * @param {function} [done=null]
  * @returns {stream.Stream}
  */
-const defaultCmd = (done = null) => gulpConfig.get('nodeOnly') ? series(dist)(done) : series(dist, bundle)(done)
+const defaultCmd = (done = null) => gulpConfig.get('browser.enabled') ? series(dist, bundle)(done) : series(dist)(done)
 
 module.exports = defaultCmd

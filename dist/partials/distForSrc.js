@@ -9,7 +9,7 @@ const gulpConfig = require('../../gulp.config');
  * @returns {string}
  */
 const distForSrc = function () {
-  let useTs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('useTsConfig');
-  return useTs ? gulpConfig.get('distSearch') : gulpConfig.get('srcSearch');
+  let useTs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('typescript.enabled');
+  return useTs ? gulpConfig.get('browser.from') : gulpConfig.get('dist.from');
 };
 module.exports = distForSrc;

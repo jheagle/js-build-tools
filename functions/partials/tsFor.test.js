@@ -23,7 +23,7 @@ afterEach(setUp.afterEach)
 
 describe('tsFor', () => {
   test('copies the src directory and compiles it into the dist directory', done => {
-    const distPath = gulpConfig.get('distPath')
+    const distPath = gulpConfig.get('typescript.to')
     const srcPath = gulpConfig.get('srcPath')
     const srcFile = `${srcPath}/typeScript.ts`
     expect.assertions(3)

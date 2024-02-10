@@ -16,7 +16,7 @@ try {
  * @param {string} [imageDest=dest/image/folder]
  * @return {stream.Stream}
  */
-const imagesFor = (imageSrc = gulpConfig.get('imageSearch'), imageDest = gulpConfig.get('imageDest')) =>
+const imagesFor = (imageSrc = gulpConfig.get('images.from'), imageDest = gulpConfig.get('images.to')) =>
   src(imageSrc)
     .pipe(
       // Caching images that ran through imagemin

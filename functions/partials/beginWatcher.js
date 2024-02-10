@@ -6,6 +6,6 @@ const { watch } = require('gulp')
  * @memberOf module:partials
  * @returns {FSWatcher}
  */
-const beginWatcher = () => watch(gulpConfig.get('watchSearch'))
+const beginWatcher = () => watch(gulpConfig.get('test.watch'))
 
 module.exports = beginWatcher

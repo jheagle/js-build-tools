@@ -10,7 +10,7 @@ jest.mock('./dist', () => jest.fn(genericFunction))
 
 describe('distMinify', () => {
   test('calls dist for nodeOnly true', done => {
-    gulpConfig.set('nodeOnly', true)
+    gulpConfig.set('browser.enabled', false)
     expect.assertions(1)
     defaultCmd()
     setTimeout(() => {
@@ -20,7 +20,7 @@ describe('distMinify', () => {
   })
 
   test('calls dist and bundle for nodeOnly false', done => {
-    gulpConfig.set('nodeOnly', false)
+    gulpConfig.set('browser.enabled', true)
     expect.assertions(2)
     defaultCmd()
     setTimeout(() => {
