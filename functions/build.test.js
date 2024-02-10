@@ -52,7 +52,7 @@ const mainFileContents = '/**\n' +
   ' * Some test functions for usage with build tests.\n' +
   ' * @file\n' +
   ' * @author John Doe <john.doe@example.com>\n' +
-  ' * @version 1.0.0\n' +
+  ' * @version 3.0.0\n' +
   ' * @module test-build\n' +
   ' */\n' +
   '\n' +

@@ -629,7 +629,7 @@ A set of Configurations options defined by Settings.
 ## testHelpers
 Export the setUp helper.
 
-**Version**: 2.0.0  
+**Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [testHelpers](#module_testHelpers)
@@ -677,7 +677,7 @@ Update the gulp configurations with the test data. Set the test directory where 
 ## partials
 Micro-functions used as components for the main gulp functions.
 
-**Version**: 2.0.0  
+**Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [partials](#module_partials)
