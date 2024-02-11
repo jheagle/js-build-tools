@@ -52,26 +52,88 @@
  */
 
 /**
+ * Configurations for building the browser files.
+ * @typedef {Object<string, Setting>} module:gulpConfig~BrowserConfig
+ * @property {BooleanSetting} enabled
+ * @property {StringSetting} from
+ * @property {StringSetting} name
+ * @property {StringSetting} to
+ */
+
+/**
+ * Configurations for building the node distribution files.
+ * @typedef {Object<string, Setting>} module:gulpConfig~DistConfig
+ * @property {StringSetting} from
+ * @property {StringSetting} main
+ * @property {StringSetting} to
+ */
+
+/**
+ * Configurations for copying the font files.
+ * @typedef {Object<string, Setting>} module:gulpConfig~FontConfig
+ * @property {BooleanSetting} enabled
+ * @property {StringSetting} from
+ * @property {StringSetting} to
+ */
+
+/**
+ * Configurations to minify and copy the images.
+ * @typedef {Object<string, Setting>} module:gulpConfig~ImageConfig
+ * @property {BooleanSetting} enabled
+ * @property {StringSetting} from
+ * @property {StringSetting} to
+ */
+
+/**
+ * Configurations to compile and generate the Readme file.
+ * @typedef {Object<string, Setting>} module:gulpConfig~ReadmeConfig
+ * @property {StringSetting} file
+ * @property {StringSetting} from
+ * @property {ArrayableSetting} options
+ * @property {StringSetting} template
+ * @property {StringSetting} to
+ */
+
+/**
+ * Configurations to compile and copy the sass files into css.
+ * @typedef {Object<string, Setting>} module:gulpConfig~SassConfig
+ * @property {BooleanSetting} enabled
+ * @property {StringSetting} from
+ * @property {StringSetting} path
+ * @property {StringSetting} to
+ */
+
+/**
+ * Configurations for running the test suite.
+ * @typedef {Object<string, Setting>} module:gulpConfig~TestConfig
+ * @property {JestTestFlags} options
+ * @property {ArrayableSetting} path
+ * @property {ArrayableSetting} watch
+ */
+
+/**
+ * Configurations for compiling typescript into JS files.
+ * @typedef {Object<string, Setting>} module:gulpConfig~TsConfig
+ * @property {FlagStringSetting} config
+ * @property {BooleanSetting} enabled
+ * @property {StringSetting} from
+ * @property {StringSetting} to
+ */
+
+/**
  * A set of Configurations options defined by Settings.
  * @typedef {Object<string, Setting>} module:gulpConfig~Configurations
- * @property {StringSetting} browserName
- * @property {StringSetting} browserPath
- * @property {StringSetting} distMain
- * @property {StringSetting} distPath
- * @property {ArrayableSetting} distSearch
- * @property {BooleanSetting} nodeOnly
- * @property {StringSetting} readmeTemplate
- * @property {ArrayableSetting} readmeOptions
- * @property {StringSetting} readmeFile
- * @property {StringSetting} readmePath
- * @property {ArrayableSetting} readmeSearch
+ * @property {BrowserConfig} browser
+ * @property {ArrayableSetting} cleanPaths
+ * @property {DistConfig} dist
+ * @property {FontConfig} fonts
+ * @property {ImageConfig} images
+ * @property {ReadmeConfig} readme
  * @property {StringSetting} rootPath
+ * @property {SassConfig} sass
  * @property {StringSetting} srcPath
- * @property {ArrayableSetting} srcSearch
- * @property {JestTestFlags} testOptions
- * @property {ArrayableSetting} testPath
- * @property {FlagStringSetting} useTsConfig
- * @property {ArrayableSetting} watchSearch
+ * @property {TestConfig} test
+ * @property {TsConfig} typescript
  */
 
 const dotGet = require('./functions/utilities/dotGet')
@@ -96,40 +158,40 @@ try {
 
 const setDefaults = {
   browser: {
-    name: 'default',
-    from: 'dist/**/*.js',
-    to: 'browser',
     enabled: true,
+    from: 'dist/**/*.js',
+    name: 'default',
+    to: 'browser',
   },
   cleanPaths: ['dist', 'browser'],
   dist: {
-    main: 'dist/main',
     from: 'src/**/!(*.test).js',
+    main: 'dist/main',
     to: 'dist',
   },
   fonts: {
+    enabled: false,
     from: 'src/fonts/**/*',
     to: 'browser/fonts',
-    enabled: false
   },
   images: {
+    enabled: false,
     from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
     to: 'browser/img',
-    enabled: false
   },
   readme: {
-    template: 'MAIN.md',
-    options: 'utf8',
     file: 'README.md',
     from: 'src/**/!(*.test).js',
+    options: 'utf8',
+    template: 'MAIN.md',
     to: './'
   },
   rootPath: './',
   sass: {
+    enabled: false,
     from: 'sass/**/*.+(scss|sass)',
     path: 'sass',
     to: 'browser/css',
-    enabled: false
   },
   srcPath: 'src',
   test: {
@@ -149,14 +211,14 @@ const setDefaults = {
   },
   typescript: {
     config: false,
+    enabled: false,
     from: 'src/**/*.ts',
     to: 'dist',
-    enabled: false
   },
 }
 
 const notation = dotNotate(setDefaults)
-for(let notationKey in notation) {
+for (let notationKey in notation) {
   const arrayEnding = /(\.\d+)$/
   if (arrayEnding.test(notationKey)) {
     // ends in number a key then it must be an array; use the entire array

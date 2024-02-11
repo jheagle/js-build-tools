@@ -339,33 +339,6 @@ Run any of the above commands with `gulp` or `npm run`.
 </dd>
 </dl>
 
-## Functions
-
-<dl>
-<dt><a href="#isObject">isObject(object)</a> ⇒ <code>boolean</code></dt>
-<dd><p>Check if the provided thing is an object / array.
-Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/isObject.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#dotSet">dotSet(arrayObject, dotNotation, value)</a> ⇒ <code>Object</code></dt>
-<dd><p>Set a nested property value an object.
-Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotSet.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#handleRetainObjects">handleRetainObjects([retainObjects])</a> ⇒ <code>function</code></dt>
-<dd><p>Convert an array of keys into a regex, return a function to test if incoming keys match.</p>
-</dd>
-<dt><a href="#performDotNotate">performDotNotate(arrayObject, didRetain, [prepend], [results])</a> ⇒ <code>Object.&lt;string, *&gt;</code></dt>
-<dd><p>The underlying logic function for converting arrays to dot-notation.</p>
-</dd>
-<dt><a href="#dotNotate">dotNotate(arrayObject, [retainObjects])</a> ⇒ <code>Object.&lt;string, *&gt;</code></dt>
-<dd><p>Convert an array or object to a single dimensional associative array with dot notation.
-Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotNotate.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#dotGet">dotGet(arrayObject, dotNotation, [defaultValue])</a> ⇒ <code>*</code></dt>
-<dd><p>Get a nested property value from an object.
-Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotGet.ts">Sí, funciona</a></p>
-</dd>
-</dl>
-
 <a name="module_js-build-tools"></a>
 
 ## js-build-tools
@@ -513,6 +486,14 @@ Modify these configurations to match your project specifications.
         * [~JestTestFlags](#module_gulpConfig..JestTestFlags) : <code>FlagsSetting</code>
         * [~StringSetting](#module_gulpConfig..StringSetting) : <code>string</code>
         * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+        * [~BrowserConfig](#module_gulpConfig..BrowserConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~DistConfig](#module_gulpConfig..DistConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~FontConfig](#module_gulpConfig..FontConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~ImageConfig](#module_gulpConfig..ImageConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~ReadmeConfig](#module_gulpConfig..ReadmeConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~SassConfig](#module_gulpConfig..SassConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~TestConfig](#module_gulpConfig..TestConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~TsConfig](#module_gulpConfig..TsConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~Configurations](#module_gulpConfig..Configurations) : <code>Object.&lt;string, Setting&gt;</code>
 
 <a name="module_gulpConfig.get"></a>
@@ -595,6 +576,123 @@ A setting that may only be a string.
 Any single configuration option is a Setting.
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..BrowserConfig"></a>
+
+### gulpConfig~BrowserConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for building the browser files.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| enabled | <code>BooleanSetting</code> | 
+| from | <code>StringSetting</code> | 
+| name | <code>StringSetting</code> | 
+| to | <code>StringSetting</code> | 
+
+<a name="module_gulpConfig..DistConfig"></a>
+
+### gulpConfig~DistConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for building the node distribution files.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| from | <code>StringSetting</code> | 
+| main | <code>StringSetting</code> | 
+| to | <code>StringSetting</code> | 
+
+<a name="module_gulpConfig..FontConfig"></a>
+
+### gulpConfig~FontConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for copying the font files.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| enabled | <code>BooleanSetting</code> | 
+| from | <code>StringSetting</code> | 
+| to | <code>StringSetting</code> | 
+
+<a name="module_gulpConfig..ImageConfig"></a>
+
+### gulpConfig~ImageConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations to minify and copy the images.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| enabled | <code>BooleanSetting</code> | 
+| from | <code>StringSetting</code> | 
+| to | <code>StringSetting</code> | 
+
+<a name="module_gulpConfig..ReadmeConfig"></a>
+
+### gulpConfig~ReadmeConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations to compile and generate the Readme file.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| file | <code>StringSetting</code> | 
+| from | <code>StringSetting</code> | 
+| options | <code>ArrayableSetting</code> | 
+| template | <code>StringSetting</code> | 
+| to | <code>StringSetting</code> | 
+
+<a name="module_gulpConfig..SassConfig"></a>
+
+### gulpConfig~SassConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations to compile and copy the sass files into css.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| enabled | <code>BooleanSetting</code> | 
+| from | <code>StringSetting</code> | 
+| path | <code>StringSetting</code> | 
+| to | <code>StringSetting</code> | 
+
+<a name="module_gulpConfig..TestConfig"></a>
+
+### gulpConfig~TestConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for running the test suite.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| options | <code>JestTestFlags</code> | 
+| path | <code>ArrayableSetting</code> | 
+| watch | <code>ArrayableSetting</code> | 
+
+<a name="module_gulpConfig..TsConfig"></a>
+
+### gulpConfig~TsConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for compiling typescript into JS files.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| config | <code>FlagStringSetting</code> | 
+| enabled | <code>BooleanSetting</code> | 
+| from | <code>StringSetting</code> | 
+| to | <code>StringSetting</code> | 
+
 <a name="module_gulpConfig..Configurations"></a>
 
 ### gulpConfig~Configurations : <code>Object.&lt;string, Setting&gt;</code>
@@ -605,24 +703,17 @@ A set of Configurations options defined by Settings.
 
 | Name | Type |
 | --- | --- |
-| browserName | <code>StringSetting</code> | 
-| browserPath | <code>StringSetting</code> | 
-| distMain | <code>StringSetting</code> | 
-| distPath | <code>StringSetting</code> | 
-| distSearch | <code>ArrayableSetting</code> | 
-| nodeOnly | <code>BooleanSetting</code> | 
-| readmeTemplate | <code>StringSetting</code> | 
-| readmeOptions | <code>ArrayableSetting</code> | 
-| readmeFile | <code>StringSetting</code> | 
-| readmePath | <code>StringSetting</code> | 
-| readmeSearch | <code>ArrayableSetting</code> | 
+| browser | <code>BrowserConfig</code> | 
+| cleanPaths | <code>ArrayableSetting</code> | 
+| dist | <code>DistConfig</code> | 
+| fonts | <code>FontConfig</code> | 
+| images | <code>ImageConfig</code> | 
+| readme | <code>ReadmeConfig</code> | 
 | rootPath | <code>StringSetting</code> | 
+| sass | <code>SassConfig</code> | 
 | srcPath | <code>StringSetting</code> | 
-| srcSearch | <code>ArrayableSetting</code> | 
-| testOptions | <code>JestTestFlags</code> | 
-| testPath | <code>ArrayableSetting</code> | 
-| useTsConfig | <code>FlagStringSetting</code> | 
-| watchSearch | <code>ArrayableSetting</code> | 
+| test | <code>TestConfig</code> | 
+| typescript | <code>TsConfig</code> | 
 
 <a name="module_testHelpers"></a>
 
@@ -844,83 +935,3 @@ Create a chokidar instance which watches and triggers change when the globed fil
 Appends all the jsdoc comments to the readme file. Assumes empty or templated file.Configure this with 'readmeSearch', 'readmePath', 'readmeFile', and 'readmeOptions'.
 
 **Kind**: static method of [<code>partials</code>](#module_partials)  
-<a name="isObject"></a>
-
-## isObject(object) ⇒ <code>boolean</code>
-Check if the provided thing is an object / array.Original source concepts from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/isObject.ts)
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| object | <code>\*</code> | 
-
-<a name="dotSet"></a>
-
-## dotSet(arrayObject, dotNotation, value) ⇒ <code>Object</code>
-Set a nested property value an object.Original source concepts from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotSet.ts)
-
-**Kind**: global function  
-**Returns**: <code>Object</code> - The modified object  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| arrayObject | <code>Object</code> |  | The array or object to set the property on |
-| dotNotation | <code>string</code> |  | The path for the property |
-| value | <code>\*</code> | <code></code> | The default value to return if the property is not found |
-
-<a name="handleRetainObjects"></a>
-
-## handleRetainObjects([retainObjects]) ⇒ <code>function</code>
-Convert an array of keys into a regex, return a function to test if incoming keys match.
-
-**Kind**: global function  
-**Returns**: <code>function</code> - The dot-notated array  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| [retainObjects] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | An array of keys to retain as objects |
-
-<a name="performDotNotate"></a>
-
-## performDotNotate(arrayObject, didRetain, [prepend], [results]) ⇒ <code>Object.&lt;string, \*&gt;</code>
-The underlying logic function for converting arrays to dot-notation.
-
-**Kind**: global function  
-**Returns**: <code>Object.&lt;string, \*&gt;</code> - The dot-notated object  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| arrayObject | <code>Object</code> |  | The array or object to dot-notate |
-| didRetain | <code>function</code> |  | The test function to see if a key should be retained |
-| [prepend] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | The path for the property being processed |
-| [results] | <code>Object.&lt;string, \*&gt;</code> | <code>{}</code> | The final notated object to return |
-
-<a name="dotNotate"></a>
-
-## dotNotate(arrayObject, [retainObjects]) ⇒ <code>Object.&lt;string, \*&gt;</code>
-Convert an array or object to a single dimensional associative array with dot notation.
-Original source concepts from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotNotate.ts)
-
-**Kind**: global function  
-**Returns**: <code>Object.&lt;string, \*&gt;</code> - The dot-notated object  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| arrayObject | <code>Object</code> |  | The array or object to dot-notate |
-| [retainObjects] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | An array of keys to retain as objects |
-
-<a name="dotGet"></a>
-
-## dotGet(arrayObject, dotNotation, [defaultValue]) ⇒ <code>\*</code>
-Get a nested property value from an object.Original source concepts from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotGet.ts)
-
-**Kind**: global function  
-**Returns**: <code>\*</code> - The value of the property  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| arrayObject | <code>Object</code> |  | The array or object to get the property from |
-| dotNotation | <code>string</code> |  | The path to the property |
-| [defaultValue] | <code>string</code> \| <code>null</code> | <code>null</code> | The default value to return if the property is not found |
-

@@ -15,7 +15,7 @@ module.exports = {
     template: 'MAIN.md',
     options: 'utf8',
     toFile: 'README.md',
-    from: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
+    from: ['gulpfile.base.js', 'gulp.config.js', 'functions/!(*.test).js', 'functions/partials/!(*.test).js', 'functions/test-helpers/!(*.test).js'],
     to: './'
   },
   rootPath: './',
