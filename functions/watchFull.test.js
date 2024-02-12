@@ -29,7 +29,7 @@ afterEach(setUp.afterEach)
 describe('watchFull', () => {
   test('should call beginWatcher and runOnChange for change event', () => {
     const srcPath = gulpConfig.get('srcPath')
-    gulpConfig.set('watchSearch', `${srcPath}/*.js`)
+    gulpConfig.set('test.watch', `${srcPath}/*.js`)
     const srcFile = `${srcPath}/watchFull.js`
     fs.writeFileSync(srcFile, rawContents)
     expect.assertions(2)

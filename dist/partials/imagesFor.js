@@ -21,8 +21,8 @@ try {
  * @return {stream.Stream}
  */
 const imagesFor = function () {
-  let imageSrc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('imageSearch');
-  let imageDest = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('imageDest');
+  let imageSrc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('images.from');
+  let imageDest = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('images.to');
   return src(imageSrc).pipe(
   // Caching images that ran through imagemin
   cache(imagemin({

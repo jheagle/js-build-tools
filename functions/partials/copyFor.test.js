@@ -18,7 +18,7 @@ describe('copyFor', () => {
     expect.assertions(3)
     const oldContents = fs.readFileSync(copyFile).toString()
     expect(oldContents).toEqual(fileContents)
-    const browserPath = gulpConfig.get('browserPath')
+    const browserPath = gulpConfig.get('browser.to')
     copyFor(copyFile, browserPath)
       .on('finish', () => {
         expect(fs.existsSync(browserPath)).toBeTruthy()

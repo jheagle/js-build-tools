@@ -1,7 +1,7 @@
 const setUp = require('./test-helpers/setUp')
 setUp.setDefaults('test-watch-test')
 const gulpConfig = setUp.gulpConfig
-gulpConfig.set('watchSearch', 'test-begin-watcher/*.js')
+gulpConfig.set('test.watch', 'test-begin-watcher/*.js')
 const watchTest = require('./watchTest')
 const { EventEmitter } = require('node:events')
 const fs = require('fs')

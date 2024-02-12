@@ -12,7 +12,7 @@ const {
  * @returns {Promise<*>}
  */
 const testQuick = () => {
-  let testPath = gulpConfig.get('testPath')
+  let testPath = gulpConfig.get('test.path')
   if (!Array.isArray(testPath)) {
     // The testPath must be an array of strings
     testPath = [testPath]

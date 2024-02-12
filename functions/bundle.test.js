@@ -27,8 +27,8 @@ beforeEach(
   () => setUp.beforeEach()
     .then(
       async () => {
-        const distPath = gulpConfig.get('distPath')
-        const mainFile = gulpConfig.get('distMain')
+        const distPath = gulpConfig.get('dist.to')
+        const mainFile = gulpConfig.get('dist.main')
         const sourcesPath = `${distPath}/sources`
         await fs.mkdirSync(distPath)
         await fs.mkdirSync(sourcesPath)
@@ -43,9 +43,9 @@ afterEach(setUp.afterEach)
 
 describe('bundle', () => {
   test('copies all the dist contents into a single file for browsers', done => {
-    const distPath = gulpConfig.get('distPath')
-    const destFile = `${gulpConfig.get('browserName')}.js`
-    const destPath = gulpConfig.get('browserPath')
+    const distPath = gulpConfig.get('dist.to')
+    const destFile = `${gulpConfig.get('browser.name')}.js`
+    const destPath = gulpConfig.get('browser.to')
     const bundledFile = `${destPath}/${destFile}`
     const sourcesPath = `${distPath}/sources`
     const file1Path = `${sourcesPath}/file1.js`

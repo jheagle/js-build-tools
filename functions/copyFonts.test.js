@@ -16,7 +16,7 @@ describe('copyFonts', () => {
     fs.mkdirSync(srcPath, { recursive: true })
     const fontFile = `${srcPath}/comic-sans.woff`
     fs.writeFileSync(fontFile, fontContent)
-    const fontPath = gulpConfig.get('fontDest')
+    const fontPath = gulpConfig.get('fonts.to')
     expect.assertions(1)
     copyFonts()
       .on('finish', () => {

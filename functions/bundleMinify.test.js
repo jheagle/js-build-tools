@@ -9,6 +9,6 @@ describe('bundleMinify', () => {
   test('calls minifyFor with configurations', () => {
     expect.assertions(1)
     bundleMinify()
-    expect(minifyFor).toHaveBeenCalledWith(`${gulpConfig.get('browserPath')}/${gulpConfig.get('browserName')}.js`, gulpConfig.get('browserPath'))
+    expect(minifyFor).toHaveBeenCalledWith(`${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`, gulpConfig.get('browser.to'))
   })
 })

@@ -12,10 +12,10 @@ const tsFor = require('./tsFor')
  * @param {string} [tsSearch='ts/search/config/path']
  * @returns {function(null=): stream.Stream}
  */
-const distSeries = (srcPath = distForSrc(), distFinalPath = gulpConfig.get('distPath'), tsSearch = gulpConfig.get('tsSearch')) => {
+const distSeries = (srcPath = distForSrc(), distFinalPath = gulpConfig.get('dist.to'), tsSearch = gulpConfig.get('typescript.from')) => {
   const typescript = tsFor(tsSearch, distFinalPath)
   const dist = () => distFor(srcPath, distFinalPath)
-  return gulpConfig.get('useTsConfig')
+  return gulpConfig.get('typescript.enabled')
     ? series(typescript, dist)
     : dist
 }

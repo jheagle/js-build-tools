@@ -123,7 +123,7 @@ describe('images', () => {
     fs.mkdirSync(srcPath, { recursive: true })
     const imageFile = `${srcPath}/imageToCopy.svg`
     fs.writeFileSync(imageFile, imageContents)
-    const imagePath = gulpConfig.get('imageDest')
+    const imagePath = gulpConfig.get('images.to')
     expect.assertions(1)
     images()
       .on('finish', () => {

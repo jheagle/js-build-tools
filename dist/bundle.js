@@ -12,5 +12,5 @@ const source = require('vinyl-source-stream')
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
-const bundle = () => browserify(gulpConfig.get('distMain')).bundle().pipe(source(''.concat(gulpConfig.get('browserName'), '.js'))).pipe(dest(gulpConfig.get('browserPath')))
+const bundle = () => browserify(gulpConfig.get('dist.main')).bundle().pipe(source(''.concat(gulpConfig.get('browser.name'), '.js'))).pipe(dest(gulpConfig.get('browser.to')))
 module.exports = bundle

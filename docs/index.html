@@ -63,78 +63,87 @@ of <code>node_modules/.bin/gulp</code>.</p>
 <p>In your project's root directory, create a <code>build-tools.config.js</code> file. This can contain any of the following (values
 provided are the defaults):</p>
 <pre class="prettyprint source lang-js"><code>module.exports = {
-  // The name to use for the browser-bundled output file (.js will be appended).
-  browserName: 'my-package',
-
-  // The output directory for browser-bundled files.
-  browserPath: 'browser',
-
+  browser: {
+    // 'true' to generate browser bundled files; 'false' for node environment only
+    enabled: true,
+    // The name to use for the browser-bundled output file (.js will be appended).
+    name: 'my-package',
+    // The search pattern used for retrieving compiled distribution files.
+    from: 'dist/**/*.js',
+    // The output directory for browser-bundled files.
+    to: 'browser',
+  },
   // The paths for directories to delete before build.
   cleanPaths: ['dist', 'browser'],
-
-  // The destination path for where generated CSS (from SASS files) should go
-  cssPath: 'browser/css',
-
-  // The name of entry the distribution file.
-  distMain: 'dist/main',
-
-  // The output directory for the distribution files.
-  distPath: 'dist',
-
-  // The search pattern used for retrieving compiled distribution files.
-  distSearch: 'dist/**/*.js',
-
-  // 'true' to only generate node environment files.
-  nodeOnly: false,
-
-  // The name of the output documentation markdown file.
-  readmeFile: 'README.md',
-
-  // The directory to output the readme file in.
-  readmePath: './',
-
-  // Options for formatting the output readme.
-  readmeOptions: 'utf8',
-
-  // The file which will be pre-fixed to your README.md output.
-  readmeTemplate: 'MAIN.md',
-
-  // Location of files to use for compiling documentation into the readme.
-  readmeSearch: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
-
+  dist: {
+    // Name of the entry the distribution file.
+    main: 'dist/main',
+    // The search pattern used for gathering source files for distribution.
+    from: 'src/**/!(*.test).js',
+    // The output directory for the distribution files.
+    to: 'dist',
+  },
+  fonts: {
+    // Toggle copy directory of fonts on
+    enabled: false,
+    // Path to search for fonts
+    from: 'src/fonts/**/*',
+    // Path to output fonts
+    to: 'browser/fonts',
+  },
+  images: {
+    // Toggle image minify and copy process
+    enabled: false,
+    // Path to search for images
+    from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+    // Path to output images
+    to: 'browser/img',
+  },
+  readme: {
+    // The file which will be pre-fixed to your README.md output.
+    template: 'MAIN.md',
+    // Options for formatting the output readme.
+    options: 'utf8',
+    // The name of the output documentation markdown file.
+    file: 'README.md',
+    // Location of files to use for compiling documentation into the readme.
+    from: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
+    // The directory to output the readme file in.
+    to: './'
+  },
   // Base directory of the project.
   rootPath: './',
-
-  // The directory were sass files will be stored
-  sassPath: 'sass',
-  
-  // The pattern for finding all sass files
-  sassSearch: 'sass/**/*.+(scss|sass)',
-
+  sass: {
+    // Toggle SASS to CSS process on.
+    enabled: false,
+    // The pattern for finding all sass files.
+    from: 'sass/**/*.+(scss|sass)',
+    // The directory were sass files will be stored.
+    path: 'sass',
+    // The destination path for where generated CSS (from SASS files) should go.
+    to: 'browser/css',
+  },
   // The directory where your source files are stored (the files you manually created).
   srcPath: 'src',
-
-  // The search pattern used for gathering source files for distribution.
-  srcSearch: 'src/**/!(*.test).js',
-
-  // Additional flags for programatically running Jest Cli.
-  testOptions: null,
-
-  // The directory where Jest test files are stored.
-  // By default stored as *.test.js adjacent with the files they are testing).
-  testPath: 'src',
-
-  // Pattern for finding the TypeScript files
-  tsSearch: 'src/**/*.ts',
-  
-  // Toggle SASS to CSS process on
-  useSass: false,
-
-  // The path the tsconfig file for running typescript or false if no ts file given.
-  useTsConfig: false,
-
-  // The search pattern for watching files for changes.
-  watchSearch: 'src/**/*.js',
+  test: {
+    // Additional flags for programmatically running Jest Cli.
+    options: null,
+    // The directory where Jest test files are stored.
+    // By default, stored as *.test.js adjacent to the files they are testing.
+    path: ['src'],
+    // The search pattern for watching files for changes.
+    watch: 'src/**/*.js'
+  },
+  typescript: {
+    // The path the tsconfig file for running typescript or false if no ts file given.
+    config: false,
+    // Toggle usage of typescript parsing.
+    enabled: false,
+    // Pattern for finding the TypeScript files.
+    from: 'src/**/*.ts',
+    // Directory where parsed typescript files go.
+    to: 'dist',
+  },
 }
 </code></pre>
 <h3>Create your local gulpfile.js</h3>
@@ -194,18 +203,48 @@ module.exports = babelConfig
  */
 module.exports = jsDocBase
 </code></pre>
+<h3>Configure move fonts (optional)</h3>
+<p>Be able to copy a source directory of fonts into the distribution path.</p>
+<p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
+<pre class="prettyprint source lang-js"><code>module.exports = {
+  fonts: {
+    // Enable fonts process
+    enabled: false,
+    // Search pattern to find your font files
+    from: 'src/fonts/**/*',
+    // Output directory for your font files
+    to: 'browser/fonts',
+  }
+}
+</code></pre>
+<h3>Configure move and minify images (optional)</h3>
+<p>Be able to copy and reduce the file size of images into an output path.</p>
+<p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
+<pre class="prettyprint source lang-js"><code>module.exports = {
+  images: {
+    // Enable image process
+    enabled: false,
+    // Search pattern to find your images
+    from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+    // Output directory for your images files
+    to: 'browser/img',
+  }
+}
+</code></pre>
 <h3>Configure SASS (optional)</h3>
 <p>SASS support is built-in, this enables conversion of SASS files to CSS for web projects.</p>
 <p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
 <pre class="prettyprint source lang-js"><code>module.exports = {
-  // Output directory for your compiled css files, recommend css directory within your browser output directory
-  css: 'browser/css',
-  // Optional but nice to add (future support), add the directory where your sass files exist
-  sassPath: 'sass',
-  // Search pattern to find your SASS files (the below would be files ending in .scss or .sass in a directory called 'sass')
-  sassSearch: 'sass/**/*.+(scss|sass)',
-  // Enable SASS process
-  useSass: true,
+  sass: {
+    // Enable SASS process
+    enabled: false,
+    // Search pattern to find your SASS files (the below would be files ending in .scss or .sass in a directory called 'sass')
+    from: 'sass/**/*.+(scss|sass)',
+    // Optional but nice to add (future support), add the directory where your sass files exist
+    path: 'sass',
+    // Output directory for your compiled css files, recommend css directory within your browser output directory
+    to: 'browser/css',
+  }
 }
 </code></pre>
 <h3>Configure TypeScript (optional)</h3>
@@ -223,12 +262,24 @@ module.exports = jsDocBase
 }
 </code></pre>
 <p>The pattern for <code>&quot;files&quot;</code> should match your .ts files, but the essential thing is that it is wrapped in an array.
-The actual pattern used comes from <code>build-tools.config.js</code> as <code>'tsSearch'</code> setting. In order to create the ts declaration
-files you must add the <code>&quot;declaration&quot;: true</code>.</p>
+The actual pattern used comes from <code>build-tools.config.js</code> as <code>'typescript.from'</code> setting.
+To create the ts declaration files, you must add the <code>&quot;declaration&quot;: true</code>.</p>
 <p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
 <pre class="prettyprint source lang-js"><code>module.exports = {
-  readmeSearch: 'dist/**/!(*.min).js',
-  useTsConfig: 'tsconfig.json',
+  readme: {
+    // Location of files to use for compiling documentation into the readme.
+    from: 'dist/**/!(*.min).js',
+  },
+  typescript: {
+    // The path the tsconfig file for running typescript or false if no ts file given.
+    config: 'tsconfig.json',
+    // Toggle usage of typescript parsing
+    enabled: true,
+    // Pattern for finding the TypeScript files
+    from: 'src/**/*.ts',
+    // Directory where parsed typescript files go
+    to: 'dist',
+  },
 }
 </code></pre>
 <p>The <code>js-to-markdown</code> only works on .js files, so we run the readme search on the built dist files. Also, we want to
@@ -274,7 +325,7 @@ module.exports = babelConfig
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Feb 09 2024 16:28:21 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Feb 11 2024 22:40:45 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

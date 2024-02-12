@@ -12,10 +12,10 @@ const standard = require('gulp-standard')
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const distLint = () => src(gulpConfig.get('distSearch')).pipe(standard({
+const distLint = () => src(gulpConfig.get('browser.from')).pipe(standard({
   fix: true
 })).pipe(standard.reporter('default', {
   fix: true,
   quiet: true
-})).pipe(dest(gulpConfig.get('distPath')))
+})).pipe(dest(gulpConfig.get('dist.to')))
 module.exports = distLint

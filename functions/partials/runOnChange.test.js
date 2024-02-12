@@ -19,7 +19,7 @@ const rawContents = 'export function sayHello(name: string) {\n' +
   '  return `Hello from ${name}`;\n' +
   '}'
 
-const distPath = gulpConfig.get('distPath') + '/'
+const distPath = gulpConfig.get('dist.to') + '/'
 const srcPath = gulpConfig.get('srcPath')
 const srcFile = `${srcPath}/runOnChange.js`
 const srcTsFile = `${srcPath}/runOnChange.ts`
@@ -38,8 +38,8 @@ afterEach(() => {
 
 describe('runOnChange', () => {
   test('runs testQuick and distFor for nodeOnly true and useTs false', done => {
-    gulpConfig.set('nodeOnly', true)
-    gulpConfig.set('useTsConfig', false)
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('typescript.enabled', false)
     expect.assertions(2)
     runOnChange(srcFile)
     setTimeout(() => {
@@ -50,8 +50,8 @@ describe('runOnChange', () => {
   })
 
   test('runs testQuick and distFor for nodeOnly true and tsFor for useTs true', done => {
-    gulpConfig.set('nodeOnly', true)
-    gulpConfig.set('useTsConfig', true)
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('typescript.enabled', true)
     const distSrcPath = distPath + 'runOnChange.js'
     expect.assertions(3)
     runOnChange(srcTsFile)
@@ -64,8 +64,8 @@ describe('runOnChange', () => {
   })
 
   test('runs testQuick and distFor then bundle for nodeOnly false and useTs false', done => {
-    gulpConfig.set('nodeOnly', false)
-    gulpConfig.set('useTsConfig', false)
+    gulpConfig.set('browser.enabled', true)
+    gulpConfig.set('typescript.enabled', false)
     expect.assertions(3)
     runOnChange(srcFile)
     setTimeout(() => {
@@ -77,8 +77,8 @@ describe('runOnChange', () => {
   })
 
   test('runs testQuick and distFor then bundle for nodeOnly false and tsFor for useTs true', done => {
-    gulpConfig.set('nodeOnly', false)
-    gulpConfig.set('useTsConfig', true)
+    gulpConfig.set('browser.enabled', true)
+    gulpConfig.set('typescript.enabled', true)
     const distSrcPath = distPath + 'runOnChange.js'
     expect.assertions(4)
     runOnChange(srcTsFile)

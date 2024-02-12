@@ -9,6 +9,6 @@ describe('distMinify', () => {
   test('calls minifyFor with configurations', () => {
     expect.assertions(1)
     distMinify()
-    expect(minifyFor).toHaveBeenCalledWith(gulpConfig.get('distSearch'), gulpConfig.get('distPath'))
+    expect(minifyFor).toHaveBeenCalledWith(gulpConfig.get('browser.from'), gulpConfig.get('dist.to'))
   })
 })

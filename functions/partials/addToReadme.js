@@ -10,9 +10,9 @@ const { globSync } = require('glob')
  * @returns {string|Uint8Array}
  */
 const addToReadme = () => jsdoc2md
-  .render({ files: globSync(gulpConfig.get('readmeSearch')) })
+  .render({ files: globSync(gulpConfig.get('readme.from')) })
   .then(
-    readme => fs.appendFileSync(gulpConfig.get('readmePath') + gulpConfig.get('readmeFile'), readme, gulpConfig.get('readmeOptions'))
+    readme => fs.appendFileSync(gulpConfig.get('readme.to') + gulpConfig.get('readme.file'), readme, gulpConfig.get('readmeOptions'))
   )
 
 module.exports = addToReadme

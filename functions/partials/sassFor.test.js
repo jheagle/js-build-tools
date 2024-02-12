@@ -24,7 +24,7 @@ const sassContents = 'html\n' +
   '  outline: none\n' +
   '  text-decoration: none'
 
-const sassPath = gulpConfig.get('sassPath')
+const sassPath = gulpConfig.get('sass.path')
 
 beforeEach(() => {
   setUp.beforeEach()
@@ -43,7 +43,7 @@ describe('sassFor', () => {
     expect(countMatches(oldContents, ' {')).toEqual(0)
     expect(countMatches(oldContents, '\n' +
       '    }')).toEqual(0)
-    const cssPath = gulpConfig.get('cssPath')
+    const cssPath = gulpConfig.get('sass.to')
     sassFor(sassFile)
       .on('finish', () => {
         expect(fs.existsSync(cssPath)).toBeTruthy()

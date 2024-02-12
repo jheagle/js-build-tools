@@ -71,7 +71,7 @@ describe('distFor', () => {
     expect.assertions(5)
     const oldContents = fs.readFileSync(srcFile).toString()
     expect(countMatches(oldContents, 'const ')).toEqual(7)
-    const distPath = gulpConfig.get('distPath')
+    const distPath = gulpConfig.get('dist.to')
     distFor(srcFile)
       .on('finish', () => {
         expect(fs.existsSync(distPath)).toBeTruthy()
@@ -99,7 +99,7 @@ describe('distFor', () => {
     expect.assertions(7)
     const oldContents = fs.readFileSync(srcFile).toString()
     expect(countMatches(oldContents, 'const ')).toEqual(3)
-    const distPath = gulpConfig.get('distPath')
+    const distPath = gulpConfig.get('dist.to')
     typeScript(() => {
       distFor()
         .on('finish', () => {
@@ -109,7 +109,7 @@ describe('distFor', () => {
           expect(countMatches(babelifiedContents, 'const ')).toEqual(0)
           expect(countMatches(babelifiedContents, 'var ')).toEqual(8)
           expect(countMatches(babelifiedContents, 'function')).toEqual(1)
-          expect(countMatches(babelifiedContents, 'Object.defineProperty(exports, "__esModule", { value: true })')).toEqual(1)
+          expect(countMatches(babelifiedContents, 'Object.defineProperty(exports, "__esModule", {')).toEqual(1)
           done()
         })
         .on('error', error => {

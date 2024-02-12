@@ -10,9 +10,9 @@ const ts = require('gulp-typescript')
  * @returns {Function}
  * @see `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info
  */
-const tsFor = (srcPath = gulpConfig.get('tsSearch'), distPath = gulpConfig.get('distPath')) => {
-  const declarationProject = ts.createProject(gulpConfig.get('useTsConfig'))
-  const tsProject = ts.createProject(gulpConfig.get('useTsConfig'))
+const tsFor = (srcPath = gulpConfig.get('typescript.from'), distPath = gulpConfig.get('typescript.to')) => {
+  const declarationProject = ts.createProject(gulpConfig.get('typescript.config'))
+  const tsProject = ts.createProject(gulpConfig.get('typescript.config'))
   const makeDeclarations = () => src(srcPath).pipe(declarationProject()).dts.pipe(dest(distPath))
   const compileJS = () => src(srcPath).pipe(tsProject()).js.pipe(dest(distPath))
   return parallel(makeDeclarations, compileJS)

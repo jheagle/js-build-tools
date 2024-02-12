@@ -2,7 +2,7 @@
  * Export these functions to your own project in order to customize your build pipeline.
  * @file
  * @author Joshua Heagle <joshuaheagle@gmail.com>
- * @version 2.0.0
+ * @version 3.0.0
  * @module js-build-tools
  */
 

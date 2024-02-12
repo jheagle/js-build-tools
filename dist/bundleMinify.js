@@ -8,5 +8,5 @@ const minifyFor = require('./partials/minifyFor')
  * @memberOf module:js-build-tools
  * @returns {*}
  */
-const bundleMinify = () => minifyFor(''.concat(gulpConfig.get('browserPath'), '/').concat(gulpConfig.get('browserName'), '.js'), gulpConfig.get('browserPath'))
+const bundleMinify = () => minifyFor(''.concat(gulpConfig.get('browser.to'), '/').concat(gulpConfig.get('browser.name'), '.js'), gulpConfig.get('browser.to'))
 module.exports = bundleMinify

@@ -6,8 +6,8 @@ const gulpConfig = require('../../gulp.config')
  * @param {module:gulpConfig~FlagStringSetting} [useTs='config/for/ts']
  * @returns {string}
  */
-const distForSrc = (useTs = gulpConfig.get('useTsConfig')) => useTs
-  ? gulpConfig.get('distSearch')
-  : gulpConfig.get('srcSearch')
+const distForSrc = (useTs = gulpConfig.get('typescript.enabled')) => useTs
+  ? gulpConfig.get('browser.from')
+  : gulpConfig.get('dist.from')
 
 module.exports = distForSrc

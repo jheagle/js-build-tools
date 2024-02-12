@@ -11,22 +11,22 @@ jest.mock('./tsFor', () => jest.fn(() => genericFunction))
 
 describe('distSeries', () => {
   test('when not using ts config only returns runnable distFor', done => {
-    gulpConfig.set('useTsConfig', false)
+    gulpConfig.set('typescript.enabled', false)
     expect.assertions(1)
     distSeries()()
     setTimeout(() => {
-      expect(distFor).toHaveBeenCalledWith(gulpConfig.get('srcSearch'), gulpConfig.get('distPath'))
+      expect(distFor).toHaveBeenCalledWith(gulpConfig.get('dist.from'), gulpConfig.get('dist.to'))
       done()
     }, 500)
   })
 
   test('when using ts config returns runnable series of tsFor and distFor', done => {
-    gulpConfig.set('useTsConfig', true)
+    gulpConfig.set('typescript.enabled', true)
     expect.assertions(2)
     distSeries()()
     setTimeout(() => {
-      expect(tsFor).toHaveBeenCalledWith(gulpConfig.get('tsSearch'), gulpConfig.get('distPath'))
-      expect(distFor).toHaveBeenCalledWith(gulpConfig.get('distSearch'), gulpConfig.get('distPath'))
+      expect(tsFor).toHaveBeenCalledWith(gulpConfig.get('typescript.from'), gulpConfig.get('dist.to'))
+      expect(distFor).toHaveBeenCalledWith(gulpConfig.get('browser.from'), gulpConfig.get('dist.to'))
       done()
     }, 500)
   })

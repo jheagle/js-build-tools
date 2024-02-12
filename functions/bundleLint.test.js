@@ -27,8 +27,8 @@ beforeEach(
   () => setUp.beforeEach()
     .then(
       async () => {
-        const browserPath = gulpConfig.get('browserPath')
-        const browserName = gulpConfig.get('browserName')
+        const browserPath = gulpConfig.get('browser.to')
+        const browserName = gulpConfig.get('browser.name')
         await fs.mkdirSync(browserPath)
         return fs.writeFileSync(`${browserPath}/${browserName}.js`, lintableContents)
       }
@@ -39,8 +39,8 @@ afterEach(setUp.afterEach)
 
 describe('bundleLint', () => {
   test('copies the src directory and babelifies it into the dist directory', done => {
-    const browserPath = gulpConfig.get('browserPath')
-    const browserName = gulpConfig.get('browserName')
+    const browserPath = gulpConfig.get('browser.to')
+    const browserName = gulpConfig.get('browser.name')
     const fullPath = `${browserPath}/${browserName}.js`
     const oldContents = fs.readFileSync(fullPath).toString()
     expect.assertions(4)

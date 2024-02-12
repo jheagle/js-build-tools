@@ -27,96 +27,87 @@ provided are the defaults):
 
 ```js
 module.exports = {
-  // The name to use for the browser-bundled output file (.js will be appended).
-  browserName: 'my-package',
-
-  // The output directory for browser-bundled files.
-  browserPath: 'browser',
-
+  browser: {
+    // 'true' to generate browser bundled files; 'false' for node environment only
+    enabled: true,
+    // The name to use for the browser-bundled output file (.js will be appended).
+    name: 'my-package',
+    // The search pattern used for retrieving compiled distribution files.
+    from: 'dist/**/*.js',
+    // The output directory for browser-bundled files.
+    to: 'browser',
+  },
   // The paths for directories to delete before build.
   cleanPaths: ['dist', 'browser'],
-
-  // The destination path for where generated CSS (from SASS files) should go
-  cssPath: 'browser/css',
-
-  // The name of entry the distribution file.
-  distMain: 'dist/main',
-
-  // The output directory for the distribution files.
-  distPath: 'dist',
-
-  // The search pattern used for retrieving compiled distribution files.
-  distSearch: 'dist/**/*.js',
-  
-  // Path to output fonts
-  fontDest: 'browser/fonts',
-
-  // Path to search for fonts
-  fontSearch: 'src/fonts/**/*',
-
-  // Path to output images
-  imageDest: 'browser/img',
-
-  // Path to search for images
-  imageSearch: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
-
-  // 'true' to only generate node environment files.
-  nodeOnly: false,
-
-  // The name of the output documentation markdown file.
-  readmeFile: 'README.md',
-
-  // The directory to output the readme file in.
-  readmePath: './',
-
-  // Options for formatting the output readme.
-  readmeOptions: 'utf8',
-
-  // The file which will be pre-fixed to your README.md output.
-  readmeTemplate: 'MAIN.md',
-
-  // Location of files to use for compiling documentation into the readme.
-  readmeSearch: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
-
+  dist: {
+    // Name of the entry the distribution file.
+    main: 'dist/main',
+    // The search pattern used for gathering source files for distribution.
+    from: 'src/**/!(*.test).js',
+    // The output directory for the distribution files.
+    to: 'dist',
+  },
+  fonts: {
+    // Toggle copy directory of fonts on
+    enabled: false,
+    // Path to search for fonts
+    from: 'src/fonts/**/*',
+    // Path to output fonts
+    to: 'browser/fonts',
+  },
+  images: {
+    // Toggle image minify and copy process
+    enabled: false,
+    // Path to search for images
+    from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+    // Path to output images
+    to: 'browser/img',
+  },
+  readme: {
+    // The file which will be pre-fixed to your README.md output.
+    template: 'MAIN.md',
+    // Options for formatting the output readme.
+    options: 'utf8',
+    // The name of the output documentation markdown file.
+    file: 'README.md',
+    // Location of files to use for compiling documentation into the readme.
+    from: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
+    // The directory to output the readme file in.
+    to: './'
+  },
   // Base directory of the project.
   rootPath: './',
-
-  // The directory were sass files will be stored
-  sassPath: 'sass',
-  
-  // The pattern for finding all sass files
-  sassSearch: 'sass/**/*.+(scss|sass)',
-
+  sass: {
+    // Toggle SASS to CSS process on.
+    enabled: false,
+    // The pattern for finding all sass files.
+    from: 'sass/**/*.+(scss|sass)',
+    // The directory were sass files will be stored.
+    path: 'sass',
+    // The destination path for where generated CSS (from SASS files) should go.
+    to: 'browser/css',
+  },
   // The directory where your source files are stored (the files you manually created).
   srcPath: 'src',
-
-  // The search pattern used for gathering source files for distribution.
-  srcSearch: 'src/**/!(*.test).js',
-
-  // Additional flags for programatically running Jest Cli.
-  testOptions: null,
-
-  // The directory where Jest test files are stored.
-  // By default stored as *.test.js adjacent with the files they are testing).
-  testPath: 'src',
-
-  // Pattern for finding the TypeScript files
-  tsSearch: 'src/**/*.ts',
-
-  // Toggle copy directory of fonts on
-  useFonts: false,
-
-  // Toggle image minify and copy process
-  useImages: false,
-  
-  // Toggle SASS to CSS process on
-  useSass: false,
-
-  // The path the tsconfig file for running typescript or false if no ts file given.
-  useTsConfig: false,
-
-  // The search pattern for watching files for changes.
-  watchSearch: 'src/**/*.js',
+  test: {
+    // Additional flags for programmatically running Jest Cli.
+    options: null,
+    // The directory where Jest test files are stored.
+    // By default, stored as *.test.js adjacent to the files they are testing.
+    path: ['src'],
+    // The search pattern for watching files for changes.
+    watch: 'src/**/*.js'
+  },
+  typescript: {
+    // The path the tsconfig file for running typescript or false if no ts file given.
+    config: false,
+    // Toggle usage of typescript parsing.
+    enabled: false,
+    // Pattern for finding the TypeScript files.
+    from: 'src/**/*.ts',
+    // Directory where parsed typescript files go.
+    to: 'dist',
+  },
 }
 ```
 
@@ -199,12 +190,14 @@ Add the following to the exports in your `build-tools.config.js`:
 
 ```js
 module.exports = {
-  // Output directory for your font files
-  fontDest: 'browser/fonts',
-  // Search pattern to find your font files
-  fontSearch: 'src/fonts/**/*',
-  // Enable fonts process
-  useFonts: true,
+  fonts: {
+    // Enable fonts process
+    enabled: false,
+    // Search pattern to find your font files
+    from: 'src/fonts/**/*',
+    // Output directory for your font files
+    to: 'browser/fonts',
+  }
 }
 ```
 
@@ -216,12 +209,14 @@ Add the following to the exports in your `build-tools.config.js`:
 
 ```js
 module.exports = {
-  // Output directory for your images files
-  imageDest: 'browser/img',
-  // Search pattern to find your images
-  imageSearch: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
-  // Enable image process
-  useImages: true,
+  images: {
+    // Enable image process
+    enabled: false,
+    // Search pattern to find your images
+    from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+    // Output directory for your images files
+    to: 'browser/img',
+  }
 }
 ```
 
@@ -233,14 +228,16 @@ Add the following to the exports in your `build-tools.config.js`:
 
 ```js
 module.exports = {
-  // Output directory for your compiled css files, recommend css directory within your browser output directory
-  css: 'browser/css',
-  // Optional but nice to add (future support), add the directory where your sass files exist
-  sassPath: 'sass',
-  // Search pattern to find your SASS files (the below would be files ending in .scss or .sass in a directory called 'sass')
-  sassSearch: 'sass/**/*.+(scss|sass)',
-  // Enable SASS process
-  useSass: true,
+  sass: {
+    // Enable SASS process
+    enabled: false,
+    // Search pattern to find your SASS files (the below would be files ending in .scss or .sass in a directory called 'sass')
+    from: 'sass/**/*.+(scss|sass)',
+    // Optional but nice to add (future support), add the directory where your sass files exist
+    path: 'sass',
+    // Output directory for your compiled css files, recommend css directory within your browser output directory
+    to: 'browser/css',
+  }
 }
 ```
 
@@ -263,15 +260,27 @@ Create a `tsconfig.json` file in your project root with the following:
 ```
 
 The pattern for `"files"` should match your .ts files, but the essential thing is that it is wrapped in an array.
-The actual pattern used comes from `build-tools.config.js` as `'tsSearch'` setting. In order to create the ts declaration
-files you must add the `"declaration": true`.
+The actual pattern used comes from `build-tools.config.js` as `'typescript.from'` setting.
+To create the ts declaration files, you must add the `"declaration": true`.
 
 Add the following to the exports in your `build-tools.config.js`:
 
 ```js
 module.exports = {
-  readmeSearch: 'dist/**/!(*.min).js',
-  useTsConfig: 'tsconfig.json',
+  readme: {
+    // Location of files to use for compiling documentation into the readme.
+    from: 'dist/**/!(*.min).js',
+  },
+  typescript: {
+    // The path the tsconfig file for running typescript or false if no ts file given.
+    config: 'tsconfig.json',
+    // Toggle usage of typescript parsing
+    enabled: true,
+    // Pattern for finding the TypeScript files
+    from: 'src/**/*.ts',
+    // Directory where parsed typescript files go
+    to: 'dist',
+  },
 }
 ```
 
@@ -335,7 +344,7 @@ Run any of the above commands with `gulp` or `npm run`.
 ## js-build-tools
 Export these functions to your own project in order to customize your build pipeline.
 
-**Version**: 2.0.0  
+**Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [js-build-tools](#module_js-build-tools)
@@ -462,12 +471,11 @@ Runs several processes to build and validate the project.Cleans, distributes (l
 ## gulpConfig
 Modify these configurations to match your project specifications.
 
-**Version**: 2.0.0  
+**Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [gulpConfig](#module_gulpConfig)
     * _static_
-        * [.defaultConfig([config], [path], [defaultValue])](#module_gulpConfig.defaultConfig) ⇒ <code>\*</code> \| <code>null</code>
         * [.get(path, defaultValue)](#module_gulpConfig.get) ⇒ <code>\*</code> \| <code>null</code>
         * [.set(path, value)](#module_gulpConfig.set) ⇒ <code>\*</code>
     * _inner_
@@ -478,25 +486,20 @@ Modify these configurations to match your project specifications.
         * [~JestTestFlags](#module_gulpConfig..JestTestFlags) : <code>FlagsSetting</code>
         * [~StringSetting](#module_gulpConfig..StringSetting) : <code>string</code>
         * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+        * [~BrowserConfig](#module_gulpConfig..BrowserConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~DistConfig](#module_gulpConfig..DistConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~FontConfig](#module_gulpConfig..FontConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~ImageConfig](#module_gulpConfig..ImageConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~ReadmeConfig](#module_gulpConfig..ReadmeConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~SassConfig](#module_gulpConfig..SassConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~TestConfig](#module_gulpConfig..TestConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~TsConfig](#module_gulpConfig..TsConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~Configurations](#module_gulpConfig..Configurations) : <code>Object.&lt;string, Setting&gt;</code>
-
-<a name="module_gulpConfig.defaultConfig"></a>
-
-### gulpConfig.defaultConfig([config], [path], [defaultValue]) ⇒ <code>\*</code> \| <code>null</code>
-Retrieve a value from an object with the path (key), return a given default if the key is not found.
-
-**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [config] | <code>Object.&lt;string, \*&gt;</code> | <code>[]</code> | 
-| [path] | <code>string</code> \| <code>null</code> | <code>null</code> | 
-| [defaultValue] | <code>\*</code> | <code></code> | 
 
 <a name="module_gulpConfig.get"></a>
 
 ### gulpConfig.get(path, defaultValue) ⇒ <code>\*</code> \| <code>null</code>
-Retrieve a value from teh configurations, default may be returned.
+Retrieve a value from the configurations, default may be returned.
 
 **Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
 
@@ -573,6 +576,123 @@ A setting that may only be a string.
 Any single configuration option is a Setting.
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..BrowserConfig"></a>
+
+### gulpConfig~BrowserConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for building the browser files.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| enabled | <code>BooleanSetting</code> | 'true' to generate browser bundled files; 'false' for node environment only |
+| from | <code>StringSetting</code> | The name to use for the browser-bundled output file (.js will be appended). |
+| name | <code>StringSetting</code> | The search pattern used for retrieving compiled distribution files. |
+| to | <code>StringSetting</code> | The output directory for browser-bundled files. |
+
+<a name="module_gulpConfig..DistConfig"></a>
+
+### gulpConfig~DistConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for building the node distribution files.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| from | <code>StringSetting</code> | The search pattern used for gathering source files for distribution. |
+| main | <code>StringSetting</code> | Name of the entry the distribution file. |
+| to | <code>StringSetting</code> | The output directory for the distribution files. |
+
+<a name="module_gulpConfig..FontConfig"></a>
+
+### gulpConfig~FontConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for copying the font files.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| enabled | <code>BooleanSetting</code> | Toggle copy directory of fonts on. |
+| from | <code>StringSetting</code> | Path to search for fonts. |
+| to | <code>StringSetting</code> | Path to output fonts. |
+
+<a name="module_gulpConfig..ImageConfig"></a>
+
+### gulpConfig~ImageConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations to minify and copy the images.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| enabled | <code>BooleanSetting</code> | Toggle image minify and copy process. |
+| from | <code>StringSetting</code> | Path to search for images. |
+| to | <code>StringSetting</code> | Path to output images. |
+
+<a name="module_gulpConfig..ReadmeConfig"></a>
+
+### gulpConfig~ReadmeConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations to compile and generate the Readme file.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| file | <code>StringSetting</code> | The name of the output documentation markdown file. |
+| from | <code>StringSetting</code> | Location of files to use for compiling documentation into the readme. |
+| options | <code>ArrayableSetting</code> | Options for formatting the output readme. |
+| template | <code>StringSetting</code> | The file which will be pre-fixed to your README.md output. |
+| to | <code>StringSetting</code> | The directory to output the readme file in. |
+
+<a name="module_gulpConfig..SassConfig"></a>
+
+### gulpConfig~SassConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations to compile and copy the sass files into css.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| enabled | <code>BooleanSetting</code> | Toggle SASS to CSS process on. |
+| from | <code>StringSetting</code> | The pattern for finding all sass files. |
+| path | <code>StringSetting</code> | The directory were sass files will be stored. |
+| to | <code>StringSetting</code> | The destination path for where generated CSS (from SASS files) should go. |
+
+<a name="module_gulpConfig..TestConfig"></a>
+
+### gulpConfig~TestConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for running the test suite.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| options | <code>JestTestFlags</code> | Additional flags for programmatically running Jest Cli. |
+| path | <code>ArrayableSetting</code> | The directory where Jest test files are stored. By default, stored as *.test.js adjacent to the files they are testing. |
+| watch | <code>ArrayableSetting</code> | The search pattern for watching files for changes. |
+
+<a name="module_gulpConfig..TsConfig"></a>
+
+### gulpConfig~TsConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for compiling typescript into JS files.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| config | <code>FlagStringSetting</code> | The path the tsconfig file for running typescript or false if no ts file given. |
+| enabled | <code>BooleanSetting</code> | Toggle usage of typescript parsing. |
+| from | <code>StringSetting</code> | Pattern for finding the TypeScript files. |
+| to | <code>StringSetting</code> | Directory where parsed typescript files go. |
+
 <a name="module_gulpConfig..Configurations"></a>
 
 ### gulpConfig~Configurations : <code>Object.&lt;string, Setting&gt;</code>
@@ -581,33 +701,26 @@ A set of Configurations options defined by Settings.
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
 **Properties**
 
-| Name | Type |
-| --- | --- |
-| browserName | <code>StringSetting</code> | 
-| browserPath | <code>StringSetting</code> | 
-| distMain | <code>StringSetting</code> | 
-| distPath | <code>StringSetting</code> | 
-| distSearch | <code>ArrayableSetting</code> | 
-| nodeOnly | <code>BooleanSetting</code> | 
-| readmeTemplate | <code>StringSetting</code> | 
-| readmeOptions | <code>ArrayableSetting</code> | 
-| readmeFile | <code>StringSetting</code> | 
-| readmePath | <code>StringSetting</code> | 
-| readmeSearch | <code>ArrayableSetting</code> | 
-| rootPath | <code>StringSetting</code> | 
-| srcPath | <code>StringSetting</code> | 
-| srcSearch | <code>ArrayableSetting</code> | 
-| testOptions | <code>JestTestFlags</code> | 
-| testPath | <code>ArrayableSetting</code> | 
-| useTsConfig | <code>FlagStringSetting</code> | 
-| watchSearch | <code>ArrayableSetting</code> | 
+| Name | Type | Description |
+| --- | --- | --- |
+| browser | <code>BrowserConfig</code> | Browser bundling configuration group. |
+| cleanPaths | <code>ArrayableSetting</code> | The paths for directories to delete before build. |
+| dist | <code>DistConfig</code> | Distribution file generation configuration group. |
+| fonts | <code>FontConfig</code> | Fonts copy configuration group. |
+| images | <code>ImageConfig</code> | Minify and copy the images configuration. |
+| readme | <code>ReadmeConfig</code> | Build readme files configuration. |
+| rootPath | <code>StringSetting</code> | Base directory of the project. |
+| sass | <code>SassConfig</code> | Compile CSS from SASS configuration. |
+| srcPath | <code>StringSetting</code> | The directory where your source files are stored (the files you manually created). |
+| test | <code>TestConfig</code> | Run test suite configuration. |
+| typescript | <code>TsConfig</code> | Compile from typescript configuration. |
 
 <a name="module_testHelpers"></a>
 
 ## testHelpers
 Export the setUp helper.
 
-**Version**: 2.0.0  
+**Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [testHelpers](#module_testHelpers)
@@ -655,7 +768,7 @@ Update the gulp configurations with the test data. Set the test directory where 
 ## partials
 Micro-functions used as components for the main gulp functions.
 
-**Version**: 2.0.0  
+**Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [partials](#module_partials)

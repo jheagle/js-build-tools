@@ -10,7 +10,7 @@ afterEach(setUp.afterEach)
 
 describe('beginWatcher', () => {
   test('returns instance of EventEmitter / FSWatcher', () => {
-    gulpConfig.set('watchSearch', 'test-begin-watcher/*.js')
+    gulpConfig.set('test.watch', 'test-begin-watcher/*.js')
     const fsWatcher = beginWatcher()
     expect(fsWatcher).toBeInstanceOf(EventEmitter)
     fsWatcher.close()

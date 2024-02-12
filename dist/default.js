@@ -15,6 +15,6 @@ const {
  */
 const defaultCmd = function () {
   const done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
-  return gulpConfig.get('nodeOnly') ? series(dist)(done) : series(dist, bundle)(done)
+  return gulpConfig.get('browser.enabled') ? series(dist, bundle)(done) : series(dist)(done)
 }
 module.exports = defaultCmd

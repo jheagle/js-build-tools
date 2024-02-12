@@ -28,7 +28,7 @@ afterEach(setUp.afterEach)
 
 describe('dist', () => {
   test('uses the configured paths', done => {
-    const distPath = gulpConfig.get('distPath')
+    const distPath = gulpConfig.get('dist.to')
     expect.assertions(1)
     dist()
       .on('finish', () => {
