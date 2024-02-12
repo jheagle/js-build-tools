@@ -78,22 +78,22 @@ module.exports = {
   // Base directory of the project.
   rootPath: './',
   sass: {
-    // Toggle SASS to CSS process on
+    // Toggle SASS to CSS process on.
     enabled: false,
-    // The pattern for finding all sass files
+    // The pattern for finding all sass files.
     from: 'sass/**/*.+(scss|sass)',
-    // The directory were sass files will be stored
+    // The directory were sass files will be stored.
     path: 'sass',
-    // The destination path for where generated CSS (from SASS files) should go
+    // The destination path for where generated CSS (from SASS files) should go.
     to: 'browser/css',
   },
   // The directory where your source files are stored (the files you manually created).
   srcPath: 'src',
   test: {
-    // Additional flags for programatically running Jest Cli.
+    // Additional flags for programmatically running Jest Cli.
     options: null,
     // The directory where Jest test files are stored.
-    // By default stored as *.test.js adjacent with the files they are testing).
+    // By default, stored as *.test.js adjacent to the files they are testing.
     path: ['src'],
     // The search pattern for watching files for changes.
     watch: 'src/**/*.js'
@@ -101,11 +101,11 @@ module.exports = {
   typescript: {
     // The path the tsconfig file for running typescript or false if no ts file given.
     config: false,
-    // Toggle usage of typescript parsing
+    // Toggle usage of typescript parsing.
     enabled: false,
-    // Pattern for finding the TypeScript files
+    // Pattern for finding the TypeScript files.
     from: 'src/**/*.ts',
-    // Directory where parsed typescript files go
+    // Directory where parsed typescript files go.
     to: 'dist',
   },
 }
