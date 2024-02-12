@@ -2,7 +2,7 @@
  * Modify these configurations to match your project specifications.
  * @file
  * @author Joshua Heagle <joshuaheagle@gmail.com>
- * @version 2.0.0
+ * @version 3.0.0
  * @module gulpConfig
  * @memberOf module:js-build-tools
  */

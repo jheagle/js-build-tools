@@ -344,7 +344,7 @@ Run any of the above commands with `gulp` or `npm run`.
 ## js-build-tools
 Export these functions to your own project in order to customize your build pipeline.
 
-**Version**: 2.0.0  
+**Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [js-build-tools](#module_js-build-tools)
@@ -471,7 +471,7 @@ Runs several processes to build and validate the project.Cleans, distributes (l
 ## gulpConfig
 Modify these configurations to match your project specifications.
 
-**Version**: 2.0.0  
+**Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [gulpConfig](#module_gulpConfig)
