@@ -1,5 +1,4 @@
-async function exportImagemin () {
-  "use strict";
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -89,6 +88,3 @@ imagemin.buffer = async function (input) {
   }
   return (0, _index2.default)(...plugins)(input);
 };
-}
-
-exportImagemin()

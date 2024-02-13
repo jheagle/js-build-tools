@@ -1,6 +1,6 @@
 const isObject = require('./isObject')
-const strAfter = require('common-exports/dist/utilities/strAfter').default
-const strBefore = require('common-exports/dist/utilities/strBefore').default
+const strAfter = require('./strAfter')
+const strBefore = require('./strBefore')
 
 /**
  * Get a nested property value from an object.

@@ -1,5 +1,4 @@
-async function exportImageminMozjpeg () {
-  "use strict";
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -99,6 +98,3 @@ const imageminMozjpeg = options => async buffer => {
   return stdout;
 };
 var _default = exports.default = imageminMozjpeg;
-}
-
-exportImageminMozjpeg()

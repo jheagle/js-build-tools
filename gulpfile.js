@@ -8,10 +8,11 @@ const {
   watchFull,
   watchTest
 } = require('./gulpfile.base.js')
-const removeDirectory = require('./functions/partials/removeDirectory')
 const { series } = require('gulp')
 
-const convertCommon = () => require('common-exports').default(
+const { makeCommon } = require('common-exports')
+
+const convertCommon = () => makeCommon(
   'node_modules/gulp-imagemin/index.js',
   'vendor/gulp-imagemin',
   {
@@ -19,21 +20,31 @@ const convertCommon = () => require('common-exports').default(
       ['node_modules/mozjpeg/index.js']: [
         {
           src: 'node_modules/mozjpeg/package.json',
-          dest: 'vendor/mozjpeg/package.json'
+          dest: 'vendor/mozjpeg/package.json',
+          updateContent: (content) => content.replace(
+            '\n\t"type": "module",', ''
+          )
+        },
+        {
+          src: 'node_modules/mozjpeg/vendor',
+          dest: 'vendor/mozjpeg/vendor'
+        }
+      ]
+    },
+    customChanges: {
+      ['node_modules/imagemin-mozjpeg/node_modules/execa/lib/kill.js']: [
+        {
+          updateContent: (content) => content.replace(
+            'import onExit from \'signal-exit\';',
+            'import { onExit } from \'signal-exit\';'
+          )
         }
       ]
     }
   }
 )
 
-exports.build = done => {
-  return series(convertCommon, build)(done)
-  // return removeDirectory('vendor')
-  //   .then(() => {
-  //     return convertCommon()
-  //   })
-  //   .then(() => build(done))
-}
+exports.build = done => series(convertCommon, build)(done)
 exports.convertCommon = convertCommon
 exports.default = defaultCmd
 exports.readme = readme

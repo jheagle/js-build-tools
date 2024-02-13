@@ -4,7 +4,6 @@
 	"description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
 	"license": "MIT",
 	"repository": "imagemin/mozjpeg-bin",
-	"type": "module",
 	"exports": "./index.js",
 	"bin": "cli.js",
 	"engines": {

@@ -1,5 +1,4 @@
-async function exportImageminGifsicle () {
-  'use strict';
+'use strict';
 
 const execa = require('execa');
 const gifsicle = require('gifsicle');
@@ -32,6 +31,3 @@ module.exports = function () {
     return stdout;
   };
 };
-}
-
-exportImageminGifsicle()

@@ -1,5 +1,4 @@
-async function exportPPipe () {
-  "use strict";
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -21,6 +20,3 @@ function pPipe() {
     return currentValue;
   };
 }
-}
-
-exportPPipe()

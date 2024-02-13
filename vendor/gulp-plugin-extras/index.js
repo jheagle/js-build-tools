@@ -1,5 +1,4 @@
-async function exportGulpPluginExtras () {
-  "use strict";
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -41,6 +40,3 @@ function gulpPlugin(name, onFile) {
     }
   });
 }
-}
-
-exportGulpPluginExtras()

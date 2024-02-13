@@ -1,5 +1,4 @@
-async function exportGlobby () {
-  "use strict";
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -95,6 +94,3 @@ const isGitIgnoredSync = options => {
   return getIsIgnoredPredicate(ignores, options.cwd);
 };
 exports.isGitIgnoredSync = isGitIgnoredSync;
-}
-
-exportGlobby()

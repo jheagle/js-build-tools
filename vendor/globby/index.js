@@ -1,5 +1,4 @@
-async function exportGlobby () {
-  "use strict";
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -190,6 +189,3 @@ const isDynamicPattern = function (patterns) {
   return [patterns].flat().some(pattern => _fastGlob.default.isDynamicPattern(pattern, options));
 };
 exports.isDynamicPattern = isDynamicPattern;
-}
-
-exportGlobby()
