@@ -39,6 +39,20 @@ const convertCommon = () => makeCommon(
             'import { onExit } from \'signal-exit\';'
           )
         }
+      ],
+      ['node_modules/gulp-imagemin/index.js']: [
+        {
+          updateContent: content => content.replace(
+            'export const gifsicle = await exposePlugin(\'gifsicle\');\n' +
+            'export const mozjpeg = await exposePlugin(\'mozjpeg\');\n' +
+            'export const optipng = await exposePlugin(\'optipng\');\n' +
+            'export const svgo = await exposePlugin(\'svgo\');',
+            'export const gifsicle = exposePlugin(\'gifsicle\');\n' +
+            'export const mozjpeg = exposePlugin(\'mozjpeg\');\n' +
+            'export const optipng = exposePlugin(\'optipng\');\n' +
+            'export const svgo = exposePlugin(\'svgo\');'
+          )
+        },
       ]
     }
   }

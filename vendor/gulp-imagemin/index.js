@@ -1,5 +1,4 @@
-async function exportGulpImagemin () {
-  "use strict";
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -119,10 +118,7 @@ function gulpImagemin(plugins, options) {
     }
   });
 }
-const gifsicle = exports.gifsicle = await exposePlugin('gifsicle');
-const mozjpeg = exports.mozjpeg = await exposePlugin('mozjpeg');
-const optipng = exports.optipng = await exposePlugin('optipng');
-const svgo = exports.svgo = await exposePlugin('svgo');
-}
-
-exportGulpImagemin()
+const gifsicle = exports.gifsicle = exposePlugin('gifsicle');
+const mozjpeg = exports.mozjpeg = exposePlugin('mozjpeg');
+const optipng = exports.optipng = exposePlugin('optipng');
+const svgo = exports.svgo = exposePlugin('svgo');
