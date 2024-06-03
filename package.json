@@ -3,6 +3,10 @@
   "version": "3.0.4",
   "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
+  "exports": {
+    "import": "./gulpfile.base.mjs",
+    "require": "./gulpfile.base.js"
+  },
   "scripts": {
     "build": "gulp build",
     "dev": "gulp",
@@ -32,17 +36,17 @@
     ]
   },
   "dependencies": {
-    "@babel/core": "^7.24.0",
-    "@babel/plugin-proposal-throw-expressions": "^7.23.3",
-    "@babel/preset-env": "^7.24.0",
-    "@babel/preset-typescript": "^7.23.3",
-    "@babel/runtime-corejs3": "^7.24.0",
+    "@babel/core": "^7.24.6",
+    "@babel/plugin-transform-modules-commonjs": "^7.24.6",
+    "@babel/preset-env": "^7.24.6",
+    "@babel/preset-typescript": "^7.24.6",
+    "@babel/runtime-corejs3": "^7.24.6",
     "babel-jest": "^29.7.0",
     "browserify": "^17.0.0",
-    "core-js": "^3.36.0",
+    "core-js": "^3.37.1",
     "fs": "^0.0.1-security",
-    "glob": "^10.3.10",
-    "gulp": "^4.0.2",
+    "glob": "^10.4.1",
+    "gulp": "^5.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-cache": "^1.1.3",
     "gulp-cssnano": "^2.1.3",
@@ -56,8 +60,9 @@
     "jest-environment-jsdom": "^29.7.0",
     "jsdoc-to-markdown": "^8.0.1",
     "regenerator-runtime": "^0.14.1",
-    "sass": "^1.72.0",
-    "test-filesystem": "^1.3.3",
+    "sass": "^1.77.4",
+    "test-filesystem": "^1.3.5",
+    "through2": "^4.0.2",
     "vinyl-source-stream": "^2.0.0"
   },
   "files": [
@@ -65,9 +70,10 @@
     "dist",
     "functions",
     "gulpfile.base.js",
+    "gulpfile.base.mjs",
     "gulp.config.js",
-    "jsdoc.base.js",
-    "vendor"
+    "gulp.config.mjs",
+    "jsdoc.base.js"
   ],
   "funding": "https://www.paypal.com/donate/?business=LRYR6SZRWKXVY&no_recurring=0&item_name=Let%27s+build+together+today+to+simplify+our+jobs+tomorrow.&currency_code=CAD"
 }
