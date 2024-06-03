@@ -4,8 +4,16 @@
   "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
   "exports": {
-    "import": "./gulpfile.base.mjs",
-    "require": "./gulpfile.base.js"
+    ".": {
+      "node": "./gulpfile.base.js",
+      "default": "./gulpfile.base.mjs"
+    },
+    "./babel.config": "./babel.config.js",
+    "./gulp.config": "./gulp.config.js",
+    "./gulp.config.mjs": "./gulp.config.mjs",
+    "./gulpfile.base": "./gulpfile.base.js",
+    "./gulpfile.base.mjs": "./gulpfile.base.mjs",
+    "./jsdoc.base": "./jsdoc.base.js"
   },
   "scripts": {
     "build": "gulp build",
