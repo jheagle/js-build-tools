@@ -138,7 +138,7 @@ const {
   typescript,
   watchFull,
   watchTest
-} = require('js-build-tools')
+} = require('js-build-tools/gulpfile.base.js')
 
 // Everything you export will be created as a gulp task.
 // You can build your own tasks here as well by using some of the functions `js-build-tools/functions`.
@@ -169,7 +169,7 @@ export {
   typescript,
   watchFull,
   watchTest
-} from 'js-build-tools'
+} from 'js-build-tools/gulpfile.base.mjs'
 
 // You can build your own tasks here as well by using some of the functions `js-build-tools/functions`.
 // You can list your available tasks by running `gulp --tasks`.
