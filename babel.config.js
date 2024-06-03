@@ -1,6 +1,6 @@
 module.exports = {
   plugins: [
-    '@babel/plugin-proposal-throw-expressions'
+    '@babel/plugin-transform-modules-commonjs'
   ],
   presets: [
     ['@babel/preset-env', {

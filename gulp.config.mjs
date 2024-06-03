@@ -1,43 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>JSDoc: Source: gulp.config.js</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-
-<body>
-
-<div id="main">
-
-    <h1 class="page-title">Source: gulp.config.js</h1>
-
-    
-
-
-
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
+/**
  * Modify these configurations to match your project specifications.
  * @file
- * @author Joshua Heagle &lt;joshuaheagle@gmail.com>
- * @version 2.0.0
+ * @author Joshua Heagle <joshuaheagle@gmail.com>
+ * @version 3.0.0
  * @module gulpConfig
  * @memberOf module:js-build-tools
  */
+import { fileExists } from 'test-filesystem'
 
 /**
  * A setting that may be an array of strings or a string only.
- * @typedef {Array&lt;string>|string} module:gulpConfig~ArrayableSetting
+ * @typedef {Array<string>|string} module:gulpConfig~ArrayableSetting
  */
 
 /**
@@ -52,7 +25,7 @@
 
 /**
  * An object of boolean settings used as flags.
- * @typedef {Object&lt;string, BooleanSetting>} module:gulpConfig~FlagsSetting
+ * @typedef {Object<string, BooleanSetting>} module:gulpConfig~FlagsSetting
  */
 
 /**
@@ -81,7 +54,7 @@
 
 /**
  * Configurations for building the browser files.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~BrowserConfig
+ * @typedef {Object<string, Setting>} module:gulpConfig~BrowserConfig
  * @property {BooleanSetting} enabled - 'true' to generate browser bundled files; 'false' for node environment only
  * @property {StringSetting} from - The name to use for the browser-bundled output file (.js will be appended).
  * @property {StringSetting} name - The search pattern used for retrieving compiled distribution files.
@@ -90,7 +63,7 @@
 
 /**
  * Configurations for building the node distribution files.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~DistConfig
+ * @typedef {Object<string, Setting>} module:gulpConfig~DistConfig
  * @property {StringSetting} from - The search pattern used for gathering source files for distribution.
  * @property {StringSetting} main - Name of the entry the distribution file.
  * @property {StringSetting} to - The output directory for the distribution files.
@@ -98,7 +71,7 @@
 
 /**
  * Configurations for copying the font files.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~FontConfig
+ * @typedef {Object<string, Setting>} module:gulpConfig~FontConfig
  * @property {BooleanSetting} enabled - Toggle copy directory of fonts on.
  * @property {StringSetting} from - Path to search for fonts.
  * @property {StringSetting} to - Path to output fonts.
@@ -106,7 +79,7 @@
 
 /**
  * Configurations to minify and copy the images.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~ImageConfig
+ * @typedef {Object<string, Setting>} module:gulpConfig~ImageConfig
  * @property {BooleanSetting} enabled - Toggle image minify and copy process.
  * @property {StringSetting} from - Path to search for images.
  * @property {StringSetting} to - Path to output images.
@@ -114,7 +87,7 @@
 
 /**
  * Configurations to compile and generate the Readme file.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~ReadmeConfig
+ * @typedef {Object<string, Setting>} module:gulpConfig~ReadmeConfig
  * @property {StringSetting} file - The name of the output documentation markdown file.
  * @property {StringSetting} from - Location of files to use for compiling documentation into the readme.
  * @property {ArrayableSetting} options - Options for formatting the output readme.
@@ -124,7 +97,7 @@
 
 /**
  * Configurations to compile and copy the sass files into css.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~SassConfig
+ * @typedef {Object<string, Setting>} module:gulpConfig~SassConfig
  * @property {BooleanSetting} enabled - Toggle SASS to CSS process on.
  * @property {StringSetting} from - The pattern for finding all sass files.
  * @property {StringSetting} path - The directory were sass files will be stored.
@@ -133,7 +106,7 @@
 
 /**
  * Configurations for running the test suite.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~TestConfig
+ * @typedef {Object<string, Setting>} module:gulpConfig~TestConfig
  * @property {JestTestFlags} options - Additional flags for programmatically running Jest Cli.
  * @property {ArrayableSetting} path - The directory where Jest test files are stored.
  * By default, stored as *.test.js adjacent to the files they are testing.
@@ -142,7 +115,7 @@
 
 /**
  * Configurations for compiling typescript into JS files.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~TsConfig
+ * @typedef {Object<string, Setting>} module:gulpConfig~TsConfig
  * @property {FlagStringSetting} config - The path the tsconfig file for running typescript or false if no ts file given.
  * @property {BooleanSetting} enabled - Toggle usage of typescript parsing.
  * @property {StringSetting} from - Pattern for finding the TypeScript files.
@@ -151,7 +124,7 @@
 
 /**
  * A set of Configurations options defined by Settings.
- * @typedef {Object&lt;string, Setting>} module:gulpConfig~Configurations
+ * @typedef {Object<string, Setting>} module:gulpConfig~Configurations
  * @property {BrowserConfig} browser - Browser bundling configuration group.
  * @property {ArrayableSetting} cleanPaths - The paths for directories to delete before build.
  * @property {DistConfig} dist - Distribution file generation configuration group.
@@ -165,25 +138,10 @@
  * @property {TsConfig} typescript - Compile from typescript configuration.
  */
 
-const dotGet = require('./functions/utilities/dotGet')
-const dotSet = require('./functions/utilities/dotSet')
-const dotNotate = require('./functions/utilities/dotNotate')
-/**
- * All the available configuration setting options for running the build.
- * @memberOf module:gulpConfig` `
- * @type {Configurations}
- */
-let gulpConfigurations = {}
-try {
-  gulpConfigurations = require('../../build-tools.config.js')
-} catch (isUndefined) {
-  try {
-    // Missing main project config, using default path
-    gulpConfigurations = require('./build-tools.config.js')
-  } catch (stillUndefined) {
-    console.warn('Missing config path, ensure you have a build-tools.config.js file in you project root')
-  }
-}
+import { dotGet } from './functions/utilities/dotGet.mjs'
+import { dotSet } from './functions/utilities/dotSet.mjs'
+import { dotNotate } from './functions/utilities/dotNotate.mjs'
+import { readFileSync } from 'fs'
 
 const setDefaults = {
   browser: {
@@ -246,6 +204,23 @@ const setDefaults = {
   },
 }
 
+/**
+ * All the available configuration setting options for running the build.
+ * @memberOf module:gulpConfig` `
+ * @type {Configurations}
+ */
+let gulpConfigurations = null
+
+if (fileExists('../../build-tools.config.json')) {
+  gulpConfigurations = JSON.parse(readFileSync('../../build-tools.config.json').toString())
+} else {
+  if (fileExists('./build-tools.config.json')) {
+    gulpConfigurations = JSON.parse(readFileSync('./build-tools.config.json').toString())
+  } else {
+    console.warn('Missing config path, ensure you have a build-tools.config.js file in you project root')
+  }
+}
+
 const notation = dotNotate(setDefaults)
 for (let notationKey in notation) {
   const arrayEnding = /(\.\d+)$/
@@ -265,7 +240,7 @@ for (let notationKey in notation) {
  * @param {*} defaultValue
  * @returns {*|null}
  */
-const get = (path = null, defaultValue = null) => dotGet(gulpConfigurations, path, defaultValue)
+export const get = (path = null, defaultValue = null) => dotGet(gulpConfigurations, path, defaultValue)
 
 /**
  * Specify a value for the configurations to use.
@@ -274,32 +249,4 @@ const get = (path = null, defaultValue = null) => dotGet(gulpConfigurations, pat
  * @param value
  * @returns {*}
  */
-const set = (path, value) => dotSet(gulpConfigurations, path, value)
-
-module.exports = {
-  get,
-  set
-}
-</code></pre>
-        </article>
-    </section>
-
-
-
-
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-gulpConfig.html">gulpConfig</a></li><li><a href="module-js-build-tools.html">js-build-tools</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Feb 11 2024 22:37:57 GMT-0500 (Eastern Standard Time)
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
-</body>
-</html>
+export const set = (path, value) => dotSet(gulpConfigurations, path, value)
