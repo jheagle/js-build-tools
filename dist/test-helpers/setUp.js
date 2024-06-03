@@ -1,12 +1,38 @@
 "use strict";
 
+require("core-js/modules/esnext.weak-map.delete-all.js");
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "afterEach", {
+  enumerable: true,
+  get: function () {
+    return setUp.afterEach;
+  }
+});
+Object.defineProperty(exports, "beforeEach", {
+  enumerable: true,
+  get: function () {
+    return setUp.beforeEach;
+  }
+});
+Object.defineProperty(exports, "createTempDir", {
+  enumerable: true,
+  get: function () {
+    return setUp.createTempDir;
+  }
+});
+exports.setUp = exports.setDefaults = exports.gulpConfig = void 0;
+var gulpConfig = _interopRequireWildcard(require("../../gulp.config.js"));
+exports.gulpConfig = gulpConfig;
+var setUp = _interopRequireWildcard(require("test-filesystem"));
+exports.setUp = setUp;
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 // Import the configurations and override some of them to direct to the temp directory.
-const gulpConfig = require('../../gulp.config.js');
-const {
-  setUp
-} = require('test-filesystem');
+
 let tempDir = 'test-temp/';
-let srcPath = "".concat(tempDir, "src");
+let srcPath = `${tempDir}src`;
 
 /**
  * Update the gulp configurations with the test data. Set the test directory where temp files will be created for testing.
@@ -15,55 +41,32 @@ let srcPath = "".concat(tempDir, "src");
  */
 const setDefaults = function () {
   let testDir = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'test-temp';
-  tempDir = "".concat(testDir, "/");
-  srcPath = "".concat(tempDir, "src");
+  tempDir = `${testDir}/`;
+  srcPath = `${tempDir}src`;
   setUp.setDefaults(tempDir);
-  const distPath = "".concat(tempDir, "dist");
-  const browserPath = "".concat(tempDir, "browser");
-  const sassPath = "".concat(tempDir, "sass");
-  gulpConfig.set('browser.from', "".concat(distPath, "/**/*.js"));
+  const distPath = `${tempDir}dist`;
+  const browserPath = `${tempDir}browser`;
+  const sassPath = `${tempDir}sass`;
+  gulpConfig.set('browser.from', `${distPath}/**/*.js`);
   gulpConfig.set('browser.to', browserPath);
   gulpConfig.set('cleanPaths', [distPath, browserPath]);
-  gulpConfig.set('dist.from', "".concat(srcPath, "/**/!(*.test).js"));
-  gulpConfig.set('dist.main', "".concat(distPath, "/main"));
+  gulpConfig.set('dist.from', `${srcPath}/**/!(*.test).js`);
+  gulpConfig.set('dist.main', `${distPath}/main`);
   gulpConfig.set('dist.to', distPath);
-  gulpConfig.set('fonts.from', "".concat(srcPath, "/fonts/**/*"));
-  gulpConfig.set('fonts.to', "".concat(browserPath, "/fonts"));
-  gulpConfig.set('images.from', "".concat(srcPath, "/img/**/*.+(png|jpg|jpeg|gif|svg)"));
-  gulpConfig.set('images.to', "".concat(browserPath, "/img"));
-  gulpConfig.set('readme.template', "".concat(tempDir, "MAIN.md"));
+  gulpConfig.set('fonts.from', `${srcPath}/fonts/**/*`);
+  gulpConfig.set('fonts.to', `${browserPath}/fonts`);
+  gulpConfig.set('images.from', `${srcPath}/img/**/*.+(png|jpg|jpeg|gif|svg)`);
+  gulpConfig.set('images.to', `${browserPath}/img`);
+  gulpConfig.set('readme.template', `${tempDir}MAIN.md`);
   gulpConfig.set('readme.to', tempDir);
-  gulpConfig.set('readme.from', "".concat(srcPath, "/**/!(*.test).js"));
+  gulpConfig.set('readme.from', `${srcPath}/**/!(*.test).js`);
   gulpConfig.set('rootPath', tempDir);
-  gulpConfig.set('sass.from', "".concat(sassPath, "/**/*.+(scss|sass)"));
+  gulpConfig.set('sass.from', `${sassPath}/**/*.+(scss|sass)`);
   gulpConfig.set('sass.path', sassPath);
-  gulpConfig.set('sass.to', "".concat(browserPath, "/css"));
+  gulpConfig.set('sass.to', `${browserPath}/css`);
   gulpConfig.set('srcPath', srcPath);
-  gulpConfig.set('typescript.from', "".concat(srcPath, "/**/*.ts"));
+  gulpConfig.set('typescript.from', `${srcPath}/**/*.ts`);
   gulpConfig.set('typescript.to', distPath);
-  gulpConfig.set('test.watch', "".concat(srcPath, "/**/*.js"));
+  gulpConfig.set('test.watch', `${srcPath}/**/*.js`);
 };
 exports.setDefaults = setDefaults;
-exports.gulpConfig = gulpConfig;
-
-/**
- * Ensure that the del has completed, recursively attempt to delete and recreate
- * @memberOf module:testHelpers
- * @param {boolean} [exists=true]
- * @returns {Promise<*|void>}
- */
-exports.createTempDir = setUp.createTempDir;
-
-/**
- * In the Jest.beforeEach function call this one to set up the temp directory.
- * @memberOf module:testHelpers
- * @returns {Promise<*|void>}
- */
-exports.beforeEach = setUp.beforeEach;
-
-/**
- * In the Jest.afterEach function call this one to clean up and remove the temp directory.
- * @memberOf module:testHelpers
- * @returns {Promise<*>}
- */
-exports.afterEach = setUp.afterEach;
