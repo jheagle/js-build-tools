@@ -60,95 +60,103 @@
 <p>It is recommended to install gulp with the <code>-g</code> flag, so that you can run it with <code>gulp</code> instead
 of <code>node_modules/.bin/gulp</code>.</p>
 <h2>Configuration</h2>
-<p>In your project's root directory, create a <code>build-tools.config.js</code> file. This can contain any of the following (values
+<p>In your project's root directory, create a <code>build-tools.config.json</code> file. This can contain any of the following (values
 provided are the defaults):</p>
-<pre class="prettyprint source lang-js"><code>module.exports = {
-  browser: {
+<pre class="prettyprint source lang-json"><code>{
+  &quot;browser&quot;: {
     // 'true' to generate browser bundled files; 'false' for node environment only
-    enabled: true,
+    &quot;enabled&quot;: true,
     // The name to use for the browser-bundled output file (.js will be appended).
-    name: 'my-package',
+    &quot;name&quot;: &quot;my-package&quot;,
     // The search pattern used for retrieving compiled distribution files.
-    from: 'dist/**/*.js',
+    &quot;from&quot;: &quot;dist/**/*.js&quot;,
     // The output directory for browser-bundled files.
-    to: 'browser',
+    &quot;to&quot;: &quot;browser&quot;
   },
   // The paths for directories to delete before build.
-  cleanPaths: ['dist', 'browser'],
-  dist: {
+  &quot;cleanPaths&quot;: [
+    &quot;dist&quot;,
+    &quot;browser&quot;
+  ],
+  &quot;dist&quot;: {
     // Name of the entry the distribution file.
-    main: 'dist/main',
+    &quot;main&quot;: &quot;dist/main&quot;,
     // The search pattern used for gathering source files for distribution.
-    from: 'src/**/!(*.test).js',
+    &quot;from&quot;: &quot;src/**/!(*.test).js&quot;,
     // The output directory for the distribution files.
-    to: 'dist',
+    &quot;to&quot;: &quot;dist&quot;
   },
-  fonts: {
+  &quot;fonts&quot;: {
     // Toggle copy directory of fonts on
-    enabled: false,
+    &quot;enabled&quot;: false,
     // Path to search for fonts
-    from: 'src/fonts/**/*',
+    &quot;from&quot;: &quot;src/fonts/**/*&quot;,
     // Path to output fonts
-    to: 'browser/fonts',
+    &quot;to&quot;: &quot;browser/fonts&quot;
   },
-  images: {
+  &quot;images&quot;: {
     // Toggle image minify and copy process
-    enabled: false,
+    &quot;enabled&quot;: false,
     // Path to search for images
-    from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+    &quot;from&quot;: &quot;src/img/**/*.+(png|jpg|jpeg|gif|svg)&quot;,
     // Path to output images
-    to: 'browser/img',
+    &quot;to&quot;: &quot;browser/img&quot;
   },
-  readme: {
+  &quot;readme&quot;: {
     // The file which will be pre-fixed to your README.md output.
-    template: 'MAIN.md',
+    &quot;template&quot;: &quot;MAIN.md&quot;,
     // Options for formatting the output readme.
-    options: 'utf8',
+    &quot;options&quot;: &quot;utf8&quot;,
     // The name of the output documentation markdown file.
-    file: 'README.md',
+    &quot;file&quot;: &quot;README.md&quot;,
     // Location of files to use for compiling documentation into the readme.
-    from: ['gulpfile.base.js', 'gulp.config.js', 'functions/**/!(*.test).js'],
+    &quot;from&quot;: [
+      &quot;src/**/!(*.test).js&quot;
+    ],
     // The directory to output the readme file in.
-    to: './'
+    &quot;to&quot;: &quot;./&quot;
   },
   // Base directory of the project.
-  rootPath: './',
-  sass: {
+  &quot;rootPath&quot;: &quot;./&quot;,
+  &quot;sass&quot;: {
     // Toggle SASS to CSS process on.
-    enabled: false,
+    &quot;enabled&quot;: false,
     // The pattern for finding all sass files.
-    from: 'sass/**/*.+(scss|sass)',
+    &quot;from&quot;: &quot;sass/**/*.+(scss|sass)&quot;,
     // The directory were sass files will be stored.
-    path: 'sass',
+    &quot;path&quot;: &quot;sass&quot;,
     // The destination path for where generated CSS (from SASS files) should go.
-    to: 'browser/css',
+    &quot;to&quot;: &quot;browser/css&quot;
   },
   // The directory where your source files are stored (the files you manually created).
-  srcPath: 'src',
-  test: {
+  &quot;srcPath&quot;: &quot;src&quot;,
+  &quot;test&quot;: {
     // Additional flags for programmatically running Jest Cli.
-    options: null,
+    &quot;options&quot;: null,
     // The directory where Jest test files are stored.
     // By default, stored as *.test.js adjacent to the files they are testing.
-    path: ['src'],
+    &quot;path&quot;: [
+      &quot;src&quot;
+    ],
     // The search pattern for watching files for changes.
-    watch: 'src/**/*.js'
+    &quot;watch&quot;: &quot;src/**/*.js&quot;
   },
-  typescript: {
+  &quot;typescript&quot;: {
     // The path the tsconfig file for running typescript or false if no ts file given.
-    config: false,
+    &quot;config&quot;: false,
     // Toggle usage of typescript parsing.
-    enabled: false,
+    &quot;enabled&quot;: false,
     // Pattern for finding the TypeScript files.
-    from: 'src/**/*.ts',
+    &quot;from&quot;: &quot;src/**/*.ts&quot;,
     // Directory where parsed typescript files go.
-    to: 'dist',
-  },
+    &quot;to&quot;: &quot;dist&quot;
+  }
 }
 </code></pre>
 <h3>Create your local gulpfile.js</h3>
 <p>In your project's root directory, create a <code>gulpfile.js</code> file, in here you can require any of the functions you need.
 For example:</p>
+<h4>Common JS</h4>
 <pre class="prettyprint source lang-js"><code>// Your local gulpfile.js
 const {
   build,
@@ -175,6 +183,26 @@ exports.testQuick = testQuick
 exports.watchFull = watchFull
 exports.watchTest = watchTest
 </code></pre>
+<h4>ES Module</h4>
+<pre class="prettyprint source lang-js"><code>// Your local gulpfile.mjs
+// Everything you export will be created as a gulp task.
+export {
+  build,
+  defaultCmd,
+  partials,
+  readme,
+  sass,
+  testFull,
+  testQuick,
+  typescript,
+  watchFull,
+  watchTest
+} from 'js-build-tools'
+
+// You can build your own tasks here as well by using some of the functions `js-build-tools/functions`.
+// You can list your available tasks by running `gulp --tasks`.
+
+</code></pre>
 <p>Verify your tasks are available by running <code>gulp --tasks</code>.</p>
 <h3>Configure Babel</h3>
 <p>Depending on how you wrote your test files, Jest may require some Babel configuration.
@@ -184,6 +212,53 @@ Example:</p>
 <pre class="prettyprint source lang-js"><code>const babelConfig = require('js-build-tools/babel.config')
 // You may add additional configuration here. Example: babelConfig.presets.push('@babel/preset-env')
 module.exports = babelConfig
+</code></pre>
+<h3>Configure ES Modules (.mjs)</h3>
+<p>It is not recommended to use <code>&quot;type&quot;: &quot;module&quot;</code> in the <code>package.json</code> to enable ES Modules.
+This is because some dependencies still rely on common JS syntax (ex: babel, jest, jsdoc).
+So, to use ES Modules, you can use the <code>.mjs</code> extension on your files instead.
+There are different downsides to using the <code>.mjs</code> extension to consider.
+The <code>jsdoc</code> generation can only read <code>.js</code> files, and the provided test runner <code>Jest</code> will need to be configured.
+Update the test config as follows:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;dist&quot;: {
+    // Use .mjs files for from and main
+    &quot;main&quot;: &quot;src/main.mjs&quot;,
+    &quot;from&quot;: &quot;src/**/!(*.test).mjs&quot;,
+    &quot;to&quot;: &quot;dist&quot;
+  },
+  &quot;readme&quot;: {
+    &quot;template&quot;: &quot;MAIN.md&quot;,
+    &quot;options&quot;: &quot;utf8&quot;,
+    &quot;toFile&quot;: &quot;README.md&quot;,
+    &quot;from&quot;: [
+      // Use the dist directory files to generate the jsdocs
+      &quot;dist/!(*.test).js&quot;
+    ],
+    &quot;to&quot;: &quot;./&quot;
+  },
+  &quot;test&quot;: {
+    &quot;options&quot;: {
+      // The below helps to find the .mjs files (rather than default .js files)
+      &quot;testMatch&quot;: [
+        &quot;**/?(*.)+(spec|test).mjs?(x)&quot;
+      ]
+    },
+    &quot;path&quot;: &quot;functions&quot;,
+    // Include watching for .mjs files
+    &quot;watch&quot;: &quot;functions/**/*.[cm]?[jt]s&quot;
+  }
+}
+</code></pre>
+<p>There is an additional file you need to get Jest working, add a <code>jest.config.js</code> file.
+While we have already added these configurations above in the &quot;options&quot;,
+there seems to be a bug where the &quot;transform&quot; does not work in that context. Add the following to your <code>jest.config.js</code>:</p>
+<pre class="prettyprint source lang-js"><code>module.exports = {
+  // The transform will instruct jest to run the files through babel so it can interpret them
+  transform: {
+    '^.+\\.[cm]?[jt]sx?$': 'babel-jest'
+  }
+}
 </code></pre>
 <h3>Configure HTML JS Documentation (optional)</h3>
 <p>It may be desirable to generate HTML documentation for your JS files.</p>
@@ -205,45 +280,45 @@ module.exports = jsDocBase
 </code></pre>
 <h3>Configure move fonts (optional)</h3>
 <p>Be able to copy a source directory of fonts into the distribution path.</p>
-<p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
-<pre class="prettyprint source lang-js"><code>module.exports = {
-  fonts: {
+<p>Add the following to the exports in your <code>build-tools.config.json</code>:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;fonts&quot;: {
     // Enable fonts process
-    enabled: false,
+    &quot;enabled&quot;: false,
     // Search pattern to find your font files
-    from: 'src/fonts/**/*',
+    &quot;from&quot;: &quot;src/fonts/**/*&quot;,
     // Output directory for your font files
-    to: 'browser/fonts',
+    &quot;to&quot;: &quot;browser/fonts&quot;
   }
 }
 </code></pre>
 <h3>Configure move and minify images (optional)</h3>
 <p>Be able to copy and reduce the file size of images into an output path.</p>
-<p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
-<pre class="prettyprint source lang-js"><code>module.exports = {
-  images: {
+<p>Add the following to the exports in your <code>build-tools.config.json</code>:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;images&quot;: {
     // Enable image process
-    enabled: false,
+    &quot;enabled&quot;: false,
     // Search pattern to find your images
-    from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+    &quot;from&quot;: &quot;src/img/**/*.+(png|jpg|jpeg|gif|svg)&quot;,
     // Output directory for your images files
-    to: 'browser/img',
+    &quot;to&quot;: &quot;browser/img&quot;
   }
 }
 </code></pre>
 <h3>Configure SASS (optional)</h3>
 <p>SASS support is built-in, this enables conversion of SASS files to CSS for web projects.</p>
-<p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
-<pre class="prettyprint source lang-js"><code>module.exports = {
-  sass: {
+<p>Add the following to the exports in your <code>build-tools.config.json</code>:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;sass&quot;: {
     // Enable SASS process
-    enabled: false,
+    &quot;enabled&quot;: false,
     // Search pattern to find your SASS files (the below would be files ending in .scss or .sass in a directory called 'sass')
-    from: 'sass/**/*.+(scss|sass)',
+    &quot;from&quot;: &quot;sass/**/*.+(scss|sass)&quot;,
     // Optional but nice to add (future support), add the directory where your sass files exist
-    path: 'sass',
+    &quot;path&quot;: &quot;sass&quot;,
     // Output directory for your compiled css files, recommend css directory within your browser output directory
-    to: 'browser/css',
+    &quot;to&quot;: &quot;browser/css&quot;
   }
 }
 </code></pre>
@@ -262,24 +337,24 @@ module.exports = jsDocBase
 }
 </code></pre>
 <p>The pattern for <code>&quot;files&quot;</code> should match your .ts files, but the essential thing is that it is wrapped in an array.
-The actual pattern used comes from <code>build-tools.config.js</code> as <code>'typescript.from'</code> setting.
+The actual pattern used comes from <code>build-tools.config.json</code> as <code>'typescript.from'</code> setting.
 To create the ts declaration files, you must add the <code>&quot;declaration&quot;: true</code>.</p>
-<p>Add the following to the exports in your <code>build-tools.config.js</code>:</p>
-<pre class="prettyprint source lang-js"><code>module.exports = {
-  readme: {
+<p>Add the following to the exports in your <code>build-tools.config.json</code>:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;readme&quot;: {
     // Location of files to use for compiling documentation into the readme.
-    from: 'dist/**/!(*.min).js',
+    &quot;from&quot;: &quot;dist/**/!(*.min).js&quot;
   },
-  typescript: {
+  &quot;typescript&quot;: {
     // The path the tsconfig file for running typescript or false if no ts file given.
-    config: 'tsconfig.json',
+    &quot;config&quot;: &quot;tsconfig.json&quot;,
     // Toggle usage of typescript parsing
-    enabled: true,
+    &quot;enabled&quot;: true,
     // Pattern for finding the TypeScript files
-    from: 'src/**/*.ts',
+    &quot;from&quot;: &quot;src/**/*.ts&quot;,
     // Directory where parsed typescript files go
-    to: 'dist',
-  },
+    &quot;to&quot;: &quot;dist&quot;
+  }
 }
 </code></pre>
 <p>The <code>js-to-markdown</code> only works on .js files, so we run the readme search on the built dist files. Also, we want to
@@ -319,13 +394,13 @@ module.exports = babelConfig
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-partials.html">partials</a></li><li><a href="module-testHelpers.html">testHelpers</a></li></ul>
+    <h2><a href="index.html">Home</a></h2>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Feb 11 2024 22:40:45 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Jun 03 2024 14:26:10 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

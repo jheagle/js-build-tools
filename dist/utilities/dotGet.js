@@ -1,9 +1,12 @@
 "use strict";
 
-const isObject = require('./isObject');
-const strAfter = require('./strAfter');
-const strBefore = require('./strBefore');
-
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.dotGet = void 0;
+var _isObject = require("./isObject.js");
+var _strAfter = require("./strAfter.js");
+var _strBefore = require("./strBefore.js");
 /**
  * Get a nested property value from an object.
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotGet.ts Sí, funciona}
@@ -14,7 +17,7 @@ const strBefore = require('./strBefore');
  */
 const dotGet = function (arrayObject, dotNotation) {
   let defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  let key = strBefore(dotNotation, '.');
+  let key = (0, _strBefore.strBefore)(dotNotation, '.');
   const lastKey = !key;
   if (lastKey) {
     key = dotNotation;
@@ -27,24 +30,23 @@ const dotGet = function (arrayObject, dotNotation) {
         result[wildKey] = wildValue;
         continue;
       }
-      if (!isObject(wildValue)) {
+      if (!(0, _isObject.isObject)(wildValue)) {
         continue;
       }
-      result[wildKey] = dotGet(wildValue, strAfter(dotNotation, '.'), defaultValue);
+      result[wildKey] = dotGet(wildValue, (0, _strAfter.strAfter)(dotNotation, '.'), defaultValue);
     }
     return result;
   }
   if (lastKey) {
-    var _arrayObject$dotNotat;
-    return (_arrayObject$dotNotat = arrayObject[dotNotation]) !== null && _arrayObject$dotNotat !== void 0 ? _arrayObject$dotNotat : defaultValue;
+    return arrayObject[dotNotation] ?? defaultValue;
   }
   if (typeof arrayObject[key] === 'undefined') {
     return defaultValue;
   }
   const next = arrayObject[key];
-  if (!isObject(next)) {
+  if (!(0, _isObject.isObject)(next)) {
     return defaultValue;
   }
-  return dotGet(next, strAfter(dotNotation, '.'), defaultValue);
+  return dotGet(next, (0, _strAfter.strAfter)(dotNotation, '.'), defaultValue);
 };
-module.exports = dotGet;
+exports.dotGet = dotGet;

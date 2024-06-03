@@ -28,27 +28,26 @@
         <article>
             <pre class="prettyprint source linenums"><code>'use strict'
 
-require('core-js/modules/web.dom-collections.iterator.js')
-const bundle = require('./bundle')
-const bundleLint = require('./bundleLint')
-const bundleMinify = require('./bundleMinify')
-const {
-  clean,
-  distSeries
-} = require('./partials')
-const compileReadme = require('./compileReadme')
-const distLint = require('./distLint')
-const distMinify = require('./distMinify')
-const {
-  parallel,
-  series
-} = require('gulp')
-const gulpConfig = require('../gulp.config.js')
-const copyFonts = require('./copyFonts.js')
-const images = require('./images.js')
-const sass = require('./sass.js')
-const testFull = require('./testFull')
-
+require('core-js/modules/esnext.weak-map.delete-all.js')
+Object.defineProperty(exports, '__esModule', {
+  value: true
+})
+exports.build = void 0
+var _bundle = require('./bundle.js')
+var _bundleLint = require('./bundleLint.js')
+var _bundleMinify = require('./bundleMinify.js')
+var _partials = require('./partials.js')
+var _compileReadme = require('./compileReadme.js')
+var _distLint = require('./distLint.js')
+var _distMinify = require('./distMinify.js')
+var _gulp = require('gulp')
+var gulpConfig = _interopRequireWildcard(require('../gulp.config.js'))
+var _copyFonts = require('./copyFonts.js')
+var _images = require('./images.js')
+var _sass = require('./sass.js')
+var _testFull = require('./testFull.js')
+function _getRequireWildcardCache (e) { if (typeof WeakMap !== 'function') return null; var r = new WeakMap(); var t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r })(e) }
+function _interopRequireWildcard (e, r) { if (!r &amp;&amp; e &amp;&amp; e.__esModule) return e; if (e === null || typeof e !== 'object' &amp;&amp; typeof e !== 'function') return { default: e }; var t = _getRequireWildcardCache(r); if (t &amp;&amp; t.has(e)) return t.get(e); var n = { __proto__: null }; var a = Object.defineProperty &amp;&amp; Object.getOwnPropertyDescriptor; for (var u in e) if (u !== 'default' &amp;&amp; {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i &amp;&amp; (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u] } return n.default = e, t &amp;&amp; t.set(e, n), n }
 /**
  * Runs several processes to build and validate the project.
  * Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
@@ -57,39 +56,39 @@ const testFull = require('./testFull')
  */
 const build = function () {
   const done = arguments.length > 0 &amp;&amp; arguments[0] !== undefined ? arguments[0] : null
-  const distLintMinify = parallel(distLint, distMinify)
-  const bundleLintMinify = parallel(bundleLint, bundleMinify)
-  const buildActions = [clean, distSeries(), distLintMinify]
+  const distLintMinify = (0, _gulp.parallel)(_distLint.distLint, _distMinify.distMinify)
+  const bundleLintMinify = (0, _gulp.parallel)(_bundleLint.bundleLint, _bundleMinify.bundleMinify)
+  const buildActions = [_partials.clean, (0, _partials.distSeries)(), distLintMinify]
   if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
-    buildActions.push(compileReadme)
+    buildActions.push(_compileReadme.compileReadme)
   }
   if (gulpConfig.get('browser.enabled')) {
     // If not 'nodeOnly' then we also want to bundle for browser after we complete the dist directory
-    buildActions.push(bundle)
+    buildActions.push(_bundle.bundle)
     buildActions.push(bundleLintMinify)
   }
-  const runActions = [series(...buildActions)]
+  const runActions = [(0, _gulp.series)(...buildActions)]
   if (!gulpConfig.get('typescript.enabled')) {
     // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
-    runActions.push(compileReadme)
+    runActions.push(_compileReadme.compileReadme)
   }
-  runActions.push(testFull)
+  runActions.push(_testFull.testFull)
   if (gulpConfig.get('fonts.enabled')) {
     // Conditionally add Fonts process
-    runActions.push(copyFonts)
+    runActions.push(_copyFonts.copyFonts)
   }
   if (gulpConfig.get('images.enabled')) {
     // Conditionally add Images process
-    runActions.push(images)
+    runActions.push(_images.images)
   }
   if (gulpConfig.get('sass.enabled')) {
     // Conditionally add SASS process
-    runActions.push(sass)
+    runActions.push(_sass.sass)
   }
-  return parallel(...runActions)(done)
+  return (0, _gulp.parallel)(...runActions)(done)
 }
-module.exports = build
+exports.build = build
 </code></pre>
         </article>
     </section>
@@ -100,13 +99,13 @@ module.exports = build
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-partials.html">partials</a></li><li><a href="module-testHelpers.html">testHelpers</a></li></ul>
+    <h2><a href="index.html">Home</a></h2>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Feb 11 2024 22:40:45 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Jun 03 2024 14:26:10 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

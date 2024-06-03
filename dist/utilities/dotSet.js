@@ -1,9 +1,12 @@
 "use strict";
 
-const isObject = require('./isObject');
-const strAfter = require('./strAfter');
-const strBefore = require('./strBefore');
-
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.dotSet = void 0;
+var _isObject = require("./isObject.js");
+var _strAfter = require("./strAfter.js");
+var _strBefore = require("./strBefore.js");
 /**
  * Set a nested property value an object.
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotSet.ts Sí, funciona}
@@ -13,9 +16,8 @@ const strBefore = require('./strBefore');
  * @returns {Object} The modified object
  */
 const dotSet = function (arrayObject, dotNotation) {
-  var _arrayObject$key;
   let value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  let key = strBefore(dotNotation, '.');
+  let key = (0, _strBefore.strBefore)(dotNotation, '.');
   const lastKey = !key;
   if (lastKey) {
     key = dotNotation;
@@ -26,10 +28,10 @@ const dotSet = function (arrayObject, dotNotation) {
         arrayObject[wildKey] = value;
         continue;
       }
-      if (!isObject(arrayObject[wildKey])) {
+      if (!(0, _isObject.isObject)(arrayObject[wildKey])) {
         continue;
       }
-      dotSet(arrayObject[wildKey], strAfter(dotNotation, '.'), value);
+      dotSet(arrayObject[wildKey], (0, _strAfter.strAfter)(dotNotation, '.'), value);
     }
     return arrayObject;
   }
@@ -37,8 +39,8 @@ const dotSet = function (arrayObject, dotNotation) {
     arrayObject[dotNotation] = value;
     return arrayObject;
   }
-  const next = (_arrayObject$key = arrayObject[key]) !== null && _arrayObject$key !== void 0 ? _arrayObject$key : [];
-  arrayObject[key] = dotSet(next, strAfter(dotNotation, '.'), value);
+  const next = arrayObject[key] ?? [];
+  arrayObject[key] = dotSet(next, (0, _strAfter.strAfter)(dotNotation, '.'), value);
   return arrayObject;
 };
-module.exports = dotSet;
+exports.dotSet = dotSet;

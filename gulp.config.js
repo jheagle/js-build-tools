@@ -6,6 +6,7 @@
  * @module gulpConfig
  * @memberOf module:js-build-tools
  */
+const { fileExists } = require('test-filesystem')
 
 /**
  * A setting that may be an array of strings or a string only.
@@ -137,25 +138,10 @@
  * @property {TsConfig} typescript - Compile from typescript configuration.
  */
 
-const dotGet = require('./functions/utilities/dotGet')
-const dotSet = require('./functions/utilities/dotSet')
-const dotNotate = require('./functions/utilities/dotNotate')
-/**
- * All the available configuration setting options for running the build.
- * @memberOf module:gulpConfig` `
- * @type {Configurations}
- */
-let gulpConfigurations = {}
-try {
-  gulpConfigurations = require('../../build-tools.config.js')
-} catch (isUndefined) {
-  try {
-    // Missing main project config, using default path
-    gulpConfigurations = require('./build-tools.config.js')
-  } catch (stillUndefined) {
-    console.warn('Missing config path, ensure you have a build-tools.config.js file in you project root')
-  }
-}
+const { dotGet } = require('./dist/utilities/dotGet')
+const { dotSet } = require('./dist/utilities/dotSet')
+const { dotNotate } = require('./dist/utilities/dotNotate')
+const { readFileSync } = require('fs')
 
 const setDefaults = {
   browser: {
@@ -216,6 +202,21 @@ const setDefaults = {
     from: 'src/**/*.ts',
     to: 'dist',
   },
+}
+/**
+ * All the available configuration setting options for running the build.
+ * @memberOf module:gulpConfig` `
+ * @type {Configurations}
+ */
+let gulpConfigurations = {}
+if (fileExists('../../build-tools.config.json')) {
+  gulpConfigurations = JSON.parse(readFileSync('../../build-tools.config.json').toString())
+} else {
+  if (fileExists('./build-tools.config.json')) {
+    gulpConfigurations = JSON.parse(readFileSync('./build-tools.config.json').toString())
+  } else {
+    console.warn('Missing config path, ensure you have a build-tools.config.js file in you project root')
+  }
 }
 
 const notation = dotNotate(setDefaults)
