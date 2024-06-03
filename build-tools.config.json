@@ -10,7 +10,7 @@
     "browser"
   ],
   "dist": {
-    "main": "gulpfile.base.mjs",
+    "main": "gulpfile.base.js",
     "from": "functions/**/!(*.test).mjs",
     "to": "dist"
   },
