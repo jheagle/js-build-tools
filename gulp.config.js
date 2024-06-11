@@ -209,8 +209,8 @@ const setDefaults = {
  * @type {Configurations}
  */
 let gulpConfigurations = {}
-if (fileExists('../../build-tools.config.json')) {
-  gulpConfigurations = JSON.parse(readFileSync('../../build-tools.config.json').toString())
+if (fileExists(process.cwd() + '/build-tools.config.json')) {
+  gulpConfigurations = JSON.parse(readFileSync(process.cwd() + '/build-tools.config.json').toString())
 } else {
   if (fileExists('./build-tools.config.json')) {
     gulpConfigurations = JSON.parse(readFileSync('./build-tools.config.json').toString())

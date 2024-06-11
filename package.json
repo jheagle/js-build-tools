@@ -13,7 +13,9 @@
     "./gulp.config.mjs": "./gulp.config.mjs",
     "./gulpfile.base": "./gulpfile.base.js",
     "./gulpfile.base.mjs": "./gulpfile.base.mjs",
-    "./jsdoc.base": "./jsdoc.base.js"
+    "./jsdoc.base": "./jsdoc.base.js",
+    "./testHelpers": "./dist/testHelpers",
+    "./testHelpers.mjs": "./functions/testHelpers.mjs"
   },
   "scripts": {
     "build": "gulp build",

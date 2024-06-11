@@ -1,6 +1,6 @@
 // Import the configurations and override some of them to direct to the temp directory.
 import * as gulpConfig from '../../gulp.config.mjs'
-import * as setUp from 'test-filesystem'
+import { setUp } from 'test-filesystem'
 
 let tempDir = 'test-temp/'
 let srcPath = `${tempDir}src`
@@ -40,7 +40,7 @@ export const setDefaults = (testDir = 'test-temp') => {
   gulpConfig.set('test.watch', `${srcPath}/**/*.js`)
 }
 
-export { gulpConfig, setUp }
+export { gulpConfig }
 
 export {
   /**
@@ -61,5 +61,29 @@ export {
    * @memberOf module:testHelpers
    * @returns {Promise<*>}
    */
-    afterEach
+    afterEach,
+  /**
+   * Return number of occurrences of substring in another string.
+   * @memberOf module:testHelpers
+   * @returns {int}
+   */
+    countMatches,
+  /**
+   * Returns true if the given file or directory exists, otherwise false.
+   * @memberOf module:testHelpers
+   * @returns {boolean}
+   */
+    fileExists,
+  /**
+   * Console log objects in a readable format, returns the given object.
+   * @memberOf module:testHelpers
+   * @returns {*}
+   */
+    logObject,
+  /**
+   * Delete a directory and subcontents.
+   * @memberOf module:testHelpers
+   * @returns {Promise<*>}
+   */
+    removeDirectory,
 } from 'test-filesystem'

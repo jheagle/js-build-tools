@@ -7,26 +7,50 @@ Object.defineProperty(exports, "__esModule", {
 Object.defineProperty(exports, "afterEach", {
   enumerable: true,
   get: function () {
-    return setUp.afterEach;
+    return _testFilesystem.afterEach;
   }
 });
 Object.defineProperty(exports, "beforeEach", {
   enumerable: true,
   get: function () {
-    return setUp.beforeEach;
+    return _testFilesystem.beforeEach;
+  }
+});
+Object.defineProperty(exports, "countMatches", {
+  enumerable: true,
+  get: function () {
+    return _testFilesystem.countMatches;
   }
 });
 Object.defineProperty(exports, "createTempDir", {
   enumerable: true,
   get: function () {
-    return setUp.createTempDir;
+    return _testFilesystem.createTempDir;
   }
 });
-exports.setUp = exports.setDefaults = exports.gulpConfig = void 0;
+Object.defineProperty(exports, "fileExists", {
+  enumerable: true,
+  get: function () {
+    return _testFilesystem.fileExists;
+  }
+});
+exports.gulpConfig = void 0;
+Object.defineProperty(exports, "logObject", {
+  enumerable: true,
+  get: function () {
+    return _testFilesystem.logObject;
+  }
+});
+Object.defineProperty(exports, "removeDirectory", {
+  enumerable: true,
+  get: function () {
+    return _testFilesystem.removeDirectory;
+  }
+});
+exports.setDefaults = void 0;
 var gulpConfig = _interopRequireWildcard(require("../../gulp.config.js"));
 exports.gulpConfig = gulpConfig;
-var setUp = _interopRequireWildcard(require("test-filesystem"));
-exports.setUp = setUp;
+var _testFilesystem = require("test-filesystem");
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 // Import the configurations and override some of them to direct to the temp directory.
@@ -43,7 +67,7 @@ const setDefaults = function () {
   let testDir = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'test-temp';
   tempDir = `${testDir}/`;
   srcPath = `${tempDir}src`;
-  setUp.setDefaults(tempDir);
+  _testFilesystem.setUp.setDefaults(tempDir);
   const distPath = `${tempDir}dist`;
   const browserPath = `${tempDir}browser`;
   const sassPath = `${tempDir}sass`;

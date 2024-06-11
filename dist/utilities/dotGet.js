@@ -10,13 +10,18 @@ var _strBefore = require("./strBefore.js");
 /**
  * Get a nested property value from an object.
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotGet.ts Sí, funciona}
- * @param {Object} arrayObject - The array or object to get the property from
- * @param {string} dotNotation - The path to the property
+ * @param {Object} [arrayObject={}] - The array or object to get the property from
+ * @param {string} [dotNotation=''] - The path to the property
  * @param {string|null} [defaultValue=null] - The default value to return if the property is not found
  * @returns {*} The value of the property
  */
-const dotGet = function (arrayObject, dotNotation) {
+const dotGet = function () {
+  let arrayObject = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  let dotNotation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
   let defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  if (!dotNotation) {
+    return arrayObject;
+  }
   let key = (0, _strBefore.strBefore)(dotNotation, '.');
   const lastKey = !key;
   if (lastKey) {

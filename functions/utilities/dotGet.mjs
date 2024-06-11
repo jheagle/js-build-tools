@@ -5,12 +5,15 @@ import { strBefore } from './strBefore.mjs'
 /**
  * Get a nested property value from an object.
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/objects/dotGet.ts Sí, funciona}
- * @param {Object} arrayObject - The array or object to get the property from
- * @param {string} dotNotation - The path to the property
+ * @param {Object} [arrayObject={}] - The array or object to get the property from
+ * @param {string} [dotNotation=''] - The path to the property
  * @param {string|null} [defaultValue=null] - The default value to return if the property is not found
  * @returns {*} The value of the property
  */
-export const dotGet = (arrayObject, dotNotation, defaultValue = null) => {
+export const dotGet = (arrayObject = {}, dotNotation= '', defaultValue = null) => {
+  if (!dotNotation) {
+    return arrayObject
+  }
   let key = strBefore(dotNotation, '.')
   const lastKey = !key
   if (lastKey) {
