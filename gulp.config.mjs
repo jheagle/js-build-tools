@@ -12,22 +12,18 @@ import { fileExists } from 'test-filesystem'
  * A setting that may be an array of strings or a string only.
  * @typedef {Array<string>|string} module:gulpConfig~ArrayableSetting
  */
-
 /**
  * A setting that may be true or false.
  * @typedef {boolean} module:gulpConfig~BooleanSetting
  */
-
 /**
  * A setting that may be flag 'false' or provide a StringSetting
  * @typedef {false|StringSetting} module:gulpConfig~FlagStringSetting
  */
-
 /**
  * An object of boolean settings used as flags.
  * @typedef {Object<string, BooleanSetting>} module:gulpConfig~FlagsSetting
  */
-
 /**
  * Configure cli options for running Jest.
  * @typedef {FlagsSetting} module:gulpConfig~JestTestFlags
@@ -41,17 +37,14 @@ import { fileExists } from 'test-filesystem'
  * @property {BooleanSetting} watch
  * @property {BooleanSetting} watchAll
  */
-
 /**
  * A setting that may only be a string.
  * @typedef {string} module:gulpConfig~StringSetting
  */
-
 /**
  * Any single configuration option is a Setting.
  * @typedef {ArrayableSetting|BooleanSetting|FlagsSetting|StringSetting} Setting
  */
-
 /**
  * Configurations for building the browser files.
  * @typedef {Object<string, Setting>} module:gulpConfig~BrowserConfig
@@ -60,7 +53,6 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} name - The search pattern used for retrieving compiled distribution files.
  * @property {StringSetting} to - The output directory for browser-bundled files.
  */
-
 /**
  * Configurations for building the node distribution files.
  * @typedef {Object<string, Setting>} module:gulpConfig~DistConfig
@@ -68,7 +60,6 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} main - Name of the entry the distribution file.
  * @property {StringSetting} to - The output directory for the distribution files.
  */
-
 /**
  * Configurations for copying the font files.
  * @typedef {Object<string, Setting>} module:gulpConfig~FontConfig
@@ -76,7 +67,6 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} from - Path to search for fonts.
  * @property {StringSetting} to - Path to output fonts.
  */
-
 /**
  * Configurations to minify and copy the images.
  * @typedef {Object<string, Setting>} module:gulpConfig~ImageConfig
@@ -84,7 +74,6 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} from - Path to search for images.
  * @property {StringSetting} to - Path to output images.
  */
-
 /**
  * Configurations to compile and generate the Readme file.
  * @typedef {Object<string, Setting>} module:gulpConfig~ReadmeConfig
@@ -94,7 +83,6 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} template - The file which will be pre-fixed to your README.md output.
  * @property {StringSetting} to - The directory to output the readme file in.
  */
-
 /**
  * Configurations to compile and copy the sass files into css.
  * @typedef {Object<string, Setting>} module:gulpConfig~SassConfig
@@ -103,7 +91,6 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} path - The directory were sass files will be stored.
  * @property {StringSetting} to - The destination path for where generated CSS (from SASS files) should go.
  */
-
 /**
  * Configurations for running the test suite.
  * @typedef {Object<string, Setting>} module:gulpConfig~TestConfig
@@ -112,7 +99,6 @@ import { fileExists } from 'test-filesystem'
  * By default, stored as *.test.js adjacent to the files they are testing.
  * @property {ArrayableSetting} watch - The search pattern for watching files for changes.
  */
-
 /**
  * Configurations for compiling typescript into JS files.
  * @typedef {Object<string, Setting>} module:gulpConfig~TsConfig
@@ -121,7 +107,6 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} from - Pattern for finding the TypeScript files.
  * @property {StringSetting} to - Directory where parsed typescript files go.
  */
-
 /**
  * A set of Configurations options defined by Settings.
  * @typedef {Object<string, Setting>} module:gulpConfig~Configurations
@@ -137,7 +122,6 @@ import { fileExists } from 'test-filesystem'
  * @property {TestConfig} test - Run test suite configuration.
  * @property {TsConfig} typescript - Compile from typescript configuration.
  */
-
 import { dotGet } from './functions/utilities/dotGet.mjs'
 import { dotSet } from './functions/utilities/dotSet.mjs'
 import { dotNotate } from './functions/utilities/dotNotate.mjs'
@@ -210,9 +194,8 @@ const setDefaults = {
  * @type {Configurations}
  */
 let gulpConfigurations = null
-
-if (fileExists('../../build-tools.config.json')) {
-  gulpConfigurations = JSON.parse(readFileSync('../../build-tools.config.json').toString())
+if (fileExists(process.cwd() + '/build-tools.config.json')) {
+  gulpConfigurations = JSON.parse(readFileSync(process.cwd() + '/build-tools.config.json').toString())
 } else {
   if (fileExists('./build-tools.config.json')) {
     gulpConfigurations = JSON.parse(readFileSync('./build-tools.config.json').toString())
