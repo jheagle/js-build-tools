@@ -411,21 +411,14 @@ Run any of the above commands with `gulp` or `npm run`.
 ## Modules
 
 <dl>
-<dt><a href="#module_js-build-tools">js-build-tools</a></dt>
-<dd><p>Export these functions to your own project to customize your build pipeline.</p>
-</dd>
 <dt><a href="#module_gulpConfig">gulpConfig</a></dt>
 <dd><p>Modify these configurations to match your project specifications.</p>
 </dd>
+<dt><a href="#module_js-build-tools">js-build-tools</a></dt>
+<dd><p>Export these functions to your own project to customize your build pipeline.</p>
+</dd>
 </dl>
 
-<a name="module_js-build-tools"></a>
-
-## js-build-tools
-Export these functions to your own project to customize your build pipeline.
-
-**Version**: 3.0.0  
-**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 <a name="module_gulpConfig"></a>
 
 ## gulpConfig
@@ -675,3 +668,10 @@ A set of Configurations options defined by Settings.
 | test | <code>TestConfig</code> | Run test suite configuration. |
 | typescript | <code>TsConfig</code> | Compile from typescript configuration. |
 
+<a name="module_js-build-tools"></a>
+
+## js-build-tools
+Export these functions to your own project to customize your build pipeline.
+
+**Version**: 3.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
