@@ -411,14 +411,141 @@ Run any of the above commands with `gulp` or `npm run`.
 ## Modules
 
 <dl>
-<dt><a href="#module_gulpConfig">gulpConfig</a></dt>
-<dd><p>Modify these configurations to match your project specifications.</p>
-</dd>
 <dt><a href="#module_js-build-tools">js-build-tools</a></dt>
 <dd><p>Export these functions to your own project to customize your build pipeline.</p>
 </dd>
+<dt><a href="#module_gulpConfig">gulpConfig</a></dt>
+<dd><p>Modify these configurations to match your project specifications.</p>
+</dd>
 </dl>
 
+<a name="module_js-build-tools"></a>
+
+## js-build-tools
+Export these functions to your own project to customize your build pipeline.
+
+**Version**: 3.0.0  
+**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
+
+* [js-build-tools](#module_js-build-tools)
+    * [.typeScript](#module_js-build-tools.typeScript) ⇒ <code>function</code>
+    * [.compileReadme](#module_js-build-tools.compileReadme) ⇒ <code>stream.Stream</code>
+    * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
+    * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
+    * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.images()](#module_js-build-tools.images) ⇒ <code>stream.Stream</code>
+    * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
+    * [.distLint()](#module_js-build-tools.distLint) ⇒ <code>\*</code>
+    * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
+    * [.defaultCmd([done])](#module_js-build-tools.defaultCmd) ⇒ <code>stream.Stream</code>
+    * [.copyFonts()](#module_js-build-tools.copyFonts) ⇒ <code>stream.Stream</code>
+    * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
+    * [.bundleLint()](#module_js-build-tools.bundleLint) ⇒ <code>stream.Stream</code>
+    * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>stream.Stream</code>
+    * [.build()](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
+
+<a name="module_js-build-tools.typeScript"></a>
+
+### js-build-tools.typeScript ⇒ <code>function</code>
+Simplified typescript task using tsFor.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.compileReadme"></a>
+
+### js-build-tools.compileReadme ⇒ <code>stream.Stream</code>
+Generate the README.md file based off of the template, then append the generated documentation.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.watchTest"></a>
+
+### js-build-tools.watchTest() ⇒ <code>\*</code>
+Watch for changes and run the tests.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.watchFull"></a>
+
+### js-build-tools.watchFull() ⇒ <code>FSWatcher</code>
+Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.testQuick"></a>
+
+### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run the Jest tests for files which have been modified (based on git status).Configure where tests are located by using 'testPath'.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.testFull"></a>
+
+### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run all tests with jest.Configure where tests are located by using 'testPath'.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.images"></a>
+
+### js-build-tools.images() ⇒ <code>stream.Stream</code>
+Move and optimize the images into the browser folder using configured settings.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.distMinify"></a>
+
+### js-build-tools.distMinify() ⇒ <code>\*</code>
+Creates minified versions of the dist files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.distLint"></a>
+
+### js-build-tools.distLint() ⇒ <code>\*</code>
+Applies Standard code style linting to distribution files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.dist"></a>
+
+### js-build-tools.dist() ⇒ <code>\*</code>
+Simplified distribution tasks which will use arguments from distFor.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.defaultCmd"></a>
+
+### js-build-tools.defaultCmd([done]) ⇒ <code>stream.Stream</code>
+Recommended as the default task, runs the simple dist and bundle tasks.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
+<a name="module_js-build-tools.copyFonts"></a>
+
+### js-build-tools.copyFonts() ⇒ <code>stream.Stream</code>
+Move the font files into the browser directory.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundleMinify"></a>
+
+### js-build-tools.bundleMinify() ⇒ <code>\*</code>
+Creates the minified bundle file.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundleLint"></a>
+
+### js-build-tools.bundleLint() ⇒ <code>stream.Stream</code>
+Applies Standard code style linting to bundled file.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundle"></a>
+
+### js-build-tools.bundle() ⇒ <code>stream.Stream</code>
+Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.build"></a>
+
+### js-build-tools.build() ⇒ <code>stream.Stream</code>
+Runs several processes to build and validate the project.Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_gulpConfig"></a>
 
 ## gulpConfig
@@ -668,10 +795,3 @@ A set of Configurations options defined by Settings.
 | test | <code>TestConfig</code> | Run test suite configuration. |
 | typescript | <code>TsConfig</code> | Compile from typescript configuration. |
 
-<a name="module_js-build-tools"></a>
-
-## js-build-tools
-Export these functions to your own project to customize your build pipeline.
-
-**Version**: 3.0.0  
-**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
