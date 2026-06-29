@@ -1,6 +1,7 @@
 'use strict'
 
 require('core-js/modules/esnext.weak-map.delete-all.js')
+require('core-js/modules/web.dom-collections.iterator.js')
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
@@ -16,5 +17,5 @@ function _interopRequireDefault (e) { return e && e.__esModule ? e : { default: 
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
-const bundle = () => (0, _browserify.default)(gulpConfig.get('dist.main')).bundle().pipe((0, _vinylSourceStream.default)(`${gulpConfig.get('browser.name')}.js`)).pipe((0, _gulp.dest)(gulpConfig.get('browser.to')))
+const bundle = () => (0, _browserify.default)(gulpConfig.get('dist.main')).bundle().pipe((0, _vinylSourceStream.default)(''.concat(gulpConfig.get('browser.name'), '.js'))).pipe((0, _gulp.dest)(gulpConfig.get('browser.to')))
 exports.bundle = bundle

@@ -1,10 +1,14 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
+require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.runOnChange = void 0;
+require("core-js/modules/es.regexp.constructor.js");
+require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.string.replace.js");
 var gulpConfig = _interopRequireWildcard(require("../../gulp.config.js"));
 var _bundle = require("../bundle.js");
 var _distSeries = require("./distSeries.js");
@@ -48,11 +52,11 @@ const runOnChange = path => {
    * 5. Use the dist path found previously in #2
    * 6. Use the full dist path and the dist outgoing path in distFor
    */
-  const pathRegex = new RegExp(`^${srcPath}(.*\\/)(.+)\\.(js|ts)$`, 'i');
-  const distPathResult = path.replace(pathRegex, `${distPath}$1`);
+  const pathRegex = new RegExp("^".concat(srcPath, "(.*\\/)(.+)\\.(js|ts)$"), 'i');
+  const distPathResult = path.replace(pathRegex, "".concat(distPath, "$1"));
   let distSrcPath = path;
   if (useTs) {
-    distSrcPath = path.replace(pathRegex, `${distPath}$1$2.js`);
+    distSrcPath = path.replace(pathRegex, "".concat(distPath, "$1$2.js"));
   }
   const runSeries = (0, _distSeries.distSeries)(distSrcPath, distPathResult, path);
   return gulpConfig.get('browser.enabled') ? (0, _gulp.parallel)(_testQuick.testQuick, (0, _gulp.series)(runSeries, _bundle.bundle))() : (0, _gulp.series)(_testQuick.testQuick, runSeries)();

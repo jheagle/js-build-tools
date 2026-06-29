@@ -1,6 +1,7 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
+require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -55,7 +56,7 @@ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r
 // Import the configurations and override some of them to direct to the temp directory.
 
 let tempDir = 'test-temp/';
-let srcPath = `${tempDir}src`;
+let srcPath = "".concat(tempDir, "src");
 
 /**
  * Update the gulp configurations with the test data. Set the test directory where temp files will be created for testing.
@@ -64,32 +65,32 @@ let srcPath = `${tempDir}src`;
  */
 const setDefaults = function () {
   let testDir = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'test-temp';
-  tempDir = `${testDir}/`;
-  srcPath = `${tempDir}src`;
+  tempDir = "".concat(testDir, "/");
+  srcPath = "".concat(tempDir, "src");
   _testFilesystem.setUp.setDefaults(tempDir);
-  const distPath = `${tempDir}dist`;
-  const browserPath = `${tempDir}browser`;
-  const sassPath = `${tempDir}sass`;
-  gulpConfig.set('browser.from', `${distPath}/**/*.js`);
+  const distPath = "".concat(tempDir, "dist");
+  const browserPath = "".concat(tempDir, "browser");
+  const sassPath = "".concat(tempDir, "sass");
+  gulpConfig.set('browser.from', "".concat(distPath, "/**/*.js"));
   gulpConfig.set('browser.to', browserPath);
   gulpConfig.set('cleanPaths', [distPath, browserPath]);
-  gulpConfig.set('dist.from', `${srcPath}/**/!(*.test).js`);
-  gulpConfig.set('dist.main', `${distPath}/main`);
+  gulpConfig.set('dist.from', "".concat(srcPath, "/**/!(*.test).js"));
+  gulpConfig.set('dist.main', "".concat(distPath, "/main"));
   gulpConfig.set('dist.to', distPath);
-  gulpConfig.set('fonts.from', `${srcPath}/fonts/**/*`);
-  gulpConfig.set('fonts.to', `${browserPath}/fonts`);
-  gulpConfig.set('images.from', `${srcPath}/img/**/*.+(png|jpg|jpeg|gif|svg)`);
-  gulpConfig.set('images.to', `${browserPath}/img`);
-  gulpConfig.set('readme.template', `${tempDir}MAIN.md`);
+  gulpConfig.set('fonts.from', "".concat(srcPath, "/fonts/**/*"));
+  gulpConfig.set('fonts.to', "".concat(browserPath, "/fonts"));
+  gulpConfig.set('images.from', "".concat(srcPath, "/img/**/*.+(png|jpg|jpeg|gif|svg)"));
+  gulpConfig.set('images.to', "".concat(browserPath, "/img"));
+  gulpConfig.set('readme.template', "".concat(tempDir, "MAIN.md"));
   gulpConfig.set('readme.to', tempDir);
-  gulpConfig.set('readme.from', `${srcPath}/**/!(*.test).js`);
+  gulpConfig.set('readme.from', "".concat(srcPath, "/**/!(*.test).js"));
   gulpConfig.set('rootPath', tempDir);
-  gulpConfig.set('sass.from', `${sassPath}/**/*.+(scss|sass)`);
+  gulpConfig.set('sass.from', "".concat(sassPath, "/**/*.+(scss|sass)"));
   gulpConfig.set('sass.path', sassPath);
-  gulpConfig.set('sass.to', `${browserPath}/css`);
+  gulpConfig.set('sass.to', "".concat(browserPath, "/css"));
   gulpConfig.set('srcPath', srcPath);
-  gulpConfig.set('typescript.from', `${srcPath}/**/*.ts`);
+  gulpConfig.set('typescript.from', "".concat(srcPath, "/**/*.ts"));
   gulpConfig.set('typescript.to', distPath);
-  gulpConfig.set('test.watch', `${srcPath}/**/*.js`);
+  gulpConfig.set('test.watch', "".concat(srcPath, "/**/*.js"));
 };
 exports.setDefaults = setDefaults;

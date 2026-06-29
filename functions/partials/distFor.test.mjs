@@ -151,7 +151,7 @@ describe('distFor', () => {
       .on('finish', () => {
         expect(fileExists(distPath)).toBeTruthy()
         const babelifiedContents = fs.readFileSync(`${distPath}/distFor.js`).toString()
-        expect(countMatches(babelifiedContents, '.js')).toEqual(3)
+        expect(countMatches(babelifiedContents, '.js')).toEqual(4)
         done()
       })
       .on('error', error => {

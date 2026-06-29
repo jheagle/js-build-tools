@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 })
 exports.build = void 0
+require('core-js/modules/web.dom-collections.iterator.js')
 var _bundle = require('./bundle.js')
 var _bundleLint = require('./bundleLint.js')
 var _bundleMinify = require('./bundleMinify.js')

@@ -1,6 +1,7 @@
 'use strict'
 
 require('core-js/modules/esnext.weak-map.delete-all.js')
+require('core-js/modules/web.dom-collections.iterator.js')
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
@@ -15,7 +16,7 @@ function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
-const bundleLint = () => (0, _gulp.src)(`${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`).pipe((0, _gulpStandard.default)({
+const bundleLint = () => (0, _gulp.src)(''.concat(gulpConfig.get('browser.to'), '/').concat(gulpConfig.get('browser.name'), '.js')).pipe((0, _gulpStandard.default)({
   fix: true
 })).pipe(_gulpStandard.default.reporter('default', {
   fix: true,

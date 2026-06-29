@@ -1,10 +1,14 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
+require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.distFor = void 0;
+require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.string.replace.js");
+require("core-js/modules/esnext.string.replace-all.js");
 var _gulpBabel = _interopRequireDefault(require("gulp-babel"));
 var _gulp = require("gulp");
 var _distForSrc = require("./distForSrc.js");

@@ -16,6 +16,7 @@ var _strBefore = require("./strBefore.js");
  * @returns {Object} The modified object
  */
 const dotSet = function (arrayObject, dotNotation) {
+  var _arrayObject$key;
   let value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
   let key = (0, _strBefore.strBefore)(dotNotation, '.');
   const lastKey = !key;
@@ -39,7 +40,7 @@ const dotSet = function (arrayObject, dotNotation) {
     arrayObject[dotNotation] = value;
     return arrayObject;
   }
-  const next = arrayObject[key] ?? [];
+  const next = (_arrayObject$key = arrayObject[key]) !== null && _arrayObject$key !== void 0 ? _arrayObject$key : [];
   arrayObject[key] = dotSet(next, (0, _strAfter.strAfter)(dotNotation, '.'), value);
   return arrayObject;
 };

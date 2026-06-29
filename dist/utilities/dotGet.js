@@ -43,7 +43,8 @@ const dotGet = function () {
     return result;
   }
   if (lastKey) {
-    return arrayObject[dotNotation] ?? defaultValue;
+    var _arrayObject$dotNotat;
+    return (_arrayObject$dotNotat = arrayObject[dotNotation]) !== null && _arrayObject$dotNotat !== void 0 ? _arrayObject$dotNotat : defaultValue;
   }
   if (typeof arrayObject[key] === 'undefined') {
     return defaultValue;
