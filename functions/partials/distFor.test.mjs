@@ -111,6 +111,8 @@ describe('distFor', () => {
   }, 5000)
 
   test('can process typescript before babel', done => {
+    // Since adding the additional skip in tsFor if not enabled we need to ensure that we enable typescript for this test.
+    gulpConfig.set('typescript.enabled', true)
     const srcPath = gulpConfig.get('srcPath')
     const srcFile = `${srcPath}/distFor.ts`
     fs.writeFileSync(srcFile, rawTsContents)

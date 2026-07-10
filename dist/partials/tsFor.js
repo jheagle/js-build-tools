@@ -22,6 +22,9 @@ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r
 const tsFor = function () {
   let srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('typescript.from');
   let distPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('typescript.to');
+  if (gulpConfig.get('typescript.enabled') === false) {
+    return () => {};
+  }
   const declarationProject = _gulpTypescript.default.createProject(gulpConfig.get('typescript.config'));
   const tsProject = _gulpTypescript.default.createProject(gulpConfig.get('typescript.config'));
   const makeDeclarations = () => (0, _gulp.src)(srcPath).pipe(declarationProject()).dts.pipe((0, _gulp.dest)(distPath));

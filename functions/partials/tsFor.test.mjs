@@ -24,6 +24,7 @@ afterEach(setUp.afterEach)
 
 describe('tsFor', () => {
   test('copies the src directory and compiles it into the dist directory', done => {
+    gulpConfig.set('typescript.enabled', true)
     const distPath = gulpConfig.get('typescript.to')
     const srcPath = gulpConfig.get('srcPath')
     const srcFile = `${srcPath}/typeScript.ts`
@@ -37,4 +38,10 @@ describe('tsFor', () => {
       done()
     })
   }, 60000)
+
+  test('skips if typescript.enabled is false', () => {
+    gulpConfig.set('typescript.enabled', false)
+    const result = tsFor()
+    expect(result).toBeInstanceOf(Function)
+  })
 })

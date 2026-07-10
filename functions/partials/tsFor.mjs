@@ -11,6 +11,9 @@ import ts from 'gulp-typescript'
  * @see `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info
  */
 export const tsFor = (srcPath = gulpConfig.get('typescript.from'), distPath = gulpConfig.get('typescript.to')) => {
+  if (gulpConfig.get('typescript.enabled') === false) {
+    return () => {}
+  }
   const declarationProject = ts.createProject(gulpConfig.get('typescript.config'))
   const tsProject = ts.createProject(gulpConfig.get('typescript.config'))
   const makeDeclarations = () => src(srcPath).pipe(declarationProject()).dts.pipe(dest(distPath))
