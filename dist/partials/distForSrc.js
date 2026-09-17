@@ -1,7 +1,6 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
-require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -14,8 +13,5 @@ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r
  * @param {module:gulpConfig~FlagStringSetting} [useTs='config/for/ts']
  * @returns {string}
  */
-const distForSrc = function () {
-  let useTs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('typescript.enabled');
-  return useTs ? gulpConfig.get('browser.from') : gulpConfig.get('dist.from');
-};
+const distForSrc = (useTs = gulpConfig.get('typescript.enabled')) => useTs ? gulpConfig.get('browser.from') : gulpConfig.get('dist.from');
 exports.distForSrc = distForSrc;

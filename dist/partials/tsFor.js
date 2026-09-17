@@ -1,7 +1,6 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
-require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -19,9 +18,7 @@ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r
  * @returns {Function}
  * @see `https://www.typescriptlang.org/docs/handbook/gulp.html` for more info
  */
-const tsFor = function () {
-  let srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('typescript.from');
-  let distPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('typescript.to');
+const tsFor = (srcPath = gulpConfig.get('typescript.from'), distPath = gulpConfig.get('typescript.to')) => {
   if (gulpConfig.get('typescript.enabled') === false) {
     return () => {};
   }

@@ -1,7 +1,6 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
-require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });

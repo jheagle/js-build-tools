@@ -1,7 +1,6 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
-require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -23,12 +22,8 @@ const runSass = (0, _gulpSass.default)(sass);
  * @param {string} [cssPath='css/config/path']
  * @returns {stream.Stream}
  */
-const sassFor = function () {
-  let srcSearch = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('sass.from');
-  let cssPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('sass.to');
-  return (0, _gulp.src)(srcSearch).pipe(runSass().on('error', runSass.logError)) // Passes it through a gulp-sass, log errors to console
-  .pipe((0, _gulp.dest)(cssPath)).pipe((0, _gulpCssnano.default)()).pipe((0, _gulpRename.default)({
-    extname: '.min.css'
-  })).pipe((0, _gulp.dest)(cssPath));
-};
+const sassFor = (srcSearch = gulpConfig.get('sass.from'), cssPath = gulpConfig.get('sass.to')) => (0, _gulp.src)(srcSearch).pipe(runSass().on('error', runSass.logError)) // Passes it through a gulp-sass, log errors to console
+.pipe((0, _gulp.dest)(cssPath)).pipe((0, _gulpCssnano.default)()).pipe((0, _gulpRename.default)({
+  extname: '.min.css'
+})).pipe((0, _gulp.dest)(cssPath));
 exports.sassFor = sassFor;

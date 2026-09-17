@@ -86,7 +86,7 @@ describe('distFor', () => {
     const srcPath = gulpConfig.get('srcPath')
     const srcFile = `${srcPath}/distFor.js`
     fs.writeFileSync(srcFile, rawContents)
-    expect.assertions(5)
+    expect.assertions(3)
     const oldContents = fs.readFileSync(srcFile).toString()
     expect(countMatches(oldContents, 'const ')).toEqual(7)
     const distPath = gulpConfig.get('dist.to')
@@ -94,14 +94,12 @@ describe('distFor', () => {
       .on('finish', () => {
         expect(fileExists(distPath)).toBeTruthy()
         const babelifiedContents = fs.readFileSync(`${distPath}/distFor.js`).toString()
-        expect(countMatches(babelifiedContents, '"use strict"')).toEqual(1)
-        /* There used to be a nice check here where `const` and `let` would be swapped to `var`, but that no longer
-           happens.
-           It would be nice if it still happened, but due to 'browserlist' supposedly, most browsers support
-           `const` and `let` now.
+        /* There used to be checks here for `const`/`let` being swapped to `var`, and for arrow functions being
+           compiled down to `function`/`arguments`, but neither happens anymore now that 'browserslist' resolves to
+           targets that natively support this syntax - there's nothing stable left to count. What still matters -
+           that babel actually ran and produced a valid CommonJS module - is confirmed by the "use strict" check.
          */
-        expect(countMatches(babelifiedContents, 'function')).toEqual(1)
-        expect(countMatches(babelifiedContents, 'arguments')).toEqual(6)
+        expect(countMatches(babelifiedContents, '"use strict"')).toEqual(1)
         done()
       })
       .on('error', error => {
@@ -153,7 +151,10 @@ describe('distFor', () => {
       .on('finish', () => {
         expect(fileExists(distPath)).toBeTruthy()
         const babelifiedContents = fs.readFileSync(`${distPath}/distFor.js`).toString()
-        expect(countMatches(babelifiedContents, '.js')).toEqual(4)
+        // A total '.js' substring count is too fragile - it drifts with whichever core-js polyfill modules babel
+        // happens to pull in. Check specifically for the thing this test is about: the .mjs import extension in
+        // the source (./distForSrc.mjs) got rewritten to .js in the compiled require path.
+        expect(countMatches(babelifiedContents, 'distForSrc.js')).toEqual(1)
         done()
       })
       .on('error', error => {

@@ -1,7 +1,6 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
-require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -19,15 +18,11 @@ function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e
  * @param {string} [imageDest=dest/image/folder]
  * @return {stream.Stream}
  */
-const imagesFor = function () {
-  let imageSrc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : gulpConfig.get('images.from');
-  let imageDest = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('images.to');
-  return (0, _gulp.src)(imageSrc).pipe(
-  // Caching images that ran through imagemin
-  (0, _gulpCache.default)((0, _gulpImagemin.default)({
-    interlaced: true,
-    silent: true,
-    verbose: false
-  }))).pipe((0, _gulp.dest)(imageDest));
-};
+const imagesFor = (imageSrc = gulpConfig.get('images.from'), imageDest = gulpConfig.get('images.to')) => (0, _gulp.src)(imageSrc).pipe(
+// Caching images that ran through imagemin
+(0, _gulpCache.default)((0, _gulpImagemin.default)({
+  interlaced: true,
+  silent: true,
+  verbose: false
+}))).pipe((0, _gulp.dest)(imageDest));
 exports.imagesFor = imagesFor;

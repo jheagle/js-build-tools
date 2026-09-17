@@ -15,9 +15,7 @@ var _strBefore = require("./strBefore.js");
  * @param {*} value - The default value to return if the property is not found
  * @returns {Object} The modified object
  */
-const dotSet = function (arrayObject, dotNotation) {
-  var _arrayObject$key;
-  let value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+const dotSet = (arrayObject, dotNotation, value = null) => {
   let key = (0, _strBefore.strBefore)(dotNotation, '.');
   const lastKey = !key;
   if (lastKey) {
@@ -40,7 +38,7 @@ const dotSet = function (arrayObject, dotNotation) {
     arrayObject[dotNotation] = value;
     return arrayObject;
   }
-  const next = (_arrayObject$key = arrayObject[key]) !== null && _arrayObject$key !== void 0 ? _arrayObject$key : [];
+  const next = arrayObject[key] ?? [];
   arrayObject[key] = dotSet(next, (0, _strAfter.strAfter)(dotNotation, '.'), value);
   return arrayObject;
 };
