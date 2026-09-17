@@ -1,14 +1,10 @@
 "use strict";
 
 require("core-js/modules/esnext.weak-map.delete-all.js");
-require("core-js/modules/web.dom-collections.iterator.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.distFor = void 0;
-require("core-js/modules/es.regexp.exec.js");
-require("core-js/modules/es.string.replace.js");
-require("core-js/modules/esnext.string.replace-all.js");
 var _gulpBabel = _interopRequireDefault(require("gulp-babel"));
 var _gulp = require("gulp");
 var _distForSrc = require("./distForSrc.js");
@@ -23,14 +19,10 @@ function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e
  * @param {string} [destPath='dist/config/path']
  * @returns {stream.Stream}
  */
-const distFor = function () {
-  let srcPath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _distForSrc.distForSrc)();
-  let destPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : gulpConfig.get('dist.to');
-  return (0, _gulp.src)(srcPath).pipe((0, _gulpBabel.default)()).pipe(_through.default.obj(function (file, enc, callback) {
-    const regex = /\.mjs(['"]\s*\))/gi;
-    file.contents = Buffer.from(file.contents.toString().replaceAll(regex, '.js$1'));
-    this.push(file);
-    callback();
-  })).pipe((0, _gulp.dest)(destPath));
-};
+const distFor = (srcPath = (0, _distForSrc.distForSrc)(), destPath = gulpConfig.get('dist.to')) => (0, _gulp.src)(srcPath).pipe((0, _gulpBabel.default)()).pipe(_through.default.obj(function (file, enc, callback) {
+  const regex = /\.mjs(['"]\s*\))/gi;
+  file.contents = Buffer.from(file.contents.toString().replaceAll(regex, '.js$1'));
+  this.push(file);
+  callback();
+})).pipe((0, _gulp.dest)(destPath));
 exports.distFor = distFor;

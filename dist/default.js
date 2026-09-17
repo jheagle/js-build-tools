@@ -1,7 +1,6 @@
 'use strict'
 
 require('core-js/modules/esnext.weak-map.delete-all.js')
-require('core-js/modules/web.dom-collections.iterator.js')
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
@@ -17,8 +16,5 @@ function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var
  * @param {function} [done=null]
  * @returns {stream.Stream}
  */
-const defaultCmd = function () {
-  const done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
-  return gulpConfig.get('browser.enabled') ? (0, _gulp.series)(_dist.dist, _bundle.bundle)(done) : (0, _gulp.series)(_dist.dist)(done)
-}
+const defaultCmd = (done = null) => gulpConfig.get('browser.enabled') ? (0, _gulp.series)(_dist.dist, _bundle.bundle)(done) : (0, _gulp.series)(_dist.dist)(done)
 exports.defaultCmd = defaultCmd

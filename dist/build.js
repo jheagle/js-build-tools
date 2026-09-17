@@ -5,7 +5,6 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 })
 exports.build = void 0
-require('core-js/modules/web.dom-collections.iterator.js')
 var _bundle = require('./bundle.js')
 var _bundleLint = require('./bundleLint.js')
 var _bundleMinify = require('./bundleMinify.js')
@@ -26,8 +25,7 @@ function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
-const build = function () {
-  const done = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
+const build = (done = null) => {
   const distLintMinify = (0, _gulp.parallel)(_distLint.distLint, _distMinify.distMinify)
   const bundleLintMinify = (0, _gulp.parallel)(_bundleLint.bundleLint, _bundleMinify.bundleMinify)
   const buildActions = [_partials.clean, (0, _partials.distSeries)(), distLintMinify]

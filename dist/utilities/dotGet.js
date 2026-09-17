@@ -15,10 +15,7 @@ var _strBefore = require("./strBefore.js");
  * @param {string|null} [defaultValue=null] - The default value to return if the property is not found
  * @returns {*} The value of the property
  */
-const dotGet = function () {
-  let arrayObject = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  let dotNotation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-  let defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+const dotGet = (arrayObject = {}, dotNotation = '', defaultValue = null) => {
   if (!dotNotation) {
     return arrayObject;
   }
@@ -43,8 +40,7 @@ const dotGet = function () {
     return result;
   }
   if (lastKey) {
-    var _arrayObject$dotNotat;
-    return (_arrayObject$dotNotat = arrayObject[dotNotation]) !== null && _arrayObject$dotNotat !== void 0 ? _arrayObject$dotNotat : defaultValue;
+    return arrayObject[dotNotation] ?? defaultValue;
   }
   if (typeof arrayObject[key] === 'undefined') {
     return defaultValue;
