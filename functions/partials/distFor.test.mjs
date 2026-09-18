@@ -1,8 +1,38 @@
 import fs from 'fs'
+import { Transform, PassThrough } from 'node:stream'
+import ts from 'typescript'
+import File from 'vinyl'
 import * as setUp from '../test-helpers/setUp.mjs'
 import { distFor } from './distFor.mjs'
 import { countMatches, fileExists } from 'test-filesystem'
 import { tsFor } from './tsFor.mjs'
+
+// tsFor's real implementation loads gulp-ts-compile (a genuine ESM-only package) via a dynamic import() hidden
+// from babel's static analysis - necessary for production correctness (see tsFor.mjs's own comments), but this
+// project's current CommonJS-transform-based Jest setup cannot execute a real dynamic import at all: it doesn't
+// just fail cleanly, it segfaults the whole Jest worker. This fake stands in for it here, doing real (not
+// mocked-away) TypeScript transpilation via `ts.transpileModule` so this test still exercises genuine compile
+// behavior - gulp-ts-compile's own test suite separately covers its whole-program/cross-file-import behavior.
+const fakeLoadTsCompile = () => Promise.resolve((options) => {
+  const transform = new Transform({
+    objectMode: true,
+    transform (file, enc, callback) {
+      const { outputText } = ts.transpileModule(file.contents.toString(), { compilerOptions: options })
+      jsStream.push(new File({ cwd: file.cwd, base: file.base, path: file.path.replace(/\.tsx?$/, '.js'), contents: Buffer.from(outputText) }))
+      callback()
+    },
+    flush (callback) {
+      jsStream.end()
+      dtsStream.end()
+      callback()
+    }
+  })
+  const jsStream = new PassThrough({ objectMode: true })
+  const dtsStream = new PassThrough({ objectMode: true })
+  transform.js = jsStream
+  transform.dts = dtsStream
+  return transform
+})
 
 setUp.setDefaults('test-dist-for')
 const gulpConfig = setUp.gulpConfig
@@ -120,7 +150,7 @@ describe('distFor', () => {
     const distPath = gulpConfig.get('dist.to')
     const tsFrom = gulpConfig.get('typescript.from')
     const tsTo = gulpConfig.get('typescript.to')
-    tsFor(tsFrom, tsTo)(() => {
+    tsFor(tsFrom, tsTo, fakeLoadTsCompile)(() => {
       distFor()
         .on('finish', () => {
           expect(fileExists(distPath)).toBeTruthy()

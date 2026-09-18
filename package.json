@@ -63,7 +63,7 @@
     "gulp-rename": "^2.1.0",
     "gulp-sass": "^6.0.1",
     "gulp-standard": "^14.0.0",
-    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-ts-compile": "file:../joshuaheagle.local/projects/gulp-ts-compile/gulp-ts-compile-1.0.0.tgz",
     "gulp-uglify-es": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.4.1",

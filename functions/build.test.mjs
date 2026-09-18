@@ -12,6 +12,30 @@ const genericFunction = () => Promise.resolve(true)
 
 jest.mock('./partials/clean.mjs', () => ({ clean: jest.fn(genericFunction) }))
 jest.mock('./testFull.mjs', () => ({ testFull: jest.fn(genericFunction) }))
+// tsFor's real implementation loads gulp-ts-compile (a genuine ESM-only package) via a dynamic import() hidden
+// from babel's static analysis - necessary for production correctness (see tsFor.mjs's own comments), but this
+// project's current CommonJS-transform-based Jest setup can't execute a real dynamic import at all: it doesn't
+// just fail cleanly, it segfaults the whole Jest worker. Replace the whole module here with a fake that does
+// real (not mocked-away) TypeScript transpilation via `ts.transpileModule`, so the typescript.enabled tests
+// below still exercise genuine compile behavior end to end - gulp-ts-compile's own test suite separately covers
+// its whole-program/cross-file-import behavior.
+jest.mock('./partials/tsFor.mjs', () => ({
+  tsFor: (srcPath, distPath) => (done) => {
+    const nodeFs = require('fs')
+    const nodePath = require('path')
+    const glob = require('glob')
+    const ts = require('typescript')
+    nodeFs.mkdirSync(distPath, { recursive: true })
+    for (const file of glob.globSync(srcPath)) {
+      const contents = nodeFs.readFileSync(file).toString()
+      const { outputText } = ts.transpileModule(contents, { compilerOptions: { declaration: true } })
+      const base = nodePath.basename(file).replace(/\.tsx?$/, '')
+      nodeFs.writeFileSync(`${distPath}/${base}.js`, outputText)
+      nodeFs.writeFileSync(`${distPath}/${base}.d.ts`, '')
+    }
+    done()
+  }
+}))
 
 const file1Contents = '/**\n' +
   ' * Console log out a greeting with given input.\n' +
