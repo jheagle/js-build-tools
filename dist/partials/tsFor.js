@@ -67,8 +67,16 @@ const tsFor = (srcPath = gulpConfig.get('typescript.from'), distPath = gulpConfi
     return () => {};
   }
   const configPath = gulpConfig.get('typescript.config');
+  // When no tsconfig.json is configured, target/module are pinned explicitly rather than left for TypeScript's
+  // own compiler defaults - those defaults have already shifted once across a TypeScript version bump in this
+  // project's own history (silently changing whether output keeps `const`/`let` or downlevels to `var`), and
+  // pinning them keeps this task's output stable across future TypeScript upgrades too. ES5/CommonJS matches
+  // what the downstream babel/browserify bundling pipeline has always assumed it receives.
   const compilerOptions = configPath ? readCompilerOptions(configPath) : {
-    declaration: true
+    declaration: true,
+    target: _typescript.default.ScriptTarget.ES5,
+    module: _typescript.default.ModuleKind.CommonJS,
+    esModuleInterop: false
   };
   // Accepts gulp's own callback-style task convention (an optional `done`, called once finished) rather than
   // just returning a Promise, since callers may invoke the returned function directly with a callback instead

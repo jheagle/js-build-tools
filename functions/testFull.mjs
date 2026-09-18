@@ -1,5 +1,5 @@
 import * as gulpConfig from '../gulp.config.mjs'
-import { default as jest } from 'jest'
+import { runCLI } from 'jest'
 
 /**
  * Run all tests with jest.
@@ -13,5 +13,5 @@ export const testFull = () => {
     // The testPath must be an array of strings
     testPath = [testPath]
   }
-  return jest.runCLI(gulpConfig.get('test.options'), testPath)
+  return runCLI(gulpConfig.get('test.options'), testPath)
 }
