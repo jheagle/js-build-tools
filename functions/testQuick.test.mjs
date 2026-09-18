@@ -1,5 +1,5 @@
 import { testHelpers } from './testHelpers.mjs'
-import { default as jestImport } from 'jest'
+import { runCLI } from 'jest'
 import { testQuick } from './testQuick.mjs'
 
 const gulpConfig = testHelpers.gulpConfig
@@ -12,6 +12,6 @@ describe('testQuick', () => {
   test('runs the jest CLI with onlyChanged option', () => {
     expect.assertions(1)
     testQuick()
-    expect(jestImport.runCLI).toHaveBeenCalledWith({ onlyChanged: true }, [gulpConfig.get('test.path')])
+    expect(runCLI).toHaveBeenCalledWith({ onlyChanged: true }, [gulpConfig.get('test.path')])
   })
 })

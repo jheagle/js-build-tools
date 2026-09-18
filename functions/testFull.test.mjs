@@ -1,5 +1,5 @@
 import { testHelpers } from './testHelpers.mjs'
-import { default as jestImport } from 'jest'
+import { runCLI } from 'jest'
 import { testFull } from './testFull.mjs'
 
 const gulpConfig = testHelpers.gulpConfig
@@ -12,6 +12,6 @@ describe('testFull', () => {
   test('runs the Jest CLI with the configured options', () => {
     expect.assertions(1)
     testFull()
-    expect(jestImport.runCLI).toHaveBeenCalledWith(gulpConfig.get('test.options'), [gulpConfig.get('test.path')])
+    expect(runCLI).toHaveBeenCalledWith(gulpConfig.get('test.options'), [gulpConfig.get('test.path')])
   })
 })
