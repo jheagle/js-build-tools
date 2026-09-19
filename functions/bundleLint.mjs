@@ -1,6 +1,6 @@
 import { dest, src } from 'gulp'
 import * as gulpConfig from '../gulp.config.mjs'
-import standard from 'gulp-standard'
+import { standardLint } from './partials/standardLint.mjs'
 
 /**
  * Applies Standard code style linting to bundled file.
@@ -8,9 +8,5 @@ import standard from 'gulp-standard'
  * @returns {stream.Stream}
  */
 export const bundleLint = () => src(`${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`)
-  .pipe(standard({ fix: true }))
-  .pipe(standard.reporter('default', {
-    fix: true,
-    quiet: true
-  }))
+  .pipe(standardLint({ fix: true }))
   .pipe(dest(gulpConfig.get('browser.to')))

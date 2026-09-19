@@ -1,6 +1,7 @@
 import fs from 'fs'
 import * as setUp from '../test-helpers/setUp.mjs'
-import { imagesFor } from './imagesFor.mjs'
+import os from 'os'
+import { imagesFor, loadImagemin } from './imagesFor.mjs'
 
 setUp.setDefaults('test-images-for')
 const gulpConfig = setUp.gulpConfig
@@ -140,5 +141,23 @@ describe('imagesFor', () => {
         console.error('Encountered error', error)
         done()
       })
+  })
+})
+
+describe('loadImagemin', () => {
+  test('loads the gulp-imagemin plugin factory from the project directory', () => {
+    expect.assertions(1)
+    expect(typeof loadImagemin()).toBe('function')
+  })
+
+  test('throws a helpful error with install instructions when gulp-imagemin is not installed', () => {
+    expect.assertions(2)
+    const emptyProject = fs.mkdtempSync(`${os.tmpdir()}/no-imagemin-`)
+    try {
+      expect(() => loadImagemin(emptyProject)).toThrow(/optional peer dependency gulp-imagemin, which is not installed/)
+      expect(() => loadImagemin(emptyProject)).toThrow(/github:jheagle\/gulp-imagemin#common-js-compatibility/)
+    } finally {
+      fs.rmSync(emptyProject, { recursive: true })
+    }
   })
 })

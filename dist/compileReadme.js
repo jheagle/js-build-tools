@@ -4,8 +4,8 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 })
 exports.compileReadme = void 0
-var _partials = require('./partials.js')
-var _gulp = require('gulp')
+const _partials = require('./partials.js')
+const _gulp = require('gulp')
 /**
  * Generate the README.md file based off of the template, then append the generated documentation.
  * @memberOf module:js-build-tools

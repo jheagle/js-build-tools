@@ -5,6 +5,9 @@ import { clean } from './partials/clean.mjs'
 import { testFull } from './testFull.mjs'
 import { countMatches } from 'test-filesystem'
 
+// Run the real Standard (in a subprocess) - Jest's CommonJS transform can't load the ESM-only package itself.
+jest.mock('./partials/standardLint.mjs', () => require('./test-helpers/standardLintWithRealStandard.mjs'))
+
 setUp.setDefaults('test-build')
 const gulpConfig = setUp.gulpConfig
 

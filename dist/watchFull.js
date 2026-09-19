@@ -4,7 +4,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 })
 exports.watchFull = void 0
-var _partials = require('./partials.js')
+const _partials = require('./partials.js')
 /**
  * Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
  * @memberOf module:js-build-tools
