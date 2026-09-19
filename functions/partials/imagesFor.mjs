@@ -41,7 +41,8 @@ export const loadImagemin = (projectPath = process.cwd()) => {
  */
 export const imagesFor = (imageSrc = gulpConfig.get('images.from'), imageDest = gulpConfig.get('images.to')) => {
   const imagemin = loadImagemin()
-  return src(imageSrc)
+  // Gulp 5 reads files as utf8 text unless told otherwise, which corrupts binary images (and makes gulp-cache drop them).
+  return src(imageSrc, { encoding: false })
     .pipe(
       // Caching images that ran through imagemin
       cache(

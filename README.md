@@ -426,6 +426,13 @@ Export these functions to your own project to customize your build pipeline.
 
 **Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
+<a name="module_js-build-tools.build"></a>
+
+### js-build-tools.build() ⇒ <code>stream.Stream</code>
+Runs several processes to build and validate the project.
+Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_gulpConfig"></a>
 
 ## gulpConfig

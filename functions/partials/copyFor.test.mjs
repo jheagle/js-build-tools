@@ -32,4 +32,22 @@ describe('copyFor', () => {
         done()
       })
   })
+
+  test('copies binary files byte for byte, including a leading BOM and bytes above 0x7f', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const binaryFile = `${srcPath}/font.woff`
+    const original = Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), Buffer.from(Array.from({ length: 512 }, (_, i) => i % 256))])
+    fs.writeFileSync(binaryFile, original)
+    expect.assertions(1)
+    const browserPath = gulpConfig.get('browser.to')
+    copyFor(binaryFile, browserPath)
+      .on('finish', () => {
+        expect(fs.readFileSync(`${browserPath}/font.woff`).equals(original)).toBeTruthy()
+        done()
+      })
+      .on('error', error => {
+        console.error('Encountered error', error)
+        done()
+      })
+  })
 })

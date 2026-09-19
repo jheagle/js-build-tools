@@ -7,5 +7,6 @@ import { dest, src } from 'gulp'
  * @param {string} destPath
  * @returns {stream.Stream}
  */
-export const copyFor = (srcPath, destPath) => src(srcPath)
+// encoding: false copies the bytes untouched - Gulp 5's default utf8 handling corrupts binary files such as fonts.
+export const copyFor = (srcPath, destPath) => src(srcPath, { encoding: false })
   .pipe(dest(destPath))
