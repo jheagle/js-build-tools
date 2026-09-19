@@ -27,10 +27,7 @@ const sassContents = 'html\n' +
 
 const sassPath = gulpConfig.get('sass.path')
 
-beforeEach(() => {
-  setUp.beforeEach()
-  return fs.mkdirSync(sassPath, { recursive: true })
-})
+beforeEach(() => setUp.beforeEach().then(() => fs.mkdirSync(sassPath, { recursive: true })))
 
 afterEach(setUp.afterEach)
 
@@ -53,6 +50,27 @@ describe('sassFor', () => {
         expect(countMatches(cssContents, ';')).toEqual(13)
         expect(countMatches(cssContents, '{')).toEqual(3)
         expect(countMatches(cssContents, '}')).toEqual(3)
+        done()
+      })
+      .on('error', error => {
+        console.error('Encountered error', error)
+        done()
+      })
+  })
+
+  test('also writes a minified .min.css next to the css output', done => {
+    const sassFile = `${sassPath}/sassFor.sass`
+    fs.writeFileSync(sassFile, sassContents)
+    expect.assertions(4)
+    const cssPath = gulpConfig.get('sass.to')
+    sassFor(sassFile)
+      .on('finish', () => {
+        const cssContents = fs.readFileSync(`${cssPath}/sassFor.css`).toString()
+        const minContents = fs.readFileSync(`${cssPath}/sassFor.min.css`).toString()
+        expect(minContents.length).toBeLessThan(cssContents.length)
+        expect(countMatches(minContents.trim(), '\n')).toEqual(0)
+        expect(minContents).toContain('outline:none')
+        expect(minContents).toContain('text-align:center')
         done()
       })
       .on('error', error => {
