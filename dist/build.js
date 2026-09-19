@@ -28,7 +28,7 @@ function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var
 const build = (done = null) => {
   const distLintMinify = (0, _gulp.parallel)(_distLint.distLint, _distMinify.distMinify)
   const bundleLintMinify = (0, _gulp.parallel)(_bundleLint.bundleLint, _bundleMinify.bundleMinify)
-  const buildActions = [_partials.clean, (0, _partials.distSeries)(), distLintMinify]
+  const buildActions = [(0, _partials.distSeries)(), distLintMinify]
   if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(_compileReadme.compileReadme)
@@ -56,6 +56,8 @@ const build = (done = null) => {
     // Conditionally add SASS process
     runActions.push(_sass.sass)
   }
-  return (0, _gulp.parallel)(...runActions)(done)
+  // clean has to finish before anything writes into the output folders - images, fonts and sass all write into
+  // browser/, so running clean in parallel with them races (ENOTEMPTY errors from clean, or output deleted mid-write).
+  return (0, _gulp.series)(_partials.clean, (0, _gulp.parallel)(...runActions))(done)
 }
 exports.build = build
