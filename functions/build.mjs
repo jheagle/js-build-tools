@@ -21,7 +21,7 @@ import { testFull } from './testFull.mjs'
 export const build = (done = null) => {
   const distLintMinify = parallel(distLint, distMinify)
   const bundleLintMinify = parallel(bundleLint, bundleMinify)
-  const buildActions = [clean, distSeries(), distLintMinify]
+  const buildActions = [distSeries(), distLintMinify]
   if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(compileReadme)
@@ -51,7 +51,10 @@ export const build = (done = null) => {
     // Conditionally add SASS process
     runActions.push(sass)
   }
-  return parallel(
-    ...runActions
+  // clean has to finish before anything writes into the output folders - images, fonts and sass all write into
+  // browser/, so running clean in parallel with them races (ENOTEMPTY errors from clean, or output deleted mid-write).
+  return series(
+    clean,
+    parallel(...runActions)
   )(done)
 }

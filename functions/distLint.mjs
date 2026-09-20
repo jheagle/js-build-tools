@@ -1,6 +1,6 @@
 import * as gulpConfig from '../gulp.config.mjs'
 import { dest, src } from 'gulp'
-import standard from 'gulp-standard'
+import { standardLint } from './partials/standardLint.mjs'
 
 /**
  * Applies Standard code style linting to distribution files.
@@ -8,9 +8,5 @@ import standard from 'gulp-standard'
  * @returns {*}
  */
 export const distLint = () => src(gulpConfig.get('browser.from'))
-  .pipe(standard({ fix: true }))
-  .pipe(standard.reporter('default', {
-    fix: true,
-    quiet: true
-  }))
+  .pipe(standardLint({ fix: true }))
   .pipe(dest(gulpConfig.get('dist.to')))

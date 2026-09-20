@@ -81,6 +81,12 @@ Object.defineProperty(exports, 'sassFor', {
     return _sassFor.sassFor
   }
 })
+Object.defineProperty(exports, 'standardLint', {
+  enumerable: true,
+  get: function () {
+    return _standardLint.standardLint
+  }
+})
 Object.defineProperty(exports, 'tsFor', {
   enumerable: true,
   get: function () {
@@ -100,4 +106,5 @@ var _readmeTemplate = require('./partials/readmeTemplate.js')
 var _removeDirectory = require('./partials/removeDirectory.js')
 var _runOnChange = require('./partials/runOnChange.js')
 var _sassFor = require('./partials/sassFor.js')
+var _standardLint = require('./partials/standardLint.js')
 var _tsFor = require('./partials/tsFor.js')

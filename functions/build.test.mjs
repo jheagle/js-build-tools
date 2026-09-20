@@ -5,6 +5,9 @@ import { clean } from './partials/clean.mjs'
 import { testFull } from './testFull.mjs'
 import { countMatches } from 'test-filesystem'
 
+// Run the real Standard (in a subprocess) - Jest's CommonJS transform can't load the ESM-only package itself.
+jest.mock('./partials/standardLint.mjs', () => require('./test-helpers/standardLintWithRealStandard.mjs'))
+
 setUp.setDefaults('test-build')
 const gulpConfig = setUp.gulpConfig
 
@@ -618,6 +621,34 @@ describe('build', () => {
 
       // Ran 'testFull'
       expect(testFull).toHaveBeenCalled()
+      done()
+    })
+  }, 30000)
+
+  test('finishes clean before starting the tasks that write into the output folders', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const sourcesPath = `${srcPath}/sources`
+    fs.writeFileSync(`${sourcesPath}/file1.js`, file1Contents)
+    fs.writeFileSync(`${sourcesPath}/file2.js`, file2Contents)
+    fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
+    expect.assertions(1)
+    const events = []
+    clean.mockImplementationOnce(() => new Promise(resolve => setTimeout(() => {
+      events.push('clean finished')
+      resolve(true)
+    }, 100)))
+    testFull.mockImplementationOnce(() => {
+      events.push('testFull started')
+      return Promise.resolve(true)
+    })
+    // Earlier tests leave these enabled, so state them explicitly to keep this test independent of test order.
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('fonts.enabled', false)
+    gulpConfig.set('images.enabled', false)
+    gulpConfig.set('sass.enabled', false)
+    gulpConfig.set('typescript.enabled', false)
+    build(() => {
+      expect(events).toEqual(['clean finished', 'testFull started'])
       done()
     })
   }, 30000)

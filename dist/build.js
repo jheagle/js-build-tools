@@ -5,20 +5,20 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 })
 exports.build = void 0
-var _bundle = require('./bundle.js')
-var _bundleLint = require('./bundleLint.js')
-var _bundleMinify = require('./bundleMinify.js')
-var _partials = require('./partials.js')
-var _compileReadme = require('./compileReadme.js')
-var _distLint = require('./distLint.js')
-var _distMinify = require('./distMinify.js')
-var _gulp = require('gulp')
-var gulpConfig = _interopRequireWildcard(require('../gulp.config.js'))
-var _copyFonts = require('./copyFonts.js')
-var _images = require('./images.js')
-var _sass = require('./sass.js')
-var _testFull = require('./testFull.js')
-function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var r = new WeakMap(); var n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o; var i; var f = { __proto__: null, default: e }; if (e === null || typeof e !== 'object' && typeof e !== 'function') return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f) } for (const t in e) t !== 'default' && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f })(e, t) }
+const _bundle = require('./bundle.js')
+const _bundleLint = require('./bundleLint.js')
+const _bundleMinify = require('./bundleMinify.js')
+const _partials = require('./partials.js')
+const _compileReadme = require('./compileReadme.js')
+const _distLint = require('./distLint.js')
+const _distMinify = require('./distMinify.js')
+const _gulp = require('gulp')
+const gulpConfig = _interopRequireWildcard(require('../gulp.config.js'))
+const _copyFonts = require('./copyFonts.js')
+const _images = require('./images.js')
+const _sass = require('./sass.js')
+const _testFull = require('./testFull.js')
+function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; let o; let i; const f = { __proto__: null, default: e }; if (e === null || typeof e !== 'object' && typeof e !== 'function') return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f) } for (const t in e) t !== 'default' && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f })(e, t) }
 /**
  * Runs several processes to build and validate the project.
  * Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
@@ -28,7 +28,7 @@ function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var
 const build = (done = null) => {
   const distLintMinify = (0, _gulp.parallel)(_distLint.distLint, _distMinify.distMinify)
   const bundleLintMinify = (0, _gulp.parallel)(_bundleLint.bundleLint, _bundleMinify.bundleMinify)
-  const buildActions = [_partials.clean, (0, _partials.distSeries)(), distLintMinify]
+  const buildActions = [(0, _partials.distSeries)(), distLintMinify]
   if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(_compileReadme.compileReadme)
@@ -56,6 +56,8 @@ const build = (done = null) => {
     // Conditionally add SASS process
     runActions.push(_sass.sass)
   }
-  return (0, _gulp.parallel)(...runActions)(done)
+  // clean has to finish before anything writes into the output folders - images, fonts and sass all write into
+  // browser/, so running clean in parallel with them races (ENOTEMPTY errors from clean, or output deleted mid-write).
+  return (0, _gulp.series)(_partials.clean, (0, _gulp.parallel)(...runActions))(done)
 }
 exports.build = build

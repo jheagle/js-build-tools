@@ -1,6 +1,8 @@
 import fs from 'fs'
 import * as setUp from '../test-helpers/setUp.mjs'
-import { imagesFor } from './imagesFor.mjs'
+import os from 'os'
+import zlib from 'zlib'
+import { imagesFor, loadImagemin } from './imagesFor.mjs'
 
 setUp.setDefaults('test-images-for')
 const gulpConfig = setUp.gulpConfig
@@ -116,6 +118,44 @@ const imageContents = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
 
 const imageCompressed = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="600"><image width="600" height="600" preserveAspectRatio="none" xlink:href="data:image/png;base64,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 TkSuQmCC"/><path d="M19.04 494.382C2.001 482.76-2.83 468.022 5.006 451.587c3.27-6.858 10.156-15.228 15.3-18.599 8.904-5.834 9.948-5.675 21.728 3.31 28.014 21.367 44.09 18.882 51.548-7.971 5.951-21.426 5.252-305.141-.77-313.044-2.617-3.433-11.316-6.65-19.688-7.28-14.39-1.082-15.047-1.7-16.164-15.19L55.797 78.75h326.107l2.574 11.718c2.93 13.34-1.711 18.133-17.648 18.225-19.29.11-21.83 7.13-21.83 60.325V217.5h135v-48.169c0-41.902-.892-48.976-6.858-54.375-3.772-3.413-10.384-6.206-14.693-6.206-15.006 0-19.699-4.116-19.699-17.276V78.75h161.703l-1.164 14.063c-1.132 13.677-1.605 14.094-17.28 15.224-13.45.97-16.737 2.798-19.876 11.053-5.802 15.26-2.837 249.42 3.25 256.747 2.617 3.15 11.477 6.801 19.688 8.114C599.596 386.274 600 386.745 600 401.37v15.03l-79.687-1.012-79.688-1.012-1.137-13.607c-1.135-13.594-1.12-13.61 16.875-16.305 9.907-1.484 19.252-4.642 20.767-7.018 1.515-2.376 2.781-30.054 2.813-61.508L480 258.75H344.814l1.03 60.938 1.031 60.937 19.688 3.34c20.492 3.476 22.165 5.78 17.323 23.848-2.253 8.408-2.53 8.437-80.573 8.437H225v-14.956c0-14.536.418-15.022 14.93-17.343 8.21-1.313 17.07-4.966 19.687-8.119 3.637-4.381 4.758-35.56 4.758-132.343 0-69.636-1.23-127.842-2.735-129.348-9.738-9.743-68.924-8.348-79.154 1.866-3.087 3.081-4.993 46.77-6.525 149.486-1.455 97.609-3.646 149.68-6.69 159.02-13.551 41.573-61.403 74.912-111 77.337-22.755 1.112-28.167.082-39.232-7.468z"/></svg>'
 
+// Build a small but real PNG so the test exercises binary data (a text-only SVG hid Gulp 5's utf8 corruption of images).
+const crc32 = buffer => {
+  let crc = 0xffffffff
+  for (const byte of buffer) {
+    crc ^= byte
+    for (let bit = 0; bit < 8; bit++) {
+      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1))
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0
+}
+const pngChunk = (type, data) => {
+  const length = Buffer.alloc(4)
+  length.writeUInt32BE(data.length)
+  const body = Buffer.concat([Buffer.from(type), data])
+  const crc = Buffer.alloc(4)
+  crc.writeUInt32BE(crc32(body))
+  return Buffer.concat([length, body, crc])
+}
+const makePng = (size = 32) => {
+  const header = Buffer.alloc(13)
+  header.writeUInt32BE(size, 0)
+  header.writeUInt32BE(size, 4)
+  header.set([8, 2, 0, 0, 0], 8) // 8-bit RGB
+  const rows = Buffer.alloc((size * 3 + 1) * size)
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size * 3; x++) {
+      rows[y * (size * 3 + 1) + 1 + x] = (x * 37 + y * 91) % 256 // bytes above 0x7f exercise utf8 corruption
+    }
+  }
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    pngChunk('IHDR', header),
+    pngChunk('IDAT', zlib.deflateSync(rows)),
+    pngChunk('IEND', Buffer.alloc(0))
+  ])
+}
+
 beforeEach(setUp.beforeEach)
 
 afterEach(setUp.afterEach)
@@ -140,5 +180,47 @@ describe('imagesFor', () => {
         console.error('Encountered error', error)
         done()
       })
+  })
+
+  test('keeps binary images intact - Gulp 5 would otherwise decode them as utf8 text and corrupt or drop them', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const pngFile = `${srcPath}/binary.png`
+    const original = makePng()
+    fs.writeFileSync(pngFile, original)
+    expect.assertions(4)
+    const browserPath = gulpConfig.get('browser.to')
+    imagesFor(pngFile, browserPath)
+      .on('finish', () => {
+        const outputPath = `${browserPath}/binary.png`
+        expect(fs.existsSync(outputPath)).toBeTruthy()
+        const optimized = fs.readFileSync(outputPath)
+        // Still a real PNG (signature and IEND intact) and never bigger than what went in.
+        expect(optimized.subarray(0, 8).equals(original.subarray(0, 8))).toBeTruthy()
+        expect(optimized.subarray(-12).equals(original.subarray(-12))).toBeTruthy()
+        expect(optimized.length).toBeLessThanOrEqual(original.length)
+        done()
+      })
+      .on('error', error => {
+        console.error('Encountered error', error)
+        done()
+      })
+  })
+})
+
+describe('loadImagemin', () => {
+  test('loads the gulp-imagemin plugin factory from the project directory', () => {
+    expect.assertions(1)
+    expect(typeof loadImagemin()).toBe('function')
+  })
+
+  test('throws a helpful error with install instructions when gulp-imagemin is not installed', () => {
+    expect.assertions(2)
+    const emptyProject = fs.mkdtempSync(`${os.tmpdir()}/no-imagemin-`)
+    try {
+      expect(() => loadImagemin(emptyProject)).toThrow(/optional peer dependency gulp-imagemin, which is not installed/)
+      expect(() => loadImagemin(emptyProject)).toThrow(/github:jheagle\/gulp-imagemin#common-js-compatibility/)
+    } finally {
+      fs.rmSync(emptyProject, { recursive: true })
+    }
   })
 })
