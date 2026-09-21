@@ -1,7 +1,7 @@
 import { dest, src } from 'gulp'
 import path from 'node:path'
 import * as gulpConfig from '../../gulp.config.mjs'
-import ts from 'typescript'
+import { createRequire } from 'node:module'
 
 // gulp-ts-compile ships ESM-only (no CJS build - see its own package.json) since it's meant to be consumed by
 // gulpfiles running under a real ESM loader, same as this project's own gulpfile.mjs does. This project also
@@ -19,6 +19,27 @@ const importGulpTsCompile = new Function('return import(\'gulp-ts-compile\')')
  * @param {import('node:stream').Stream} stream
  * @returns {Promise<void>}
  */
+const installHint = 'Install it in your project with: npm install --save-dev typescript'
+
+/**
+ * Load the project's own copy of TypeScript (an optional peer dependency, only needed when the typescript task is
+ * enabled) from the project being built, so projects which do not use TypeScript never need it installed.
+ * @memberOf module:partials
+ * @param {string} [projectPath=process.cwd()] The folder of the project (which has the package.json) being built.
+ * @returns {Object} The TypeScript compiler API module.
+ * @throws {Error} With install instructions when typescript is not installed.
+ */
+export const loadTypescript = (projectPath = process.cwd()) => {
+  try {
+    return createRequire(path.join(projectPath, 'package.json'))('typescript')
+  } catch (error) {
+    if (error.code === 'MODULE_NOT_FOUND' && /Cannot find module 'typescript'/.test(error.message)) {
+      throw new Error(`The typescript task needs the optional peer dependency typescript, which is not installed. ${installHint}`)
+    }
+    throw error
+  }
+}
+
 const streamToPromise = (stream) => new Promise((resolve, reject) => {
   stream.on('finish', resolve)
   stream.on('error', reject)
@@ -33,7 +54,7 @@ const streamToPromise = (stream) => new Promise((resolve, reject) => {
  * @param {string} configPath - Path to a tsconfig.json file.
  * @returns {import('typescript').CompilerOptions}
  */
-const readCompilerOptions = (configPath) => {
+const readCompilerOptions = (ts, configPath) => {
   const configFile = ts.readConfigFile(configPath, ts.sys.readFile)
   const parsedConfig = ts.parseJsonConfigFileContent(configFile.config, ts.sys, path.dirname(configPath))
   return parsedConfig.options
@@ -60,6 +81,7 @@ export const tsFor = (
   if (gulpConfig.get('typescript.enabled') === false) {
     return () => {}
   }
+  const ts = loadTypescript()
   const configPath = gulpConfig.get('typescript.config')
   // When no tsconfig.json is configured, target/module are pinned explicitly rather than left for TypeScript's
   // own compiler defaults - those defaults have already shifted once across a TypeScript version bump in this
@@ -67,7 +89,7 @@ export const tsFor = (
   // pinning them keeps this task's output stable across future TypeScript upgrades too. ES5/CommonJS matches
   // what the downstream babel/browserify bundling pipeline has always assumed it receives.
   const compilerOptions = configPath
-    ? readCompilerOptions(configPath)
+    ? readCompilerOptions(ts, configPath)
     : { declaration: true, target: ts.ScriptTarget.ES5, module: ts.ModuleKind.CommonJS, esModuleInterop: false }
   // Accepts gulp's own callback-style task convention (an optional `done`, called once finished) rather than
   // just returning a Promise, since callers may invoke the returned function directly with a callback instead

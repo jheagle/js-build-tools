@@ -4,11 +4,11 @@ require("core-js/modules/esnext.weak-map.delete-all.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tsFor = void 0;
+exports.tsFor = exports.loadTypescript = void 0;
 var _gulp = require("gulp");
 var _nodePath = _interopRequireDefault(require("node:path"));
 var gulpConfig = _interopRequireWildcard(require("../../gulp.config.js"));
-var _typescript = _interopRequireDefault(require("typescript"));
+var _nodeModule = require("node:module");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 // gulp-ts-compile ships ESM-only (no CJS build - see its own package.json) since it's meant to be consumed by
@@ -27,6 +27,27 @@ const importGulpTsCompile = new Function('return import(\'gulp-ts-compile\')');
  * @param {import('node:stream').Stream} stream
  * @returns {Promise<void>}
  */
+const installHint = 'Install it in your project with: npm install --save-dev typescript';
+
+/**
+ * Load the project's own copy of TypeScript (an optional peer dependency, only needed when the typescript task is
+ * enabled) from the project being built, so projects which do not use TypeScript never need it installed.
+ * @memberOf module:partials
+ * @param {string} [projectPath=process.cwd()] The folder of the project (which has the package.json) being built.
+ * @returns {Object} The TypeScript compiler API module.
+ * @throws {Error} With install instructions when typescript is not installed.
+ */
+const loadTypescript = (projectPath = process.cwd()) => {
+  try {
+    return (0, _nodeModule.createRequire)(_nodePath.default.join(projectPath, 'package.json'))('typescript');
+  } catch (error) {
+    if (error.code === 'MODULE_NOT_FOUND' && /Cannot find module 'typescript'/.test(error.message)) {
+      throw new Error(`The typescript task needs the optional peer dependency typescript, which is not installed. ${installHint}`);
+    }
+    throw error;
+  }
+};
+exports.loadTypescript = loadTypescript;
 const streamToPromise = stream => new Promise((resolve, reject) => {
   stream.on('finish', resolve);
   stream.on('error', reject);
@@ -41,9 +62,9 @@ const streamToPromise = stream => new Promise((resolve, reject) => {
  * @param {string} configPath - Path to a tsconfig.json file.
  * @returns {import('typescript').CompilerOptions}
  */
-const readCompilerOptions = configPath => {
-  const configFile = _typescript.default.readConfigFile(configPath, _typescript.default.sys.readFile);
-  const parsedConfig = _typescript.default.parseJsonConfigFileContent(configFile.config, _typescript.default.sys, _nodePath.default.dirname(configPath));
+const readCompilerOptions = (ts, configPath) => {
+  const configFile = ts.readConfigFile(configPath, ts.sys.readFile);
+  const parsedConfig = ts.parseJsonConfigFileContent(configFile.config, ts.sys, _nodePath.default.dirname(configPath));
   return parsedConfig.options;
 };
 
@@ -66,16 +87,17 @@ const tsFor = (srcPath = gulpConfig.get('typescript.from'), distPath = gulpConfi
   if (gulpConfig.get('typescript.enabled') === false) {
     return () => {};
   }
+  const ts = loadTypescript();
   const configPath = gulpConfig.get('typescript.config');
   // When no tsconfig.json is configured, target/module are pinned explicitly rather than left for TypeScript's
   // own compiler defaults - those defaults have already shifted once across a TypeScript version bump in this
   // project's own history (silently changing whether output keeps `const`/`let` or downlevels to `var`), and
   // pinning them keeps this task's output stable across future TypeScript upgrades too. ES5/CommonJS matches
   // what the downstream babel/browserify bundling pipeline has always assumed it receives.
-  const compilerOptions = configPath ? readCompilerOptions(configPath) : {
+  const compilerOptions = configPath ? readCompilerOptions(ts, configPath) : {
     declaration: true,
-    target: _typescript.default.ScriptTarget.ES5,
-    module: _typescript.default.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES5,
+    module: ts.ModuleKind.CommonJS,
     esModuleInterop: false
   };
   // Accepts gulp's own callback-style task convention (an optional `done`, called once finished) rather than
