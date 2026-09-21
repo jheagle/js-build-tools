@@ -1,6 +1,6 @@
 {
   "name": "js-build-tools",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
   "exports": {
@@ -77,10 +77,14 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
-    "gulp-imagemin": ">=9.0.0"
+    "gulp-imagemin": ">=9.0.0",
+    "typescript": ">=5.0.0 <7.0.0"
   },
   "peerDependenciesMeta": {
     "gulp-imagemin": {
+      "optional": true
+    },
+    "typescript": {
       "optional": true
     }
   },

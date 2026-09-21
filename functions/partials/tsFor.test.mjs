@@ -3,7 +3,7 @@ import { Transform, PassThrough } from 'node:stream'
 import ts from 'typescript'
 import File from 'vinyl'
 import * as setUp from '../test-helpers/setUp.mjs'
-import { tsFor } from './tsFor.mjs'
+import { tsFor, loadTypescript } from './tsFor.mjs'
 import { countMatches } from 'test-filesystem'
 
 setUp.setDefaults('test-ts-for')
@@ -73,5 +73,15 @@ describe('tsFor', () => {
     gulpConfig.set('typescript.enabled', false)
     const result = tsFor()
     expect(result).toBeInstanceOf(Function)
+  })
+})
+
+describe('loadTypescript', () => {
+  test('loads the typescript of the project being built', () => {
+    expect(loadTypescript().version).toBe(ts.version)
+  })
+
+  test('explains how to install typescript when the project does not have it', () => {
+    expect(() => loadTypescript('/')).toThrow(/optional peer dependency typescript.*npm install --save-dev typescript/)
   })
 })
