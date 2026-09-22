@@ -13,8 +13,24 @@ function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var
 function _interopRequireDefault (e) { return e && e.__esModule ? e : { default: e } }
 /**
  * Starting at the distribution entry point, bundle all the files into a single file and store them in the specified output directory.
+ *
+ * Two escape hatches from browser.config.json keep an unwanted dependency (or a dependency's dependency) out of the
+ * bundle: 'ignore' replaces it with an empty object (safe when your code never actually calls into it - for example
+ * a library's default option value you always override with your own) and 'exclude' leaves it out entirely (your
+ * code must not require it, or provide it another way, such as a separate script tag).
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
-const bundle = () => (0, _browserify.default)(gulpConfig.get('dist.main')).bundle().pipe((0, _vinylSourceStream.default)(`${gulpConfig.get('browser.name')}.js`)).pipe((0, _gulp.dest)(gulpConfig.get('browser.to')))
+const bundle = () => {
+  const bundler = (0, _browserify.default)(gulpConfig.get('dist.main'))
+  const ignore = gulpConfig.get('browser.ignore')
+  const exclude = gulpConfig.get('browser.exclude')
+  if (ignore && ignore.length) {
+    bundler.ignore(ignore)
+  }
+  if (exclude && exclude.length) {
+    bundler.exclude(exclude)
+  }
+  return bundler.bundle().pipe((0, _vinylSourceStream.default)(`${gulpConfig.get('browser.name')}.js`)).pipe((0, _gulp.dest)(gulpConfig.get('browser.to')))
+}
 exports.bundle = bundle
