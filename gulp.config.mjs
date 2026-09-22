@@ -52,6 +52,14 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} from - The name to use for the browser-bundled output file (.js will be appended).
  * @property {StringSetting} name - The search pattern used for retrieving compiled distribution files.
  * @property {StringSetting} to - The output directory for browser-bundled files.
+ * @property {ArrayableSetting} ignore - Module names or file paths which resolve to an empty object ({}) in the
+ * bundle instead of their real contents. For a dependency which is only reached because it is the default value of
+ * an option you always override (for example a selector engine's default DOM adapter, when you always pass your
+ * own), this keeps it (and anything only it requires) out of the bundle, as long as your code never actually reaches
+ * the real module by not overriding that option. See browserify's b.ignore(file).
+ * @property {ArrayableSetting} exclude - Module names or file paths left out of the bundle entirely; requiring one at
+ * runtime throws unless something else provides it (for example a script tag loading it separately). See
+ * browserify's b.exclude(file).
  */
 /**
  * Configurations for building the node distribution files.
@@ -130,7 +138,9 @@ import { readFileSync } from 'fs'
 const setDefaults = {
   browser: {
     enabled: true,
+    exclude: [],
     from: 'dist/**/*.js',
+    ignore: [],
     name: 'default',
     to: 'browser',
   },
