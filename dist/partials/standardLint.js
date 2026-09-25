@@ -8,12 +8,10 @@ require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 var _nodePath = _interopRequireDefault(require("node:path"));
 var _through = _interopRequireDefault(require("through2"));
+var _loadPeer = require("./loadPeer.js");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-// `standard` (17+) ships ESM-only, but this package also publishes a CommonJS build (dist/*.js) whose babel
-// transform would turn even a dynamic import() into a require() that cannot load an ES module. Hiding the import()
-// inside a Function constructor keeps it a genuine dynamic import that works from either build (same escape hatch
-// as tsFor.mjs uses for gulp-ts-compile).
-const importStandard = new Function('return import(\'standard\')');
+// `standard` (17+) ships ESM-only, see importModule for how it is imported.
+const importStandard = () => (0, _loadPeer.importModule)('standard');
 
 /**
  * Print a file's lint messages, if it has any.

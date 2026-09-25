@@ -1,17 +1,10 @@
 import { dest, src } from 'gulp'
 import path from 'node:path'
 import * as gulpConfig from '../../gulp.config.mjs'
-import { createRequire } from 'node:module'
+import { importModule, requirePeer } from './loadPeer.mjs'
 
-// gulp-ts-compile ships ESM-only (no CJS build - see its own package.json) since it's meant to be consumed by
-// gulpfiles running under a real ESM loader, same as this project's own gulpfile.mjs does. This project also
-// compiles itself to a CommonJS build (dist/*.js, this file's own compiled counterpart) for consumers using
-// require() though, and even a dynamic `import()` gets downleveled by babel's CommonJS transform into a
-// require() call - which can't load a real ES module. Hiding the import() call inside a Function constructor is
-// the standard escape hatch: babel can't see (and so can't rewrite) an import expression that only exists as a
-// runtime-evaluated string, so it survives as a genuine dynamic import, capable of loading gulp-ts-compile from
-// either build.
-const importGulpTsCompile = new Function('return import(\'gulp-ts-compile\')')
+// gulp-ts-compile ships ESM-only (no CJS build - see its own package.json), see importModule for how it is imported.
+const importGulpTsCompile = () => importModule('gulp-ts-compile')
 
 /**
  * Wrap a stream in a promise that resolves once it finishes writing.
@@ -29,16 +22,7 @@ const installHint = 'Install it in your project with: npm install --save-dev typ
  * @returns {Object} The TypeScript compiler API module.
  * @throws {Error} With install instructions when typescript is not installed.
  */
-export const loadTypescript = (projectPath = process.cwd()) => {
-  try {
-    return createRequire(path.join(projectPath, 'package.json'))('typescript')
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND' && /Cannot find module 'typescript'/.test(error.message)) {
-      throw new Error(`The typescript task needs the optional peer dependency typescript, which is not installed. ${installHint}`)
-    }
-    throw error
-  }
-}
+export const loadTypescript = (projectPath = process.cwd()) => requirePeer('typescript', { task: 'typescript', installHint, projectPath })
 
 const streamToPromise = (stream) => new Promise((resolve, reject) => {
   stream.on('finish', resolve)

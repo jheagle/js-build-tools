@@ -49,8 +49,8 @@ import { fileExists } from 'test-filesystem'
  * Configurations for building the browser files.
  * @typedef {Object<string, Setting>} module:gulpConfig~BrowserConfig
  * @property {BooleanSetting} enabled - 'true' to generate browser bundled files; 'false' for node environment only
- * @property {StringSetting} from - The name to use for the browser-bundled output file (.js will be appended).
- * @property {StringSetting} name - The search pattern used for retrieving compiled distribution files.
+ * @property {StringSetting} from - The search pattern used for retrieving compiled distribution files.
+ * @property {StringSetting} name - The name to use for the browser-bundled output file (.js will be appended).
  * @property {StringSetting} to - The output directory for browser-bundled files.
  * @property {ArrayableSetting} ignore - Module names or file paths which resolve to an empty object ({}) in the
  * bundle instead of their real contents. For a dependency which is only reached because it is the default value of

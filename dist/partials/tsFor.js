@@ -8,18 +8,11 @@ exports.tsFor = exports.loadTypescript = void 0;
 var _gulp = require("gulp");
 var _nodePath = _interopRequireDefault(require("node:path"));
 var gulpConfig = _interopRequireWildcard(require("../../gulp.config.js"));
-var _nodeModule = require("node:module");
+var _loadPeer = require("./loadPeer.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-// gulp-ts-compile ships ESM-only (no CJS build - see its own package.json) since it's meant to be consumed by
-// gulpfiles running under a real ESM loader, same as this project's own gulpfile.mjs does. This project also
-// compiles itself to a CommonJS build (dist/*.js, this file's own compiled counterpart) for consumers using
-// require() though, and even a dynamic `import()` gets downleveled by babel's CommonJS transform into a
-// require() call - which can't load a real ES module. Hiding the import() call inside a Function constructor is
-// the standard escape hatch: babel can't see (and so can't rewrite) an import expression that only exists as a
-// runtime-evaluated string, so it survives as a genuine dynamic import, capable of loading gulp-ts-compile from
-// either build.
-const importGulpTsCompile = new Function('return import(\'gulp-ts-compile\')');
+// gulp-ts-compile ships ESM-only (no CJS build - see its own package.json), see importModule for how it is imported.
+const importGulpTsCompile = () => (0, _loadPeer.importModule)('gulp-ts-compile');
 
 /**
  * Wrap a stream in a promise that resolves once it finishes writing.
@@ -37,16 +30,11 @@ const installHint = 'Install it in your project with: npm install --save-dev typ
  * @returns {Object} The TypeScript compiler API module.
  * @throws {Error} With install instructions when typescript is not installed.
  */
-const loadTypescript = (projectPath = process.cwd()) => {
-  try {
-    return (0, _nodeModule.createRequire)(_nodePath.default.join(projectPath, 'package.json'))('typescript');
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND' && /Cannot find module 'typescript'/.test(error.message)) {
-      throw new Error(`The typescript task needs the optional peer dependency typescript, which is not installed. ${installHint}`);
-    }
-    throw error;
-  }
-};
+const loadTypescript = (projectPath = process.cwd()) => (0, _loadPeer.requirePeer)('typescript', {
+  task: 'typescript',
+  installHint,
+  projectPath
+});
 exports.loadTypescript = loadTypescript;
 const streamToPromise = stream => new Promise((resolve, reject) => {
   stream.on('finish', resolve);

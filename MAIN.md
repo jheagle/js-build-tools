@@ -35,6 +35,11 @@ provided are the defaults):
     "name": "my-package",
     // The search pattern used for retrieving compiled distribution files.
     "from": "dist/**/*.js",
+    // Module names or file paths which resolve to an empty object ({}) in the bundle instead of their real contents.
+    "ignore": [],
+    // Module names or file paths left out of the bundle entirely (requiring one at runtime throws, unless something
+    // else provides it, for example a script tag which loads it separately).
+    "exclude": [],
     // The output directory for browser-bundled files.
     "to": "browser"
   },
@@ -288,6 +293,27 @@ const jsDocBase = require('js-build-tools/jsdoc.base')
  * This searches the defined 'distPath' for building the HTML JS Documentation
  */
 module.exports = jsDocBase
+```
+
+### Configure what the browser bundle leaves out (optional)
+
+A dependency can be reached from your code without being needed in the browser, and bundling it can add a lot of size.
+Two settings in `browser` handle this, both take module names or file paths (see browserify's `b.ignore(file)` and
+`b.exclude(file)`):
+
+```json
+{
+  "browser": {
+    // Resolves to an empty object ({}) in the bundle instead of the real module. This suits a dependency which is only
+    // reached because it is the default value of an option you always override with your own (for example a selector
+    // engine's default DOM adapter). Anything only that module requires is left out too. Your code must never actually
+    // use the real module, so keep overriding that option.
+    "ignore": ["some-default-adapter"],
+    // Left out of the bundle entirely. Requiring it at runtime throws unless something else provides it, for example a
+    // script tag which loads it separately, so this suits a large library which the page already loads.
+    "exclude": ["a-library-the-page-loads"]
+  }
+}
 ```
 
 ### Configure move fonts (optional)

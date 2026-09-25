@@ -1,15 +1,10 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { createRequire } from 'node:module'
-import { pathToFileURL } from 'node:url'
 import * as gulpConfig from '../../gulp.config.mjs'
+import { importPeer } from './loadPeer.mjs'
 import { loadTypescript } from './tsFor.mjs'
 import { removeDirectory } from './removeDirectory.mjs'
-
-// TypeDoc ships ESM-only, and this project also compiles itself to a CommonJS build (see tsFor.mjs, which hides its
-// own import of gulp-ts-compile the same way), so the import() is hidden from babel's CommonJS transform.
-const importModule = new Function('specifier', 'return import(specifier)')
 
 const installHint = 'Install it in your project with: npm install --save-dev typedoc'
 
@@ -21,18 +16,7 @@ const installHint = 'Install it in your project with: npm install --save-dev typ
  * @returns {Promise<Object>} The TypeDoc module.
  * @throws {Error} With install instructions when typedoc is not installed.
  */
-export const loadTypeDoc = async (projectPath = process.cwd()) => {
-  let typeDocPath
-  try {
-    typeDocPath = createRequire(path.join(projectPath, 'package.json')).resolve('typedoc')
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND') {
-      throw new Error(`The docs task needs the optional peer dependency typedoc, which is not installed. ${installHint}`)
-    }
-    throw error
-  }
-  return importModule(pathToFileURL(typeDocPath).href)
-}
+export const loadTypeDoc = (projectPath = process.cwd()) => importPeer('typedoc', { task: 'docs', installHint, projectPath })
 
 const isSource = fileName => /\.(ts|tsx|mts|cts)$/.test(fileName) && !/\.d\.[cm]?ts$/.test(fileName) && !/\.(test|spec)\./.test(fileName)
 
@@ -87,11 +71,29 @@ export const describeExports = (ts, filePath) => {
 }
 
 /**
+ * The description of a folder for its module: the first doc comment of the folder's index file, without its tags
+ * (@module, @file, ...), or an empty string when there is none.
+ * @memberOf module:partials
+ * @param {string} folderPath
+ * @returns {string}
+ */
+export const describeFolder = folderPath => {
+  const indexFile = ['index.ts', 'index.tsx', 'index.mts', 'index.cts'].map(name => path.join(folderPath, name)).find(file => fs.existsSync(file))
+  const comment = indexFile && fs.readFileSync(indexFile, 'utf8').match(/^\s*\/\*\*([\s\S]*?)\*\//)
+  if (!comment) {
+    return ''
+  }
+  const lines = comment[1].split('\n').map(line => line.replace(/^\s*\* ?/, '').trimEnd())
+  const tagAt = lines.findIndex(line => /^@\w+/.test(line))
+  return (tagAt === -1 ? lines : lines.slice(0, tagAt)).join('\n').trim()
+}
+
+/**
  * Write one entry file per folder of the source directory into the entry directory. TypeDoc makes a module of every
  * entry file, so the modules of the documentation mirror the folders. The default export of each source file is
  * re-exported under the name of the file (the source files hold one function each), and anything else a file exports
  * is re-exported as it is (that is where the types.ts files go). Index files (the barrels), tests and declaration
- * files are left out. A source directory with no folders gets a single entry called index.
+ * files are left out, but the first doc comment of a folder's index file becomes the description of its module. A source directory with no folders gets a single entry called index.
  * @memberOf module:partials
  * @param {Object} ts - The TypeScript compiler API.
  * @param {string} srcDir - The directory holding the TypeScript source.
@@ -103,11 +105,11 @@ export const writeDocEntries = (ts, srcDir, entryDir) => {
   fs.mkdirSync(entryDir, { recursive: true })
   const folders = fs.readdirSync(absoluteSrc, { withFileTypes: true })
     .filter(entry => entry.isDirectory() && entry.name !== 'node_modules')
-    .map(entry => ({ name: entry.name, files: listSources(path.join(absoluteSrc, entry.name)) }))
+    .map(entry => ({ name: entry.name, path: path.join(absoluteSrc, entry.name), files: listSources(path.join(absoluteSrc, entry.name)) }))
     .filter(folder => folder.files.length)
   const groups = folders.length
     ? folders
-    : [{ name: 'index', files: listSources(absoluteSrc).filter(file => !/^(index|main)\./.test(path.basename(file))) }]
+    : [{ name: 'index', path: absoluteSrc, files: listSources(absoluteSrc).filter(file => !/^(index|main)\./.test(path.basename(file))) }]
   return groups.map(group => {
     const lines = group.files
       .filter(file => !/^index\./.test(path.basename(file)))
@@ -121,8 +123,11 @@ export const writeDocEntries = (ts, srcDir, entryDir) => {
           ...(hasNamed ? [`export * from '${modulePath}'`] : [])
         ]
       })
+    const description = group.path ? describeFolder(group.path) : ''
+    // TypeDoc takes the first comment of an entry file which has the @module tag as the description of the module
+    const moduleComment = description ? `/**\n${description.split('\n').map(line => ` * ${line}`.trimEnd()).join('\n')}\n * @module\n */\n\n` : ''
     const entryPath = path.join(entryDir, `${group.name}.ts`)
-    fs.writeFileSync(entryPath, lines.join('\n') + '\n')
+    fs.writeFileSync(entryPath, moduleComment + lines.join('\n') + '\n')
     return entryPath
   })
 }
