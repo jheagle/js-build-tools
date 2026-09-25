@@ -93,6 +93,12 @@ Object.defineProperty(exports, 'tsFor', {
     return _tsFor.tsFor
   }
 })
+Object.defineProperty(exports, 'typeDocsFor', {
+  enumerable: true,
+  get: function () {
+    return _typeDocsFor.typeDocsFor
+  }
+})
 var _addToReadme = require('./partials/addToReadme.js')
 var _beginWatcher = require('./partials/beginWatcher.js')
 var _clean = require('./partials/clean.js')
@@ -108,3 +114,4 @@ var _runOnChange = require('./partials/runOnChange.js')
 var _sassFor = require('./partials/sassFor.js')
 var _standardLint = require('./partials/standardLint.js')
 var _tsFor = require('./partials/tsFor.js')
+var _typeDocsFor = require('./partials/typeDocsFor.js')

@@ -10,6 +10,7 @@ const _bundleLint = require('./bundleLint.js')
 const _bundleMinify = require('./bundleMinify.js')
 const _partials = require('./partials.js')
 const _compileReadme = require('./compileReadme.js')
+const _typeDocs = require('./typeDocs.js')
 const _distLint = require('./distLint.js')
 const _distMinify = require('./distMinify.js')
 const _gulp = require('gulp')
@@ -29,7 +30,11 @@ const build = (done = null) => {
   const distLintMinify = (0, _gulp.parallel)(_distLint.distLint, _distMinify.distMinify)
   const bundleLintMinify = (0, _gulp.parallel)(_bundleLint.bundleLint, _bundleMinify.bundleMinify)
   const buildActions = [(0, _partials.distSeries)(), distLintMinify]
-  if (gulpConfig.get('typescript.enabled')) {
+  const generateDocs = gulpConfig.get('docs.enabled')
+  if (generateDocs) {
+    // The documentation is generated from the TypeScript source itself, the readme is written by hand
+    buildActions.push(_typeDocs.typeDocs)
+  } else if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(_compileReadme.compileReadme)
   }
@@ -39,7 +44,7 @@ const build = (done = null) => {
     buildActions.push(bundleLintMinify)
   }
   const runActions = [(0, _gulp.series)(...buildActions)]
-  if (!gulpConfig.get('typescript.enabled')) {
+  if (!generateDocs && !gulpConfig.get('typescript.enabled')) {
     // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
     runActions.push(_compileReadme.compileReadme)
   }

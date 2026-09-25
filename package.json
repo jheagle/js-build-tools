@@ -1,6 +1,6 @@
 {
   "name": "js-build-tools",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
   "exports": {
@@ -78,10 +78,14 @@
   },
   "peerDependencies": {
     "gulp-imagemin": ">=9.0.0",
+    "typedoc": ">=0.28.0",
     "typescript": ">=5.0.0 <7.0.0"
   },
   "peerDependenciesMeta": {
     "gulp-imagemin": {
+      "optional": true
+    },
+    "typedoc": {
       "optional": true
     },
     "typescript": {
@@ -101,6 +105,7 @@
   "funding": "https://www.paypal.com/donate/?business=LRYR6SZRWKXVY&no_recurring=0&item_name=Let%27s+build+together+today+to+simplify+our+jobs+tomorrow.&currency_code=CAD",
   "devDependencies": {
     "gulp-imagemin": "github:jheagle/gulp-imagemin#common-js-compatibility",
+    "typedoc": "^0.28.20",
     "typescript": "^6.0.3"
   }
 }

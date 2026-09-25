@@ -11,6 +11,7 @@ Using this tool suite, you can:
 * Bundle your distribution files to be used in a browser environment.
 * Run tests and watch for changes.
 * Generate jsdoc readme files.
+* Generate HTML documentation straight from your TypeScript source (with TypeDoc), with a module for each of your folders.
 
 ## Installation
 
@@ -49,6 +50,23 @@ provided are the defaults):
     "from": "src/**/!(*.test).js",
     // The output directory for the distribution files.
     "to": "dist"
+  },
+  "docs": {
+    // Toggle generating the HTML documentation from the TypeScript source (see 'Configure TypeScript documentation').
+    // When on, the build does this instead of generating the readme from the jsdoc comments.
+    "enabled": false,
+    // The directory holding the TypeScript source, each folder in it becomes a module of the documentation.
+    "from": "src",
+    // The markdown file used as the front page of the documentation.
+    "index": "MAIN.md",
+    // How much TypeDoc reports: Verbose, Info, Warn, Error or None.
+    "logLevel": "Warn",
+    // The name of the documentation, defaults to the name in your package.json.
+    "title": "",
+    // The directory to generate the documentation in (it is cleared first).
+    "to": "docs",
+    // The tsconfig file to read the source with, false to use the one of 'typescript.config'.
+    "tsconfig": false
   },
   "fonts": {
     // Toggle copy directory of fonts on
@@ -130,6 +148,7 @@ For example:
 const {
   build,
   defaultCmd,
+  docs,
   partials,
   readme,
   sass,
@@ -145,6 +164,7 @@ const {
 // You can list your available tasks by running `gulp --tasks`.
 exports.build = build
 exports.default = defaultCmd
+exports.docs = docs
 exports.readme = readme
 exports.sass = sass
 exports.testFull = testFull
@@ -161,6 +181,7 @@ exports.watchTest = watchTest
 export {
   build,
   defaultCmd,
+  docs,
   partials,
   readme,
   sass,
@@ -248,6 +269,7 @@ module.exports = {
 ### Configure HTML JS Documentation (optional)
 
 It may be desirable to generate HTML documentation for your JS files.
+(For a TypeScript project, see 'Configure TypeScript documentation' instead.)
 
 Create a `.jsdoc.conf.js` file and add the following:
 
@@ -333,21 +355,29 @@ Create a `tsconfig.json` file in your project root with the following:
 
 ```json
 {
-  "files": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.*"],
   "compilerOptions": {
-    "noImplicitAny": true,
-    "target": "es6",
-    "moduleResolution": "node",
-    "declaration": true
+    "strict": true,
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node10",
+    "ignoreDeprecations": "6.0",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "types": []
   }
 }
 ```
 
-The pattern for `"files"` should match your .ts files, but the essential thing is that it is wrapped in an array.
-The actual pattern used comes from `build-tools.config.json` as `'typescript.from'` setting.
-To create the ts declaration files, you must add the `"declaration": true`.
+The pattern for `"include"` should match your .ts files (and leave out the tests, which can stay `.test.js` files).
+The actual pattern used to compile comes from `build-tools.config.json` as the `'typescript.from'` setting.
+To create the ts declaration files, you must add the `"declaration": true`. The `typescript` package is an optional peer
+dependency, install it in your project with `npm install --save-dev typescript` (versions 5.0 up to, but not including,
+7 are supported). When you write relative imports, leave the `.js` extension off (`import a from './a'`), because
+they stop resolving once the target is a `.ts` file. The compile only builds `.ts` files while `typescript.enabled` is
+on, so convert a whole library at once.
 
 Add the following to the exports in your `build-tools.config.json`:
 
@@ -382,6 +412,40 @@ babelConfig.presets.push('@babel/preset-typescript')
 module.exports = babelConfig
 ```
 
+### Configure TypeScript documentation (optional)
+
+`jsdoc-to-markdown` only reads `.js` files, so the types in your `.ts` files (and the comments on them) do not reach
+the readme it generates. Instead, this can generate HTML documentation straight from the TypeScript source with
+[TypeDoc](https://typedoc.org/). Every folder in your source directory becomes a module of the documentation, the default
+export of each file (one function per file) is listed under the name of the file, and everything else a file exports (for
+example the types in a `types.ts`) is listed as it is. Index files, tests and declaration files are left out. The
+comments on your code are the documentation, and the types come from the code itself, so `@module`, `@memberOf`,
+`@typedef` and the `{Type}` of `@param` are not needed.
+
+`typedoc` is an optional peer dependency (like `typescript`), install it in your project with
+`npm install --save-dev typedoc` (this needs a `typescript` version it supports).
+
+Add the following to the exports in your `build-tools.config.json`:
+
+```json
+{
+  "docs": {
+    // Generate the documentation from the TypeScript source
+    "enabled": true,
+    // The directory holding the TypeScript source, each folder in it becomes a module
+    "from": "src",
+    // The markdown file used as the front page of the documentation (a short overview of your project)
+    "index": "MAIN.md",
+    // Where the HTML is generated (the directory is cleared first)
+    "to": "docs"
+  }
+}
+```
+
+While `docs.enabled` is on, `gulp build` generates the documentation instead of the readme, so your `README.md` stays
+hand-written (a short overview which links to the documentation). If you also export `docs` from your gulpfile you can
+run it on its own with `gulp docs`, and can then add the script `"docs": "gulp docs"`.
+
 ### Configure Scripts
 
 In your `package.json` file, add the following scripts:
@@ -391,6 +455,7 @@ In your `package.json` file, add the following scripts:
   "scripts": {
     "build": "gulp build",
     "dev": "gulp",
+    "docs": "gulp docs",
     "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
     "readme": "gulp readme",
     "sass": "gulp sass",
