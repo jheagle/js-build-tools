@@ -1,11 +1,9 @@
 import path from 'node:path'
 import through from 'through2'
+import { importModule } from './loadPeer.mjs'
 
-// `standard` (17+) ships ESM-only, but this package also publishes a CommonJS build (dist/*.js) whose babel
-// transform would turn even a dynamic import() into a require() that cannot load an ES module. Hiding the import()
-// inside a Function constructor keeps it a genuine dynamic import that works from either build (same escape hatch
-// as tsFor.mjs uses for gulp-ts-compile).
-const importStandard = new Function('return import(\'standard\')')
+// `standard` (17+) ships ESM-only, see importModule for how it is imported.
+const importStandard = () => importModule('standard')
 
 /**
  * Print a file's lint messages, if it has any.

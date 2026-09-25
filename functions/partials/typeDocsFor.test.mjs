@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'node:path'
 import ts from 'typescript'
 import * as setUp from '../test-helpers/setUp.mjs'
-import { describeExports, loadTypeDoc, typeDocsFor, writeDocEntries } from './typeDocsFor.mjs'
+import { describeExports, describeFolder, loadTypeDoc, typeDocsFor, writeDocEntries } from './typeDocsFor.mjs'
 
 setUp.setDefaults('test-type-docs-for')
 const gulpConfig = setUp.gulpConfig
@@ -19,7 +19,7 @@ beforeEach(
     write(`${srcPath}/point/add.ts`, '/** Add two numbers. */\nconst add = (a: number, b: number): number => a + b\n\nexport default add\n')
     write(`${srcPath}/point/get-name.ts`, 'export default function getName (): string { return "name" }\n')
     write(`${srcPath}/point/types.ts`, 'export interface Point { x: number, y: number }\nexport type Axis = keyof Point\n')
-    write(`${srcPath}/point/index.ts`, "import add from './add'\nexport default { add }\n")
+    write(`${srcPath}/point/index.ts`, "/**\n * Points of a matrix and the maths on them.\n * A second line.\n * @file Not part of the description\n * @module point\n */\nimport add from './add'\nexport default { add }\n")
     write(`${srcPath}/point/add.test.ts`, "test('adds', () => {})\n")
     write(`${srcPath}/point/add.d.ts`, 'export {}\n')
     write(`${srcPath}/line/length.ts`, 'export const length = 5\nexport default length\n')
@@ -54,6 +54,18 @@ describe('describeExports', () => {
   })
 })
 
+describe('describeFolder', () => {
+  test('is the text of the first comment of the index file, without its tags', () => {
+    expect(describeFolder(`${gulpConfig.get('srcPath')}/point`)).toBe('Points of a matrix and the maths on them.\nA second line.')
+  })
+
+  test('is empty without an index file, or a comment in it', () => {
+    expect(describeFolder(`${gulpConfig.get('srcPath')}/line`)).toBe('')
+    write(`${gulpConfig.get('srcPath')}/bare/index.ts`, "import a from './a'\nexport default { a }\n")
+    expect(describeFolder(`${gulpConfig.get('srcPath')}/bare`)).toBe('')
+  })
+})
+
 describe('writeDocEntries', () => {
   test('writes one entry file for each folder which has source', () => {
     const entryDir = `${gulpConfig.get('srcPath')}/../entries`
@@ -65,12 +77,13 @@ describe('writeDocEntries', () => {
     const entryDir = `${gulpConfig.get('srcPath')}/../entries`
     writeDocEntries(ts, gulpConfig.get('srcPath'), entryDir)
     const absoluteSrc = path.resolve(gulpConfig.get('srcPath')).split(path.sep).join('/')
-    expect(fs.readFileSync(`${entryDir}/point.ts`, 'utf8').trim().split('\n')).toEqual([
+    const exportLines = file => fs.readFileSync(file, 'utf8').trim().split('\n').filter(line => line.startsWith('export'))
+    expect(exportLines(`${entryDir}/point.ts`)).toEqual([
       `export { default as add } from '${absoluteSrc}/point/add'`,
       `export { default as getName } from '${absoluteSrc}/point/get-name'`,
       `export * from '${absoluteSrc}/point/types'`
     ])
-    expect(fs.readFileSync(`${entryDir}/line.ts`, 'utf8').trim().split('\n')).toEqual([
+    expect(exportLines(`${entryDir}/line.ts`)).toEqual([
       `export { default as length } from '${absoluteSrc}/line/length'`,
       `export * from '${absoluteSrc}/line/length'`
     ])
@@ -80,7 +93,15 @@ describe('writeDocEntries', () => {
     const entryDir = `${gulpConfig.get('srcPath')}/../entries`
     writeDocEntries(ts, gulpConfig.get('srcPath'), entryDir)
     const entry = fs.readFileSync(`${entryDir}/point.ts`, 'utf8')
-    expect(entry).not.toMatch(/index|\.test|add\.d/)
+    expect(entry).not.toMatch(/from '.*(index|\.test|add\.d)/)
+  })
+
+  test('describes the module with the first comment of the index file of the folder', () => {
+    const entryDir = `${gulpConfig.get('srcPath')}/../entries`
+    writeDocEntries(ts, gulpConfig.get('srcPath'), entryDir)
+    expect(fs.readFileSync(`${entryDir}/point.ts`, 'utf8')).toMatch(/^\/\*\*\n \* Points of a matrix and the maths on them\.\n \* A second line\.\n \* @module\n \*\/\n\nexport/)
+    // A folder without an index file has no comment
+    expect(fs.readFileSync(`${entryDir}/line.ts`, 'utf8').startsWith('export')).toBe(true)
   })
 
   test('makes one entry called index when the source has no folders', () => {

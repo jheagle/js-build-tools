@@ -1,5 +1,5 @@
 import cache from 'gulp-cache'
-import { createRequire } from 'node:module'
+import { requirePeer } from './loadPeer.mjs'
 import { dest, src } from 'gulp'
 import path from 'node:path'
 import * as gulpConfig from '../../gulp.config.mjs'
@@ -17,18 +17,12 @@ const installHint = 'Add it to your project with: npm install --save-dev github:
  * @throws {Error} With install instructions when gulp-imagemin is missing or is the ESM-only upstream release.
  */
 export const loadImagemin = (projectPath = process.cwd()) => {
-  let loaded
-  try {
-    loaded = createRequire(path.join(projectPath, 'package.json'))('gulp-imagemin')
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND' && /Cannot find module 'gulp-imagemin'/.test(error.message)) {
-      throw new Error(`The images task needs the optional peer dependency gulp-imagemin, which is not installed. ${installHint}`)
-    }
-    if (error.code === 'ERR_REQUIRE_ESM') {
-      throw new Error(`gulp-imagemin could not be loaded because it is ESM-only. ${installHint}`)
-    }
-    throw error
-  }
+  const loaded = requirePeer('gulp-imagemin', {
+    task: 'images',
+    installHint,
+    esmOnlyMessage: `gulp-imagemin could not be loaded because it is ESM-only. ${installHint}`,
+    projectPath
+  })
   return loaded && (loaded.__esModule || loaded.default) ? loaded.default : loaded
 }
 
