@@ -51,6 +51,18 @@ Object.defineProperty(exports, 'imagesFor', {
     return _imagesFor.imagesFor
   }
 })
+Object.defineProperty(exports, 'importModule', {
+  enumerable: true,
+  get: function () {
+    return _loadPeer.importModule
+  }
+})
+Object.defineProperty(exports, 'importPeer', {
+  enumerable: true,
+  get: function () {
+    return _loadPeer.importPeer
+  }
+})
 Object.defineProperty(exports, 'minifyFor', {
   enumerable: true,
   get: function () {
@@ -67,6 +79,12 @@ Object.defineProperty(exports, 'removeDirectory', {
   enumerable: true,
   get: function () {
     return _removeDirectory.removeDirectory
+  }
+})
+Object.defineProperty(exports, 'requirePeer', {
+  enumerable: true,
+  get: function () {
+    return _loadPeer.requirePeer
   }
 })
 Object.defineProperty(exports, 'runOnChange', {
@@ -107,6 +125,7 @@ var _distFor = require('./partials/distFor.js')
 var _distForSrc = require('./partials/distForSrc.js')
 var _distSeries = require('./partials/distSeries.js')
 var _imagesFor = require('./partials/imagesFor.js')
+var _loadPeer = require('./partials/loadPeer.js')
 var _minifyFor = require('./partials/minifyFor.js')
 var _readmeTemplate = require('./partials/readmeTemplate.js')
 var _removeDirectory = require('./partials/removeDirectory.js')

@@ -4,10 +4,11 @@ require("core-js/modules/esnext.weak-map.delete-all.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.writeDocEntries = exports.typeDocsFor = exports.loadTypeDoc = exports.describeExports = void 0;
+exports.writeDocEntries = exports.typeDocsFor = exports.loadTypeDoc = exports.describeFolder = exports.describeExports = void 0;
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.flat-map.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
@@ -15,16 +16,12 @@ require("core-js/modules/esnext.iterator.some.js");
 var _nodeFs = _interopRequireDefault(require("node:fs"));
 var _nodeOs = _interopRequireDefault(require("node:os"));
 var _nodePath = _interopRequireDefault(require("node:path"));
-var _nodeModule = require("node:module");
-var _nodeUrl = require("node:url");
 var gulpConfig = _interopRequireWildcard(require("../../gulp.config.js"));
+var _loadPeer = require("./loadPeer.js");
 var _tsFor = require("./tsFor.js");
 var _removeDirectory = require("./removeDirectory.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-// TypeDoc ships ESM-only, and this project also compiles itself to a CommonJS build (see tsFor.mjs, which hides its
-// own import of gulp-ts-compile the same way), so the import() is hidden from babel's CommonJS transform.
-const importModule = new Function('specifier', 'return import(specifier)');
 const installHint = 'Install it in your project with: npm install --save-dev typedoc';
 
 /**
@@ -35,18 +32,11 @@ const installHint = 'Install it in your project with: npm install --save-dev typ
  * @returns {Promise<Object>} The TypeDoc module.
  * @throws {Error} With install instructions when typedoc is not installed.
  */
-const loadTypeDoc = async (projectPath = process.cwd()) => {
-  let typeDocPath;
-  try {
-    typeDocPath = (0, _nodeModule.createRequire)(_nodePath.default.join(projectPath, 'package.json')).resolve('typedoc');
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND') {
-      throw new Error(`The docs task needs the optional peer dependency typedoc, which is not installed. ${installHint}`);
-    }
-    throw error;
-  }
-  return importModule((0, _nodeUrl.pathToFileURL)(typeDocPath).href);
-};
+const loadTypeDoc = (projectPath = process.cwd()) => (0, _loadPeer.importPeer)('typedoc', {
+  task: 'docs',
+  installHint,
+  projectPath
+});
 exports.loadTypeDoc = loadTypeDoc;
 const isSource = fileName => /\.(ts|tsx|mts|cts)$/.test(fileName) && !/\.d\.[cm]?ts$/.test(fileName) && !/\.(test|spec)\./.test(fileName);
 const listSources = dirPath => _nodeFs.default.readdirSync(dirPath, {
@@ -103,18 +93,37 @@ const describeExports = (ts, filePath) => {
 };
 
 /**
+ * The description of a folder for its module: the first doc comment of the folder's index file, without its tags
+ * (@module, @file, ...), or an empty string when there is none.
+ * @memberOf module:partials
+ * @param {string} folderPath
+ * @returns {string}
+ */
+exports.describeExports = describeExports;
+const describeFolder = folderPath => {
+  const indexFile = ['index.ts', 'index.tsx', 'index.mts', 'index.cts'].map(name => _nodePath.default.join(folderPath, name)).find(file => _nodeFs.default.existsSync(file));
+  const comment = indexFile && _nodeFs.default.readFileSync(indexFile, 'utf8').match(/^\s*\/\*\*([\s\S]*?)\*\//);
+  if (!comment) {
+    return '';
+  }
+  const lines = comment[1].split('\n').map(line => line.replace(/^\s*\* ?/, '').trimEnd());
+  const tagAt = lines.findIndex(line => /^@\w+/.test(line));
+  return (tagAt === -1 ? lines : lines.slice(0, tagAt)).join('\n').trim();
+};
+
+/**
  * Write one entry file per folder of the source directory into the entry directory. TypeDoc makes a module of every
  * entry file, so the modules of the documentation mirror the folders. The default export of each source file is
  * re-exported under the name of the file (the source files hold one function each), and anything else a file exports
  * is re-exported as it is (that is where the types.ts files go). Index files (the barrels), tests and declaration
- * files are left out. A source directory with no folders gets a single entry called index.
+ * files are left out, but the first doc comment of a folder's index file becomes the description of its module. A source directory with no folders gets a single entry called index.
  * @memberOf module:partials
  * @param {Object} ts - The TypeScript compiler API.
  * @param {string} srcDir - The directory holding the TypeScript source.
  * @param {string} entryDir - The directory to write the entry files into.
  * @returns {Array<string>} The paths of the entry files.
  */
-exports.describeExports = describeExports;
+exports.describeFolder = describeFolder;
 const writeDocEntries = (ts, srcDir, entryDir) => {
   const absoluteSrc = _nodePath.default.resolve(srcDir);
   _nodeFs.default.mkdirSync(entryDir, {
@@ -124,10 +133,12 @@ const writeDocEntries = (ts, srcDir, entryDir) => {
     withFileTypes: true
   }).filter(entry => entry.isDirectory() && entry.name !== 'node_modules').map(entry => ({
     name: entry.name,
+    path: _nodePath.default.join(absoluteSrc, entry.name),
     files: listSources(_nodePath.default.join(absoluteSrc, entry.name))
   })).filter(folder => folder.files.length);
   const groups = folders.length ? folders : [{
     name: 'index',
+    path: absoluteSrc,
     files: listSources(absoluteSrc).filter(file => !/^(index|main)\./.test(_nodePath.default.basename(file)))
   }];
   return groups.map(group => {
@@ -140,8 +151,11 @@ const writeDocEntries = (ts, srcDir, entryDir) => {
       const fileName = _nodePath.default.basename(file).replace(/\.[cm]?tsx?$/, '');
       return [...(hasDefault ? [`export { default as ${toIdentifier(fileName)} } from '${modulePath}'`] : []), ...(hasNamed ? [`export * from '${modulePath}'`] : [])];
     });
+    const description = group.path ? describeFolder(group.path) : '';
+    // TypeDoc takes the first comment of an entry file which has the @module tag as the description of the module
+    const moduleComment = description ? `/**\n${description.split('\n').map(line => ` * ${line}`.trimEnd()).join('\n')}\n * @module\n */\n\n` : '';
     const entryPath = _nodePath.default.join(entryDir, `${group.name}.ts`);
-    _nodeFs.default.writeFileSync(entryPath, lines.join('\n') + '\n');
+    _nodeFs.default.writeFileSync(entryPath, moduleComment + lines.join('\n') + '\n');
     return entryPath;
   });
 };
