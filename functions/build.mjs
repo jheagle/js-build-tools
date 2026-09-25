@@ -3,6 +3,7 @@ import { bundleLint } from './bundleLint.mjs'
 import { bundleMinify } from './bundleMinify.mjs'
 import { clean, distSeries } from './partials.mjs'
 import { compileReadme } from './compileReadme.mjs'
+import { typeDocs } from './typeDocs.mjs'
 import { distLint } from './distLint.mjs'
 import { distMinify } from './distMinify.mjs'
 import { parallel, series } from 'gulp'
@@ -22,7 +23,11 @@ export const build = (done = null) => {
   const distLintMinify = parallel(distLint, distMinify)
   const bundleLintMinify = parallel(bundleLint, bundleMinify)
   const buildActions = [distSeries(), distLintMinify]
-  if (gulpConfig.get('typescript.enabled')) {
+  const generateDocs = gulpConfig.get('docs.enabled')
+  if (generateDocs) {
+    // The documentation is generated from the TypeScript source itself, the readme is written by hand
+    buildActions.push(typeDocs)
+  } else if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(compileReadme)
   }
@@ -34,7 +39,7 @@ export const build = (done = null) => {
   const runActions = [
     series(...buildActions),
   ]
-  if (!gulpConfig.get('typescript.enabled')) {
+  if (!generateDocs && !gulpConfig.get('typescript.enabled')) {
     // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
     runActions.push(compileReadme)
   }

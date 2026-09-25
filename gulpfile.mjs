@@ -3,6 +3,7 @@ export {
   defaultCmd,
   dist,
   distMinify,
+  docs,
   readme,
   testFull,
   testQuick,

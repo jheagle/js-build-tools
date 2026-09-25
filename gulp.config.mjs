@@ -92,6 +92,18 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} to - The directory to output the readme file in.
  */
 /**
+ * Configurations for generating the HTML documentation of a TypeScript project (with TypeDoc, from the source).
+ * @typedef {Object<string, Setting>} module:gulpConfig~DocsConfig
+ * @property {BooleanSetting} enabled - Toggle generating the documentation from the TypeScript source. When it is on the
+ * build does this instead of generating the readme from the jsdoc comments of the compiled files.
+ * @property {StringSetting} from - The directory holding the TypeScript source, each folder in it becomes a module.
+ * @property {StringSetting} index - The markdown file used as the front page of the documentation.
+ * @property {StringSetting} logLevel - How much TypeDoc reports: Verbose, Info, Warn, Error or None.
+ * @property {StringSetting} title - The name of the documentation, defaults to the name in the package.json.
+ * @property {StringSetting} to - The directory to generate the documentation in (it is cleared first).
+ * @property {FlagStringSetting} tsconfig - The tsconfig file to read the source with, defaults to the one of typescript.config.
+ */
+/**
  * Configurations to compile and copy the sass files into css.
  * @typedef {Object<string, Setting>} module:gulpConfig~SassConfig
  * @property {BooleanSetting} enabled - Toggle SASS to CSS process on.
@@ -121,6 +133,7 @@ import { fileExists } from 'test-filesystem'
  * @property {BrowserConfig} browser - Browser bundling configuration group.
  * @property {ArrayableSetting} cleanPaths - The paths for directories to delete before build.
  * @property {DistConfig} dist - Distribution file generation configuration group.
+ * @property {DocsConfig} docs - Generate the documentation of a TypeScript project configuration group.
  * @property {FontConfig} fonts - Fonts copy configuration group.
  * @property {ImageConfig} images - Minify and copy the images configuration.
  * @property {ReadmeConfig} readme - Build readme files configuration.
@@ -149,6 +162,15 @@ const setDefaults = {
     from: 'src/**/!(*.test).js',
     main: 'dist/main',
     to: 'dist',
+  },
+  docs: {
+    enabled: false,
+    from: 'src',
+    index: 'MAIN.md',
+    logLevel: 'Warn',
+    title: '',
+    to: 'docs',
+    tsconfig: false,
   },
   fonts: {
     enabled: false,

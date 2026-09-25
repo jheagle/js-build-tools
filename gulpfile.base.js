@@ -23,6 +23,7 @@ const sass = require('./dist/sass.js')
 const testFull = require('./dist/testFull.js')
 const testHelpers = require('./dist/testHelpers.js')
 const testQuick = require('./dist/testQuick.js')
+const typeDocs = require('./dist/typeDocs.js')
 const typescript = require('./dist/typeScript')
 const watchFull = require('./dist/watchFull.js')
 const watchTest = require('./dist/watchTest.js')
@@ -34,6 +35,7 @@ module.exports = {
   bundleMinify,
   copyFonts,
   defaultCmd,
+  docs: typeDocs,
   dist,
   distLint,
   distMinify,
