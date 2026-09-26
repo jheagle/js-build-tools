@@ -4,7 +4,7 @@ require("core-js/modules/esnext.weak-map.delete-all.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.writeDocEntries = exports.typeDocsFor = exports.loadTypeDoc = exports.describeFolder = exports.describeExports = void 0;
+exports.writeDocEntries = exports.typeDocsFor = exports.loadTypeDoc = exports.describeFolder = exports.describeFile = exports.describeExports = void 0;
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
@@ -102,7 +102,20 @@ const describeExports = (ts, filePath) => {
 exports.describeExports = describeExports;
 const describeFolder = folderPath => {
   const indexFile = ['index.ts', 'index.tsx', 'index.mts', 'index.cts'].map(name => _nodePath.default.join(folderPath, name)).find(file => _nodeFs.default.existsSync(file));
-  const comment = indexFile && _nodeFs.default.readFileSync(indexFile, 'utf8').match(/^\s*\/\*\*([\s\S]*?)\*\//);
+  return indexFile ? describeFile(indexFile) : '';
+};
+
+/**
+ * The description of a source file for its module: its first doc comment without the tags (@module, @file, ...), when
+ * that comment is a header (it is followed by an import or export, so it does not document a declaration itself), or
+ * an empty string.
+ * @memberOf module:partials
+ * @param {string} filePath
+ * @returns {string}
+ */
+exports.describeFolder = describeFolder;
+const describeFile = filePath => {
+  const comment = _nodeFs.default.readFileSync(filePath, 'utf8').match(/^\s*\/\*\*([\s\S]*?)\*\/\s*(import\b|export\s+(\*|\{[^}]*\}\s+from)|$)/);
   if (!comment) {
     return '';
   }
@@ -116,14 +129,16 @@ const describeFolder = folderPath => {
  * entry file, so the modules of the documentation mirror the folders. The default export of each source file is
  * re-exported under the name of the file (the source files hold one function each), and anything else a file exports
  * is re-exported as it is (that is where the types.ts files go). Index files (the barrels), tests and declaration
- * files are left out, but the first doc comment of a folder's index file becomes the description of its module. A source directory with no folders gets a single entry called index.
+ * files are left out, but the first doc comment of a folder's index file becomes the description of its module.
+ * A file which sits beside the folders (not an index or main file) is a module of its own, described by its header
+ * comment. A source directory with no folders gets a single entry called index.
  * @memberOf module:partials
  * @param {Object} ts - The TypeScript compiler API.
  * @param {string} srcDir - The directory holding the TypeScript source.
  * @param {string} entryDir - The directory to write the entry files into.
  * @returns {Array<string>} The paths of the entry files.
  */
-exports.describeFolder = describeFolder;
+exports.describeFile = describeFile;
 const writeDocEntries = (ts, srcDir, entryDir) => {
   const absoluteSrc = _nodePath.default.resolve(srcDir);
   _nodeFs.default.mkdirSync(entryDir, {
@@ -136,10 +151,19 @@ const writeDocEntries = (ts, srcDir, entryDir) => {
     path: _nodePath.default.join(absoluteSrc, entry.name),
     files: listSources(_nodePath.default.join(absoluteSrc, entry.name))
   })).filter(folder => folder.files.length);
-  const groups = folders.length ? folders : [{
+  const rootFiles = _nodeFs.default.readdirSync(absoluteSrc, {
+    withFileTypes: true
+  }).filter(entry => entry.isFile() && isSource(entry.name) && !/^(index|main)\./.test(entry.name)).map(entry => _nodePath.default.join(absoluteSrc, entry.name));
+  // Folders make modules, and so do the files which sit beside them (except the barrel: index and main). A source
+  // directory with no folders gets a single module called index which holds its files.
+  const groups = folders.length ? [...folders, ...rootFiles.map(file => ({
+    name: toIdentifier(_nodePath.default.basename(file).replace(/\.[cm]?tsx?$/, '')),
+    files: [file],
+    description: describeFile(file)
+  })).filter(group => !folders.some(folder => folder.name === group.name))] : [{
     name: 'index',
     path: absoluteSrc,
-    files: listSources(absoluteSrc).filter(file => !/^(index|main)\./.test(_nodePath.default.basename(file)))
+    files: rootFiles
   }];
   return groups.map(group => {
     const lines = group.files.filter(file => !/^index\./.test(_nodePath.default.basename(file))).sort().flatMap(file => {
@@ -151,7 +175,7 @@ const writeDocEntries = (ts, srcDir, entryDir) => {
       const fileName = _nodePath.default.basename(file).replace(/\.[cm]?tsx?$/, '');
       return [...(hasDefault ? [`export { default as ${toIdentifier(fileName)} } from '${modulePath}'`] : []), ...(hasNamed ? [`export * from '${modulePath}'`] : [])];
     });
-    const description = group.path ? describeFolder(group.path) : '';
+    const description = group.description ?? (group.path ? describeFolder(group.path) : '');
     // TypeDoc takes the first comment of an entry file which has the @module tag as the description of the module
     const moduleComment = description ? `/**\n${description.split('\n').map(line => ` * ${line}`.trimEnd()).join('\n')}\n * @module\n */\n\n` : '';
     const entryPath = _nodePath.default.join(entryDir, `${group.name}.ts`);
