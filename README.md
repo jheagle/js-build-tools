@@ -444,7 +444,9 @@ module.exports = babelConfig
 the readme it generates. Instead, this can generate HTML documentation straight from the TypeScript source with
 [TypeDoc](https://typedoc.org/). Every folder in your source directory becomes a module of the documentation, the default
 export of each file (one function per file) is listed under the name of the file, and everything else a file exports (for
-example the types in a `types.ts`) is listed as it is. Index files, tests and declaration files are left out. The
+example the types in a `types.ts`) is listed as it is. Index files, tests and declaration files are left out. A file
+which sits directly in the source directory, beside the folders, is a module of its own (unless it is `index` or
+`main`). The first comment of a folder's `index.ts` (or the header comment of such a file) describes its module. The
 comments on your code are the documentation, and the types come from the code itself, so `@module`, `@memberOf`,
 `@typedef` and the `{Type}` of `@param` are not needed.
 
