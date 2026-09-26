@@ -79,7 +79,19 @@ export const describeExports = (ts, filePath) => {
  */
 export const describeFolder = folderPath => {
   const indexFile = ['index.ts', 'index.tsx', 'index.mts', 'index.cts'].map(name => path.join(folderPath, name)).find(file => fs.existsSync(file))
-  const comment = indexFile && fs.readFileSync(indexFile, 'utf8').match(/^\s*\/\*\*([\s\S]*?)\*\//)
+  return indexFile ? describeFile(indexFile) : ''
+}
+
+/**
+ * The description of a source file for its module: its first doc comment without the tags (@module, @file, ...), when
+ * that comment is a header (it is followed by an import or export, so it does not document a declaration itself), or
+ * an empty string.
+ * @memberOf module:partials
+ * @param {string} filePath
+ * @returns {string}
+ */
+export const describeFile = filePath => {
+  const comment = fs.readFileSync(filePath, 'utf8').match(/^\s*\/\*\*([\s\S]*?)\*\/\s*(import\b|export\s+(\*|\{[^}]*\}\s+from)|$)/)
   if (!comment) {
     return ''
   }
@@ -93,7 +105,9 @@ export const describeFolder = folderPath => {
  * entry file, so the modules of the documentation mirror the folders. The default export of each source file is
  * re-exported under the name of the file (the source files hold one function each), and anything else a file exports
  * is re-exported as it is (that is where the types.ts files go). Index files (the barrels), tests and declaration
- * files are left out, but the first doc comment of a folder's index file becomes the description of its module. A source directory with no folders gets a single entry called index.
+ * files are left out, but the first doc comment of a folder's index file becomes the description of its module.
+ * A file which sits beside the folders (not an index or main file) is a module of its own, described by its header
+ * comment. A source directory with no folders gets a single entry called index.
  * @memberOf module:partials
  * @param {Object} ts - The TypeScript compiler API.
  * @param {string} srcDir - The directory holding the TypeScript source.
@@ -107,9 +121,19 @@ export const writeDocEntries = (ts, srcDir, entryDir) => {
     .filter(entry => entry.isDirectory() && entry.name !== 'node_modules')
     .map(entry => ({ name: entry.name, path: path.join(absoluteSrc, entry.name), files: listSources(path.join(absoluteSrc, entry.name)) }))
     .filter(folder => folder.files.length)
+  const rootFiles = fs.readdirSync(absoluteSrc, { withFileTypes: true })
+    .filter(entry => entry.isFile() && isSource(entry.name) && !/^(index|main)\./.test(entry.name))
+    .map(entry => path.join(absoluteSrc, entry.name))
+  // Folders make modules, and so do the files which sit beside them (except the barrel: index and main). A source
+  // directory with no folders gets a single module called index which holds its files.
   const groups = folders.length
-    ? folders
-    : [{ name: 'index', path: absoluteSrc, files: listSources(absoluteSrc).filter(file => !/^(index|main)\./.test(path.basename(file))) }]
+    ? [
+        ...folders,
+        ...rootFiles
+          .map(file => ({ name: toIdentifier(path.basename(file).replace(/\.[cm]?tsx?$/, '')), files: [file], description: describeFile(file) }))
+          .filter(group => !folders.some(folder => folder.name === group.name))
+      ]
+    : [{ name: 'index', path: absoluteSrc, files: rootFiles }]
   return groups.map(group => {
     const lines = group.files
       .filter(file => !/^index\./.test(path.basename(file)))
@@ -123,7 +147,7 @@ export const writeDocEntries = (ts, srcDir, entryDir) => {
           ...(hasNamed ? [`export * from '${modulePath}'`] : [])
         ]
       })
-    const description = group.path ? describeFolder(group.path) : ''
+    const description = group.description ?? (group.path ? describeFolder(group.path) : '')
     // TypeDoc takes the first comment of an entry file which has the @module tag as the description of the module
     const moduleComment = description ? `/**\n${description.split('\n').map(line => ` * ${line}`.trimEnd()).join('\n')}\n * @module\n */\n\n` : ''
     const entryPath = path.join(entryDir, `${group.name}.ts`)

@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'node:path'
 import ts from 'typescript'
 import * as setUp from '../test-helpers/setUp.mjs'
-import { describeExports, describeFolder, loadTypeDoc, typeDocsFor, writeDocEntries } from './typeDocsFor.mjs'
+import { describeExports, describeFile, describeFolder, loadTypeDoc, typeDocsFor, writeDocEntries } from './typeDocsFor.mjs'
 
 setUp.setDefaults('test-type-docs-for')
 const gulpConfig = setUp.gulpConfig
@@ -66,6 +66,18 @@ describe('describeFolder', () => {
   })
 })
 
+describe('describeFile', () => {
+  test('is the header comment of a file, without its tags', () => {
+    write(`${gulpConfig.get('srcPath')}/header.ts`, "/**\n * Simulate what a user does.\n * @module simulate\n */\nimport a from './a'\nexport default a\n")
+    expect(describeFile(`${gulpConfig.get('srcPath')}/header.ts`)).toBe('Simulate what a user does.')
+  })
+
+  test('is empty when the first comment documents a declaration', () => {
+    write(`${gulpConfig.get('srcPath')}/declaration.ts`, '/**\n * Add two numbers.\n */\nconst add = (a: number, b: number) => a + b\nexport default add\n')
+    expect(describeFile(`${gulpConfig.get('srcPath')}/declaration.ts`)).toBe('')
+  })
+})
+
 describe('writeDocEntries', () => {
   test('writes one entry file for each folder which has source', () => {
     const entryDir = `${gulpConfig.get('srcPath')}/../entries`
@@ -102,6 +114,19 @@ describe('writeDocEntries', () => {
     expect(fs.readFileSync(`${entryDir}/point.ts`, 'utf8')).toMatch(/^\/\*\*\n \* Points of a matrix and the maths on them\.\n \* A second line\.\n \* @module\n \*\/\n\nexport/)
     // A folder without an index file has no comment
     expect(fs.readFileSync(`${entryDir}/line.ts`, 'utf8').startsWith('export')).toBe(true)
+  })
+
+  test('makes a module of a file which sits beside the folders, but not of the barrel files', () => {
+    const srcPath = gulpConfig.get('srcPath')
+    write(`${srcPath}/simulate.ts`, "/**\n * Simulate what a user does.\n */\nimport add from './point/add'\nexport const click = () => add(1, 2)\nexport default { click }\n")
+    write(`${srcPath}/simulate.test.ts`, "test('x', () => {})\n")
+    const entryDir = `${srcPath}/../entries`
+    const entries = writeDocEntries(ts, srcPath, entryDir)
+    expect(entries.map(entry => path.basename(entry)).sort()).toEqual(['line.ts', 'point.ts', 'simulate.ts'])
+    const absoluteSrc = path.resolve(srcPath).split(path.sep).join('/')
+    expect(fs.readFileSync(`${entryDir}/simulate.ts`, 'utf8')).toBe(
+      `/**\n * Simulate what a user does.\n * @module\n */\n\nexport { default as simulate } from '${absoluteSrc}/simulate'\nexport * from '${absoluteSrc}/simulate'\n`
+    )
   })
 
   test('makes one entry called index when the source has no folders', () => {
