@@ -1,4 +1,5 @@
 import fs from 'fs'
+import path from 'path'
 import * as setUp from './test-helpers/setUp.mjs'
 import { bundle } from './bundle.mjs'
 import { countMatches } from 'test-filesystem'
@@ -65,6 +66,25 @@ describe('bundle', () => {
         console.error('Encountered error', error)
         done()
       })
+  })
+
+  test('exposes browser.name as the standalone export, reachable by a real consumer', done => {
+    const destPath = gulpConfig.get('browser.to')
+    const bundledFile = `${destPath}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(2)
+    bundle()
+      .on('finish', () => {
+        // A UMD bundle (browserify's `standalone` option) resolves to its CommonJS branch when
+        // required like this, and to a `window.<browser.name>` global when loaded via a bare
+        // <script> tag in a real browser - both paths hit the same exported value.
+        const resolved = path.resolve(bundledFile)
+        delete require.cache[resolved]
+        const loaded = require(resolved)
+        expect(typeof loaded.file1).toBe('function')
+        expect(typeof loaded.file2).toBe('function')
+        done()
+      })
+      .on('error', error => done(error))
   })
 })
 
