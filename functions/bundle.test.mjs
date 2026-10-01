@@ -88,6 +88,63 @@ describe('bundle', () => {
   })
 })
 
+describe('bundle with additional bundles', () => {
+  const renderOnlyFileContents = 'const file1 = require(\'./sources/file1\')\n' +
+    '\n' +
+    'module.exports = {\n' +
+    '  file1,\n' +
+    '}\n'
+
+  afterEach(() => gulpConfig.set('browser.bundles', []))
+
+  test('produces one file per additional bundle, each from its own entry point', done => {
+    const distPath = gulpConfig.get('dist.to')
+    const renderOnlyMain = `${distPath}/renderOnly`
+    fs.writeFileSync(`${renderOnlyMain}.js`, renderOnlyFileContents)
+    gulpConfig.set('browser.bundles', [{ name: 'renderOnly', main: renderOnlyMain }])
+
+    const destPath = gulpConfig.get('browser.to')
+    const primaryFile = `${destPath}/${gulpConfig.get('browser.name')}.js`
+    const renderOnlyFile = `${destPath}/renderOnly.js`
+    expect.assertions(4)
+    bundle()
+      .on('finish', () => {
+        // The primary bundle is unaffected - still built from dist.main, still has both files.
+        const primaryContents = fs.readFileSync(primaryFile).toString()
+        expect(primaryContents).toContain('Hello from file1')
+        expect(primaryContents).toContain('Good-bye from file2')
+
+        // The additional bundle came from its own entry point - file1 only, never file2.
+        const renderOnlyContents = fs.readFileSync(renderOnlyFile).toString()
+        expect(renderOnlyContents).toContain('Hello from file1')
+        expect(renderOnlyContents).not.toContain('Good-bye from file2')
+        done()
+      })
+      .on('error', error => done(error))
+  })
+
+  test('an additional bundle exposes its own name as its standalone export', done => {
+    const distPath = gulpConfig.get('dist.to')
+    const renderOnlyMain = `${distPath}/renderOnly`
+    fs.writeFileSync(`${renderOnlyMain}.js`, renderOnlyFileContents)
+    gulpConfig.set('browser.bundles', [{ name: 'renderOnly', main: renderOnlyMain }])
+
+    const destPath = gulpConfig.get('browser.to')
+    const renderOnlyFile = `${destPath}/renderOnly.js`
+    expect.assertions(2)
+    bundle()
+      .on('finish', () => {
+        const resolved = path.resolve(renderOnlyFile)
+        delete require.cache[resolved]
+        const loaded = require(resolved)
+        expect(typeof loaded.file1).toBe('function')
+        expect(loaded.file2).toBeUndefined()
+        done()
+      })
+      .on('error', error => done(error))
+  })
+})
+
 describe('bundle ignore / exclude', () => {
   const optionalDepMarker = 'MARKER_FROM_THE_OPTIONAL_DEPENDENCY_CODE'
 

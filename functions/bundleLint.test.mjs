@@ -62,4 +62,24 @@ describe('bundleLint', () => {
         done()
       })
   }, 10000)
+
+  test('lints every additional bundle too, not just the primary one', done => {
+    const browserPath = gulpConfig.get('browser.to')
+    const renderOnlyFile = `${browserPath}/renderOnly.js`
+    fs.writeFileSync(renderOnlyFile, lintableContents)
+    gulpConfig.set('browser.bundles', [{ name: 'renderOnly' }])
+    expect.assertions(2)
+    bundleLint()
+      .on('finish', () => {
+        const lintedContents = fs.readFileSync(renderOnlyFile).toString()
+        expect(countMatches(lintedContents, '"')).toEqual(0)
+        expect(countMatches(lintedContents, ';')).toEqual(0)
+        gulpConfig.set('browser.bundles', [])
+        done()
+      })
+      .on('error', error => {
+        console.error('Encountered error', error)
+        done(error)
+      })
+  }, 10000)
 })

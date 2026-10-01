@@ -1,6 +1,6 @@
 {
   "name": "js-build-tools",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
   "exports": {
@@ -68,6 +68,7 @@
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
     "jsdoc-to-markdown": "^9.1.3",
+    "merge-stream": "^2.0.0",
     "postcss": "^8.5.28",
     "regenerator-runtime": "^0.14.1",
     "sass": "^1.105.0",
