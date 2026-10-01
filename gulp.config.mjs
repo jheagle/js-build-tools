@@ -60,6 +60,20 @@ import { fileExists } from 'test-filesystem'
  * @property {ArrayableSetting} exclude - Module names or file paths left out of the bundle entirely; requiring one at
  * runtime throws unless something else provides it (for example a script tag loading it separately). See
  * browserify's b.exclude(file).
+ * @property {Array<module:gulpConfig~AdditionalBundleConfig>} bundles - Additional bundles to produce alongside the
+ * primary one (name/dist.main/ignore/exclude above) - for example a render-only variant built from a different
+ * entry point than the full bundle. Empty by default: a project that never sets this gets exactly the one bundle it
+ * always did.
+ */
+/**
+ * One additional bundle - everything but `name` falls back to the primary bundle's own value when omitted, so an
+ * additional bundle only has to specify what's actually different about it.
+ * @typedef {Object<string, Setting>} module:gulpConfig~AdditionalBundleConfig
+ * @property {StringSetting} name - The name for this bundle's output file and standalone export - must be unique
+ * among all of a project's bundles.
+ * @property {StringSetting} [main] - This bundle's own entry point. Falls back to dist.main when omitted.
+ * @property {ArrayableSetting} [ignore] - This bundle's own ignore list. Falls back to browser.ignore when omitted.
+ * @property {ArrayableSetting} [exclude] - This bundle's own exclude list. Falls back to browser.exclude when omitted.
  */
 /**
  * Configurations for building the node distribution files.
@@ -150,6 +164,7 @@ import { readFileSync } from 'fs'
 
 const setDefaults = {
   browser: {
+    bundles: [],
     enabled: true,
     exclude: [],
     from: 'dist/**/*.js',
