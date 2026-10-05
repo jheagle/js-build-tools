@@ -1,6 +1,6 @@
 {
   "name": "js-build-tools",
-  "version": "5.5.0",
+  "version": "5.6.0",
   "description": "Standardised build process with gulp.",
   "main": "gulpfile.base.js",
   "exports": {
@@ -108,5 +108,8 @@
     "gulp-imagemin": "github:jheagle/gulp-imagemin#common-js-compatibility",
     "typedoc": "^0.28.20",
     "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
