@@ -6,8 +6,8 @@ import { testFull } from './testFull.mjs'
 import { typeDocs } from './typeDocs.mjs'
 import { countMatches } from 'test-filesystem'
 
-// Run the real Standard (in a subprocess) - Jest's CommonJS transform can't load the ESM-only package itself.
-jest.mock('./partials/standardLint.mjs', () => require('./test-helpers/standardLintWithRealStandard.mjs'))
+// Run the real neostandard (in a subprocess) - Jest's CommonJS transform can't load the ESM-only package itself.
+jest.mock('./partials/neostandardLint.mjs', () => require('./test-helpers/neostandardLintWithRealNeostandard.mjs'))
 
 setUp.setDefaults('test-build')
 const gulpConfig = setUp.gulpConfig
@@ -266,7 +266,7 @@ beforeEach(
 afterEach(setUp.afterEach)
 
 describe('build', () => {
-  test('when browser.enabled false: calls clean, distSeries, distLint, distMinify, compileReadme, testFull', done => {
+  test('when browser.enabled false: calls clean, sourceLint, distSeries, distMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
     const distPath = gulpConfig.get('dist.to')
@@ -288,16 +288,15 @@ describe('build', () => {
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
       const babelifiedMain = fs.readFileSync(`${distPath}/main.js`).toString()
-      // Used single quotes because of distLint
-      expect(countMatches(babelifiedMain, '\'use strict\'')).toEqual(1)
+      expect(babelifiedMain.includes('use strict')).toBe(true)
 
       expect(fs.existsSync(`${distSourcesPath}/file1.min.js`)).toBeTruthy()
       const babelifiedFile1 = fs.readFileSync(`${distSourcesPath}/file1.js`).toString()
-      expect(countMatches(babelifiedFile1, '\'use strict\'')).toEqual(1)
+      expect(babelifiedFile1.includes('use strict')).toBe(true)
 
       expect(fs.existsSync(`${distSourcesPath}/file2.min.js`)).toBeTruthy()
       const babelifiedFile2 = fs.readFileSync(`${distSourcesPath}/file2.js`).toString()
-      expect(countMatches(babelifiedFile2, '\'use strict\'')).toEqual(1)
+      expect(babelifiedFile2.includes('use strict')).toBe(true)
 
       // Generated README.md (compileReadme)
       const readmeContents = fs.readFileSync(`${readmePath}/${readmeFile}`).toString()
@@ -312,7 +311,7 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when browser.enabled true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull', done => {
+  test('when browser.enabled true: calls clean, sourceLint, distSeries, distMinify, bundle, bundleMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
     const distPath = gulpConfig.get('dist.to')
@@ -336,8 +335,7 @@ describe('build', () => {
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
       const babelifiedMain = fs.readFileSync(`${distPath}/main.js`).toString()
-      // Used single quotes because of distLint
-      expect(countMatches(babelifiedMain, '\'use strict\'')).toEqual(1)
+      expect(babelifiedMain.includes('use strict')).toBe(true)
 
       // Created browser directory (bundle)
       expect(fs.existsSync(browserPath)).toBeTruthy()
@@ -361,7 +359,7 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when browser.enabled true and fonts.enabled true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, copyFonts', done => {
+  test('when browser.enabled true and fonts.enabled true: calls clean, sourceLint, distSeries, distMinify, bundle, bundleMinify, compileReadme, testFull, copyFonts', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
     const distPath = gulpConfig.get('dist.to')
@@ -388,8 +386,7 @@ describe('build', () => {
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
       const babelifiedMain = fs.readFileSync(`${distPath}/main.js`).toString()
-      // Used single quotes because of distLint
-      expect(countMatches(babelifiedMain, '\'use strict\'')).toEqual(1)
+      expect(babelifiedMain.includes('use strict')).toBe(true)
 
       // Created browser directory (bundle)
       expect(fs.existsSync(browserPath)).toBeTruthy()
@@ -419,7 +416,7 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when browser.enabled true and images.enabled true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, images', done => {
+  test('when browser.enabled true and images.enabled true: calls clean, sourceLint, distSeries, distMinify, bundle, bundleMinify, compileReadme, testFull, images', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
     const distPath = gulpConfig.get('dist.to')
@@ -446,8 +443,7 @@ describe('build', () => {
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
       const babelifiedMain = fs.readFileSync(`${distPath}/main.js`).toString()
-      // Used single quotes because of distLint
-      expect(countMatches(babelifiedMain, '\'use strict\'')).toEqual(1)
+      expect(babelifiedMain.includes('use strict')).toBe(true)
 
       // Created browser directory (bundle)
       expect(fs.existsSync(browserPath)).toBeTruthy()
@@ -477,7 +473,7 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when browser.enabled true and sass.enabled true: calls clean, distSeries, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull, sass', done => {
+  test('when browser.enabled true and sass.enabled true: calls clean, sourceLint, distSeries, distMinify, bundle, bundleMinify, compileReadme, testFull, sass', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`
     const distPath = gulpConfig.get('dist.to')
@@ -504,8 +500,7 @@ describe('build', () => {
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
       const babelifiedMain = fs.readFileSync(`${distPath}/main.js`).toString()
-      // Used single quotes because of distLint
-      expect(countMatches(babelifiedMain, '\'use strict\'')).toEqual(1)
+      expect(babelifiedMain.includes('use strict')).toBe(true)
 
       // Created browser directory (bundle)
       expect(fs.existsSync(browserPath)).toBeTruthy()
@@ -537,7 +532,7 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when browser.enabled false and typescript.enabled set: calls clean, tsFor, distFor, distLint, distMinify, compileReadme, testFull', done => {
+  test('when browser.enabled false and typescript.enabled set: calls clean, sourceLint, tsFor, distFor, distMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const rootPath = gulpConfig.get('rootPath')
     const tsConfig = `${rootPath}/tsconfig.json`
@@ -563,8 +558,7 @@ describe('build', () => {
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
       const babelifiedMain = fs.readFileSync(`${distPath}/main.js`).toString()
-      // Used single quotes because of distLint
-      expect(countMatches(babelifiedMain, '\'use strict\'')).toEqual(1)
+      expect(babelifiedMain.includes('use strict')).toBe(true)
 
       // Generated README.md (compileReadme)
       const readmeContents = fs.readFileSync(`${readmePath}/${readmeFile}`).toString()
@@ -577,7 +571,7 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when browser.enabled true and typescript.enabled set: calls clean, tsFor, distFor, distLint, distMinify, bundle, bundleLint, bundleMinify, compileReadme, testFull', done => {
+  test('when browser.enabled true and typescript.enabled set: calls clean, sourceLint, tsFor, distFor, distMinify, bundle, bundleMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const rootPath = gulpConfig.get('rootPath')
     const tsConfig = `${rootPath}/tsconfig.json`
@@ -606,8 +600,7 @@ describe('build', () => {
       // Minify the dist files (distMinify)
       expect(fs.existsSync(`${distPath}/main.min.js`)).toBeTruthy()
       const babelifiedMain = fs.readFileSync(`${distPath}/main.js`).toString()
-      // Used single quotes because of distLint
-      expect(countMatches(babelifiedMain, '\'use strict\'')).toEqual(1)
+      expect(babelifiedMain.includes('use strict')).toBe(true)
 
       // Created browser directory (bundle)
       expect(fs.existsSync(browserPath)).toBeTruthy()

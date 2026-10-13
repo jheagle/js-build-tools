@@ -1,68 +1,69 @@
-'use strict'
+"use strict";
 
-require('core-js/modules/esnext.weak-map.delete-all.js')
-Object.defineProperty(exports, '__esModule', {
+require("core-js/modules/esnext.weak-map.delete-all.js");
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.build = void 0
-const _bundle = require('./bundle.js')
-const _bundleLint = require('./bundleLint.js')
-const _bundleMinify = require('./bundleMinify.js')
-const _partials = require('./partials.js')
-const _compileReadme = require('./compileReadme.js')
-const _typeDocs = require('./typeDocs.js')
-const _distLint = require('./distLint.js')
-const _distMinify = require('./distMinify.js')
-const _gulp = require('gulp')
-const gulpConfig = _interopRequireWildcard(require('../gulp.config.js'))
-const _copyFonts = require('./copyFonts.js')
-const _images = require('./images.js')
-const _sass = require('./sass.js')
-const _testFull = require('./testFull.js')
-function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; let o; let i; const f = { __proto__: null, default: e }; if (e === null || typeof e !== 'object' && typeof e !== 'function') return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f) } for (const t in e) t !== 'default' && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f })(e, t) }
+});
+exports.build = void 0;
+var _bundle = require("./bundle.js");
+var _bundleMinify = require("./bundleMinify.js");
+var _partials = require("./partials.js");
+var _compileReadme = require("./compileReadme.js");
+var _typeDocs = require("./typeDocs.js");
+var _distMinify = require("./distMinify.js");
+var _sourceLint = require("./sourceLint.js");
+var _gulp = require("gulp");
+var gulpConfig = _interopRequireWildcard(require("../gulp.config.js"));
+var _copyFonts = require("./copyFonts.js");
+var _images = require("./images.js");
+var _sass = require("./sass.js");
+var _testFull = require("./testFull.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 /**
  * Runs several processes to build and validate the project.
- * Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+ * Cleans and lints the source, distributes and minifies, bundles and minifies, creates the readme, then runs the
+ * tests.
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
 const build = (done = null) => {
-  const distLintMinify = (0, _gulp.parallel)(_distLint.distLint, _distMinify.distMinify)
-  const bundleLintMinify = (0, _gulp.parallel)(_bundleLint.bundleLint, _bundleMinify.bundleMinify)
-  const buildActions = [(0, _partials.distSeries)(), distLintMinify]
-  const generateDocs = gulpConfig.get('docs.enabled')
+  const buildActions = [(0, _partials.distSeries)(), _distMinify.distMinify];
+  const generateDocs = gulpConfig.get('docs.enabled');
   if (generateDocs) {
     // The documentation is generated from the TypeScript source itself, the readme is written by hand
-    buildActions.push(_typeDocs.typeDocs)
+    buildActions.push(_typeDocs.typeDocs);
   } else if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
-    buildActions.push(_compileReadme.compileReadme)
+    buildActions.push(_compileReadme.compileReadme);
   }
   if (gulpConfig.get('browser.enabled')) {
     // If not 'nodeOnly' then we also want to bundle for browser after we complete the dist directory
-    buildActions.push(_bundle.bundle)
-    buildActions.push(bundleLintMinify)
+    buildActions.push(_bundle.bundle);
+    buildActions.push(_bundleMinify.bundleMinify);
   }
-  const runActions = [(0, _gulp.series)(...buildActions)]
+  const runActions = [(0, _gulp.series)(...buildActions)];
   if (!generateDocs && !gulpConfig.get('typescript.enabled')) {
     // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
-    runActions.push(_compileReadme.compileReadme)
+    runActions.push(_compileReadme.compileReadme);
   }
-  runActions.push(_testFull.testFull)
+  runActions.push(_testFull.testFull);
   if (gulpConfig.get('fonts.enabled')) {
     // Conditionally add Fonts process
-    runActions.push(_copyFonts.copyFonts)
+    runActions.push(_copyFonts.copyFonts);
   }
   if (gulpConfig.get('images.enabled')) {
     // Conditionally add Images process
-    runActions.push(_images.images)
+    runActions.push(_images.images);
   }
   if (gulpConfig.get('sass.enabled')) {
     // Conditionally add SASS process
-    runActions.push(_sass.sass)
+    runActions.push(_sass.sass);
   }
   // clean has to finish before anything writes into the output folders - images, fonts and sass all write into
   // browser/, so running clean in parallel with them races (ENOTEMPTY errors from clean, or output deleted mid-write).
-  return (0, _gulp.series)(_partials.clean, (0, _gulp.parallel)(...runActions))(done)
-}
-exports.build = build
+  // sourceLint fixes the real source in place before anything compiles from it (distSeries, tsFor inside it), so a
+  // build never reads a mix of pre- and post-fix content; clean only touches dist/browser output, so the two can
+  // run alongside each other.
+  return (0, _gulp.series)((0, _gulp.parallel)(_partials.clean, _sourceLint.sourceLint), (0, _gulp.parallel)(...runActions))(done);
+};
+exports.build = build;
