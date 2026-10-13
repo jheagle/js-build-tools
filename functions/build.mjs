@@ -1,11 +1,10 @@
 import { bundle } from './bundle.mjs'
-import { bundleLint } from './bundleLint.mjs'
 import { bundleMinify } from './bundleMinify.mjs'
 import { clean, distSeries } from './partials.mjs'
 import { compileReadme } from './compileReadme.mjs'
 import { typeDocs } from './typeDocs.mjs'
-import { distLint } from './distLint.mjs'
 import { distMinify } from './distMinify.mjs'
+import { sourceLint } from './sourceLint.mjs'
 import { parallel, series } from 'gulp'
 import * as gulpConfig from '../gulp.config.mjs'
 import { copyFonts } from './copyFonts.mjs'
@@ -15,14 +14,13 @@ import { testFull } from './testFull.mjs'
 
 /**
  * Runs several processes to build and validate the project.
- * Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
+ * Cleans and lints the source, distributes and minifies, bundles and minifies, creates the readme, then runs the
+ * tests.
  * @memberOf module:js-build-tools
  * @returns {stream.Stream}
  */
 export const build = (done = null) => {
-  const distLintMinify = parallel(distLint, distMinify)
-  const bundleLintMinify = parallel(bundleLint, bundleMinify)
-  const buildActions = [distSeries(), distLintMinify]
+  const buildActions = [distSeries(), distMinify]
   const generateDocs = gulpConfig.get('docs.enabled')
   if (generateDocs) {
     // The documentation is generated from the TypeScript source itself, the readme is written by hand
@@ -34,7 +32,7 @@ export const build = (done = null) => {
   if (gulpConfig.get('browser.enabled')) {
     // If not 'nodeOnly' then we also want to bundle for browser after we complete the dist directory
     buildActions.push(bundle)
-    buildActions.push(bundleLintMinify)
+    buildActions.push(bundleMinify)
   }
   const runActions = [
     series(...buildActions),
@@ -58,8 +56,11 @@ export const build = (done = null) => {
   }
   // clean has to finish before anything writes into the output folders - images, fonts and sass all write into
   // browser/, so running clean in parallel with them races (ENOTEMPTY errors from clean, or output deleted mid-write).
+  // sourceLint fixes the real source in place before anything compiles from it (distSeries, tsFor inside it), so a
+  // build never reads a mix of pre- and post-fix content; clean only touches dist/browser output, so the two can
+  // run alongside each other.
   return series(
-    clean,
+    parallel(clean, sourceLint),
     parallel(...runActions)
   )(done)
 }

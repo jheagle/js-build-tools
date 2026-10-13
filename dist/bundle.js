@@ -1,20 +1,20 @@
-'use strict'
+"use strict";
 
-require('core-js/modules/esnext.weak-map.delete-all.js')
-Object.defineProperty(exports, '__esModule', {
+require("core-js/modules/esnext.weak-map.delete-all.js");
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.bundle = void 0
-require('core-js/modules/esnext.iterator.constructor.js')
-require('core-js/modules/esnext.iterator.map.js')
-const _browserify = _interopRequireDefault(require('browserify'))
-const _gulp = require('gulp')
-const _mergeStream = _interopRequireDefault(require('merge-stream'))
-const gulpConfig = _interopRequireWildcard(require('../gulp.config.js'))
-const _vinylSourceStream = _interopRequireDefault(require('vinyl-source-stream'))
-const _getBundleConfigs = require('./utilities/getBundleConfigs.js')
-function _interopRequireWildcard (e, t) { if (typeof WeakMap === 'function') var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; let o; let i; const f = { __proto__: null, default: e }; if (e === null || typeof e !== 'object' && typeof e !== 'function') return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f) } for (const t in e) t !== 'default' && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f })(e, t) }
-function _interopRequireDefault (e) { return e && e.__esModule ? e : { default: e } }
+});
+exports.bundle = void 0;
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.map.js");
+var _browserify = _interopRequireDefault(require("browserify"));
+var _gulp = require("gulp");
+var _mergeStream = _interopRequireDefault(require("merge-stream"));
+var gulpConfig = _interopRequireWildcard(require("../gulp.config.js"));
+var _vinylSourceStream = _interopRequireDefault(require("vinyl-source-stream"));
+var _getBundleConfigs = require("./utilities/getBundleConfigs.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 /**
  * Starting at each bundle's own entry point (dist.main for the primary bundle, or its own
  * override from browser.bundles), bundle all the reachable files into a single file per bundle and
@@ -43,17 +43,17 @@ const bundle = () => (0, _mergeStream.default)((0, _getBundleConfigs.getBundleCo
 }) => {
   const bundler = (0, _browserify.default)(main, {
     standalone: name
-  })
+  });
   if (ignore && ignore.length) {
-    bundler.ignore(ignore)
+    bundler.ignore(ignore);
   }
   if (exclude && exclude.length) {
-    bundler.exclude(exclude)
+    bundler.exclude(exclude);
   }
-  return bundler.bundle().pipe((0, _vinylSourceStream.default)(`${name}.js`))
+  return bundler.bundle().pipe((0, _vinylSourceStream.default)(`${name}.js`));
 })
 // One shared dest() for every bundle, not one per bundle - vinyl-fs's dest() races against
 // itself (a real "write after end" failure) when two separate dest() streams target the same
 // directory concurrently, which every additional bundle's own dest() call otherwise would.
-).pipe((0, _gulp.dest)(gulpConfig.get('browser.to')))
-exports.bundle = bundle
+).pipe((0, _gulp.dest)(gulpConfig.get('browser.to')));
+exports.bundle = bundle;

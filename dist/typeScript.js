@@ -1,13 +1,13 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.typeScript = void 0
-const _tsFor = require('./partials/tsFor.js')
+});
+exports.typeScript = void 0;
+var _tsFor = require("./partials/tsFor.js");
 /**
  * Simplified typescript task using tsFor.
  * @memberOf module:js-build-tools
  * @returns {Function}
  */
-const typeScript = exports.typeScript = (0, _tsFor.tsFor)()
+const typeScript = exports.typeScript = (0, _tsFor.tsFor)();
