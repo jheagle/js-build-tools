@@ -82,6 +82,11 @@ const setDefaults = (testDir = 'test-temp') => {
   gulpConfig.set('readme.template', `${tempDir}MAIN.md`);
   gulpConfig.set('readme.to', tempDir);
   gulpConfig.set('readme.from', `${srcPath}/**/!(*.test).js`);
+  // Reset explicitly: gulpConfig is a process-wide singleton seeded once from this real project's own
+  // build-tools.config.json, so without this, this project's own real readme.fromEsm value (gulp.config.mjs)
+  // would leak into every test that exercises addToReadme/compileReadme but never sets this path itself -
+  // doing real file I/O and a real jsdoc-to-markdown parse of this project's own, much larger, config file.
+  gulpConfig.set('readme.fromEsm', []);
   gulpConfig.set('rootPath', tempDir);
   gulpConfig.set('sass.from', `${sassPath}/**/*.+(scss|sass)`);
   gulpConfig.set('sass.path', sassPath);

@@ -17,13 +17,14 @@
   "readme": {
     "template": "MAIN.md",
     "options": "utf8",
-    "toFile": "README.md",
     "from": [
       "gulpfile.base.js",
-      "gulp.config.js",
       "dist/!(*.test).js",
       "dist/partials/!(*.test).js",
       "dist/test-helpers/!(*.test).js"
+    ],
+    "fromEsm": [
+      "gulp.config.mjs"
     ],
     "to": "./"
   },

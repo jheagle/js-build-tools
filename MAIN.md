@@ -102,6 +102,9 @@ provided are the defaults):
     "from": [
       "src/**/!(*.test).js"
     ],
+    // Additional .mjs files to document alongside 'from' (see 'Configure including ESM files in the generated
+    // readme'). Empty by default: a project that never sets this gets exactly the readme it always did.
+    "fromEsm": [],
     // The directory to output the readme file in.
     "to": "./"
   },
@@ -345,21 +348,27 @@ that bundle; anything left out falls back to the primary bundle's own value:
 }
 ```
 
-### Reading and writing configuration values from your own code
+For the `gulpConfig` module's own `get`/`set` functions (read or override a resolved configuration value from your
+own code, by the same dot-notation path a setting has in the JSON above), see the generated reference below.
 
-Your own gulpfile.js (or any of your own code) can read the fully-resolved configuration (your
-`build-tools.config.json`, merged over the defaults shown above) without re-reading the file yourself, using the same
-dot-notation path a setting has in that JSON:
+### Configure including ESM files in the generated readme (optional)
 
-```js
-const { get, set } = require('js-build-tools/gulp.config')
-// or, as an ES Module: import { get, set } from 'js-build-tools/gulp.config.mjs'
+The readme generator (`jsdoc-to-markdown`) only recognizes `.js` files, even though it parses real ESM `import`/
+`export` syntax just fine once it reads one - the file extension is the only thing it filters on, not the content.
+`readme.fromEsm` names `.mjs` files to document anyway: each one is read, rewritten (every top-level `export const`/
+`export function`/`export class` becomes a plain declaration plus a trailing `module.exports = { ... }` - the same
+shape `jsdoc-to-markdown` already documents cleanly, since that rewrite is exactly what this project's own
+`gulp.config.mjs` needs it for) and written to a temp `.js` file outside your project entirely, which is cleaned up
+again once the readme generator has read it. Other export forms (`export default`, re-exports, `export { a, b }`
+lists) are left untouched in whatever way `jsdoc-to-markdown` already handles ESM - restructure a file to use named
+exports if you want it documented this cleanly:
 
-get('browser.enabled') // true, unless your own config turned it off
-get('browser.bundles.0.name') // 'render-only', from a bundles array entry
-get('some.missing.path', 'fallback') // 'fallback' - returned when the path does not exist
-
-set('browser.enabled', false) // override a value at runtime, for the rest of this process
+```json
+{
+  "readme": {
+    "fromEsm": ["src/myEsmOnlyModule.mjs"]
+  }
+}
 ```
 
 ### Configure move fonts (optional)
