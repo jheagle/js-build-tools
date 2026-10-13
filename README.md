@@ -40,6 +40,8 @@ provided are the defaults):
     // Module names or file paths left out of the bundle entirely (requiring one at runtime throws, unless something
     // else provides it, for example a script tag which loads it separately).
     "exclude": [],
+    // Additional bundles to produce alongside the primary one above (see 'Configure additional browser bundles').
+    "bundles": [],
     // The output directory for browser-bundled files.
     "to": "browser"
   },
@@ -316,6 +318,50 @@ Two settings in `browser` handle this, both take module names or file paths (see
 }
 ```
 
+### Configure additional browser bundles (optional)
+
+By default a project produces exactly one browser bundle, from `dist.main`/`browser.name`/`browser.ignore`/
+`browser.exclude` above. `browser.bundles` adds more bundles alongside it - for example a render-only variant built
+from a different entry point than the full bundle. Each entry only needs to specify what's actually different about
+that bundle; anything left out falls back to the primary bundle's own value:
+
+```json
+{
+  "browser": {
+    "bundles": [
+      {
+        // Required, and must be unique among all of a project's bundles: the name for this bundle's own output file
+        // and standalone export.
+        "name": "render-only",
+        // This bundle's own entry point. Falls back to dist.main when omitted.
+        "main": "dist/renderOnly.js",
+        // This bundle's own ignore list. Falls back to browser.ignore when omitted.
+        "ignore": [],
+        // This bundle's own exclude list. Falls back to browser.exclude when omitted.
+        "exclude": []
+      }
+    ]
+  }
+}
+```
+
+### Reading and writing configuration values from your own code
+
+Your own gulpfile.js (or any of your own code) can read the fully-resolved configuration (your
+`build-tools.config.json`, merged over the defaults shown above) without re-reading the file yourself, using the same
+dot-notation path a setting has in that JSON:
+
+```js
+const { get, set } = require('js-build-tools/gulp.config')
+// or, as an ES Module: import { get, set } from 'js-build-tools/gulp.config.mjs'
+
+get('browser.enabled') // true, unless your own config turned it off
+get('browser.bundles.0.name') // 'render-only', from a bundles array entry
+get('some.missing.path', 'fallback') // 'fallback' - returned when the path does not exist
+
+set('browser.enabled', false) // override a value at runtime, for the rest of this process
+```
+
 ### Configure move fonts (optional)
 
 Be able to copy a source directory of fonts into the distribution path.
@@ -501,17 +547,6 @@ Run any of the above commands with `gulp` or `npm run`.
 
 # Available functions documentation
 
-## Modules
-
-<dl>
-<dt><a href="#module_js-build-tools">js-build-tools</a></dt>
-<dd><p>Export these functions to your own project to customize your build pipeline.</p>
-</dd>
-<dt><a href="#module_gulpConfig">gulpConfig</a></dt>
-<dd><p>Modify these configurations to match your project specifications.</p>
-</dd>
-</dl>
-
 <a name="module_js-build-tools"></a>
 
 ## js-build-tools
@@ -525,252 +560,3 @@ Export these functions to your own project to customize your build pipeline.
 Runs several processes to build and validate the project.Cleans, distributes (lint and minify), bundles (lint and minify), creates the readme, then runs the tests.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_gulpConfig"></a>
-
-## gulpConfig
-Modify these configurations to match your project specifications.
-
-**Version**: 3.0.0  
-**Author**: Joshua Heagle <joshuaheagle@gmail.com>  
-
-* [gulpConfig](#module_gulpConfig)
-    * _static_
-        * [.get(path, defaultValue)](#module_gulpConfig.get) ⇒ <code>\*</code> \| <code>null</code>
-        * [.set(path, value)](#module_gulpConfig.set) ⇒ <code>\*</code>
-    * _inner_
-        * [~ArrayableSetting](#module_gulpConfig..ArrayableSetting) : <code>Array.&lt;string&gt;</code> \| <code>string</code>
-        * [~BooleanSetting](#module_gulpConfig..BooleanSetting) : <code>boolean</code>
-        * [~FlagStringSetting](#module_gulpConfig..FlagStringSetting) : <code>false</code> \| <code>StringSetting</code>
-        * [~FlagsSetting](#module_gulpConfig..FlagsSetting) : <code>Object.&lt;string, BooleanSetting&gt;</code>
-        * [~JestTestFlags](#module_gulpConfig..JestTestFlags) : <code>FlagsSetting</code>
-        * [~StringSetting](#module_gulpConfig..StringSetting) : <code>string</code>
-        * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
-        * [~BrowserConfig](#module_gulpConfig..BrowserConfig) : <code>Object.&lt;string, Setting&gt;</code>
-        * [~DistConfig](#module_gulpConfig..DistConfig) : <code>Object.&lt;string, Setting&gt;</code>
-        * [~FontConfig](#module_gulpConfig..FontConfig) : <code>Object.&lt;string, Setting&gt;</code>
-        * [~ImageConfig](#module_gulpConfig..ImageConfig) : <code>Object.&lt;string, Setting&gt;</code>
-        * [~ReadmeConfig](#module_gulpConfig..ReadmeConfig) : <code>Object.&lt;string, Setting&gt;</code>
-        * [~SassConfig](#module_gulpConfig..SassConfig) : <code>Object.&lt;string, Setting&gt;</code>
-        * [~TestConfig](#module_gulpConfig..TestConfig) : <code>Object.&lt;string, Setting&gt;</code>
-        * [~TsConfig](#module_gulpConfig..TsConfig) : <code>Object.&lt;string, Setting&gt;</code>
-        * [~Configurations](#module_gulpConfig..Configurations) : <code>Object.&lt;string, Setting&gt;</code>
-
-<a name="module_gulpConfig.get"></a>
-
-### gulpConfig.get(path, defaultValue) ⇒ <code>\*</code> \| <code>null</code>
-Retrieve a value from the configurations, default may be returned.
-
-**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| path | <code>string</code> \| <code>null</code> | <code>null</code> | 
-| defaultValue | <code>\*</code> | <code></code> | 
-
-<a name="module_gulpConfig.set"></a>
-
-### gulpConfig.set(path, value) ⇒ <code>\*</code>
-Specify a value for the configurations to use.
-
-**Kind**: static method of [<code>gulpConfig</code>](#module_gulpConfig)  
-
-| Param |
-| --- |
-| path | 
-| value | 
-
-<a name="module_gulpConfig..ArrayableSetting"></a>
-
-### gulpConfig~ArrayableSetting : <code>Array.&lt;string&gt;</code> \| <code>string</code>
-A setting that may be an array of strings or a string only.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-<a name="module_gulpConfig..BooleanSetting"></a>
-
-### gulpConfig~BooleanSetting : <code>boolean</code>
-A setting that may be true or false.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-<a name="module_gulpConfig..FlagStringSetting"></a>
-
-### gulpConfig~FlagStringSetting : <code>false</code> \| <code>StringSetting</code>
-A setting that may be flag 'false' or provide a StringSetting
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-<a name="module_gulpConfig..FlagsSetting"></a>
-
-### gulpConfig~FlagsSetting : <code>Object.&lt;string, BooleanSetting&gt;</code>
-An object of boolean settings used as flags.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-<a name="module_gulpConfig..JestTestFlags"></a>
-
-### gulpConfig~JestTestFlags : <code>FlagsSetting</code>
-Configure cli options for running Jest.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| clearCache | <code>BooleanSetting</code> | 
-| debug | <code>BooleanSetting</code> | 
-| ignoreProjects: | <code>BooleanSetting</code> | 
-| json | <code>BooleanSetting</code> | 
-| selectProjects | <code>BooleanSetting</code> | 
-| showConfig | <code>BooleanSetting</code> | 
-| useStderr | <code>BooleanSetting</code> | 
-| watch | <code>BooleanSetting</code> | 
-| watchAll | <code>BooleanSetting</code> | 
-
-<a name="module_gulpConfig..StringSetting"></a>
-
-### gulpConfig~StringSetting : <code>string</code>
-A setting that may only be a string.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-<a name="module_gulpConfig..Setting"></a>
-
-### gulpConfig~Setting : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
-Any single configuration option is a Setting.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-<a name="module_gulpConfig..BrowserConfig"></a>
-
-### gulpConfig~BrowserConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations for building the browser files.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| enabled | <code>BooleanSetting</code> | 'true' to generate browser bundled files; 'false' for node environment only |
-| from | <code>StringSetting</code> | The name to use for the browser-bundled output file (.js will be appended). |
-| name | <code>StringSetting</code> | The search pattern used for retrieving compiled distribution files. |
-| to | <code>StringSetting</code> | The output directory for browser-bundled files. |
-
-<a name="module_gulpConfig..DistConfig"></a>
-
-### gulpConfig~DistConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations for building the node distribution files.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| from | <code>StringSetting</code> | The search pattern used for gathering source files for distribution. |
-| main | <code>StringSetting</code> | Name of the entry the distribution file. |
-| to | <code>StringSetting</code> | The output directory for the distribution files. |
-
-<a name="module_gulpConfig..FontConfig"></a>
-
-### gulpConfig~FontConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations for copying the font files.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| enabled | <code>BooleanSetting</code> | Toggle copy directory of fonts on. |
-| from | <code>StringSetting</code> | Path to search for fonts. |
-| to | <code>StringSetting</code> | Path to output fonts. |
-
-<a name="module_gulpConfig..ImageConfig"></a>
-
-### gulpConfig~ImageConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations to minify and copy the images.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| enabled | <code>BooleanSetting</code> | Toggle image minify and copy process. |
-| from | <code>StringSetting</code> | Path to search for images. |
-| to | <code>StringSetting</code> | Path to output images. |
-
-<a name="module_gulpConfig..ReadmeConfig"></a>
-
-### gulpConfig~ReadmeConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations to compile and generate the Readme file.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| file | <code>StringSetting</code> | The name of the output documentation markdown file. |
-| from | <code>StringSetting</code> | Location of files to use for compiling documentation into the readme. |
-| options | <code>ArrayableSetting</code> | Options for formatting the output readme. |
-| template | <code>StringSetting</code> | The file which will be pre-fixed to your README.md output. |
-| to | <code>StringSetting</code> | The directory to output the readme file in. |
-
-<a name="module_gulpConfig..SassConfig"></a>
-
-### gulpConfig~SassConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations to compile and copy the sass files into css.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| enabled | <code>BooleanSetting</code> | Toggle SASS to CSS process on. |
-| from | <code>StringSetting</code> | The pattern for finding all sass files. |
-| path | <code>StringSetting</code> | The directory were sass files will be stored. |
-| to | <code>StringSetting</code> | The destination path for where generated CSS (from SASS files) should go. |
-
-<a name="module_gulpConfig..TestConfig"></a>
-
-### gulpConfig~TestConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations for running the test suite.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| options | <code>JestTestFlags</code> | Additional flags for programmatically running Jest Cli. |
-| path | <code>ArrayableSetting</code> | The directory where Jest test files are stored. By default, stored as *.test.js adjacent to the files they are testing. |
-| watch | <code>ArrayableSetting</code> | The search pattern for watching files for changes. |
-
-<a name="module_gulpConfig..TsConfig"></a>
-
-### gulpConfig~TsConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations for compiling typescript into JS files.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| config | <code>FlagStringSetting</code> | The path the tsconfig file for running typescript or false if no ts file given. |
-| enabled | <code>BooleanSetting</code> | Toggle usage of typescript parsing. |
-| from | <code>StringSetting</code> | Pattern for finding the TypeScript files. |
-| to | <code>StringSetting</code> | Directory where parsed typescript files go. |
-
-<a name="module_gulpConfig..Configurations"></a>
-
-### gulpConfig~Configurations : <code>Object.&lt;string, Setting&gt;</code>
-A set of Configurations options defined by Settings.
-
-**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| browser | <code>BrowserConfig</code> | Browser bundling configuration group. |
-| cleanPaths | <code>ArrayableSetting</code> | The paths for directories to delete before build. |
-| dist | <code>DistConfig</code> | Distribution file generation configuration group. |
-| fonts | <code>FontConfig</code> | Fonts copy configuration group. |
-| images | <code>ImageConfig</code> | Minify and copy the images configuration. |
-| readme | <code>ReadmeConfig</code> | Build readme files configuration. |
-| rootPath | <code>StringSetting</code> | Base directory of the project. |
-| sass | <code>SassConfig</code> | Compile CSS from SASS configuration. |
-| srcPath | <code>StringSetting</code> | The directory where your source files are stored (the files you manually created). |
-| test | <code>TestConfig</code> | Run test suite configuration. |
-| typescript | <code>TsConfig</code> | Compile from typescript configuration. |
-

@@ -40,6 +40,8 @@ provided are the defaults):
     // Module names or file paths left out of the bundle entirely (requiring one at runtime throws, unless something
     // else provides it, for example a script tag which loads it separately).
     "exclude": [],
+    // Additional bundles to produce alongside the primary one above (see 'Configure additional browser bundles').
+    "bundles": [],
     // The output directory for browser-bundled files.
     "to": "browser"
   },
@@ -314,6 +316,50 @@ Two settings in `browser` handle this, both take module names or file paths (see
     "exclude": ["a-library-the-page-loads"]
   }
 }
+```
+
+### Configure additional browser bundles (optional)
+
+By default a project produces exactly one browser bundle, from `dist.main`/`browser.name`/`browser.ignore`/
+`browser.exclude` above. `browser.bundles` adds more bundles alongside it - for example a render-only variant built
+from a different entry point than the full bundle. Each entry only needs to specify what's actually different about
+that bundle; anything left out falls back to the primary bundle's own value:
+
+```json
+{
+  "browser": {
+    "bundles": [
+      {
+        // Required, and must be unique among all of a project's bundles: the name for this bundle's own output file
+        // and standalone export.
+        "name": "render-only",
+        // This bundle's own entry point. Falls back to dist.main when omitted.
+        "main": "dist/renderOnly.js",
+        // This bundle's own ignore list. Falls back to browser.ignore when omitted.
+        "ignore": [],
+        // This bundle's own exclude list. Falls back to browser.exclude when omitted.
+        "exclude": []
+      }
+    ]
+  }
+}
+```
+
+### Reading and writing configuration values from your own code
+
+Your own gulpfile.js (or any of your own code) can read the fully-resolved configuration (your
+`build-tools.config.json`, merged over the defaults shown above) without re-reading the file yourself, using the same
+dot-notation path a setting has in that JSON:
+
+```js
+const { get, set } = require('js-build-tools/gulp.config')
+// or, as an ES Module: import { get, set } from 'js-build-tools/gulp.config.mjs'
+
+get('browser.enabled') // true, unless your own config turned it off
+get('browser.bundles.0.name') // 'render-only', from a bundles array entry
+get('some.missing.path', 'fallback') // 'fallback' - returned when the path does not exist
+
+set('browser.enabled', false) // override a value at runtime, for the rest of this process
 ```
 
 ### Configure move fonts (optional)
