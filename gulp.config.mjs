@@ -101,6 +101,9 @@ import { fileExists } from 'test-filesystem'
  * @typedef {Object<string, Setting>} module:gulpConfig~ReadmeConfig
  * @property {StringSetting} file - The name of the output documentation markdown file.
  * @property {StringSetting} from - Location of files to use for compiling documentation into the readme.
+ * @property {ArrayableSetting} fromEsm - Additional `.mjs` files to document alongside `from`, converted on the
+ * fly since the readme generator only recognizes `.js` files - see 'Configure including ESM files in the
+ * generated readme'. Empty by default: a project that never sets this gets exactly the readme it always did.
  * @property {ArrayableSetting} options - Options for formatting the output readme.
  * @property {StringSetting} template - The file which will be pre-fixed to your README.md output.
  * @property {StringSetting} to - The directory to output the readme file in.
@@ -200,6 +203,7 @@ const setDefaults = {
   readme: {
     file: 'README.md',
     from: 'src/**/!(*.test).js',
+    fromEsm: [],
     options: 'utf8',
     template: 'MAIN.md',
     to: './'
