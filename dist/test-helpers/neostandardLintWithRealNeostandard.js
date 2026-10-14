@@ -11,7 +11,7 @@ var _nodePath = _interopRequireDefault(require("node:path"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 // Jest's CommonJS transform cannot load `neostandard` (ESM-only) or run a real dynamic import(), so tests that need
 // genuine neostandard behavior run the actual package in a plain Node subprocess instead of faking it.
-const script = 'import { readFileSync } from \'node:fs\'\n' + 'import { ESLint } from \'eslint\'\n' + 'import { neostandard } from \'neostandard\'\n' + 'const { text, filePath, cwd, fix, ts, env } = JSON.parse(readFileSync(0, \'utf8\'))\n' + 'const eslint = new ESLint({ cwd, fix, overrideConfigFile: true, baseConfig: neostandard({ ts, env }) })\n' + 'process.stdout.write(JSON.stringify(await eslint.lintText(text, { filePath })))\n';
+const script = 'import { readFileSync } from \'node:fs\'\n' + 'import { ESLint } from \'eslint\'\n' + 'import { neostandard, defaultFilePatterns } from \'neostandard\'\n' + 'const { text, filePath, cwd, fix, ts, env, rules } = JSON.parse(readFileSync(0, \'utf8\'))\n' + 'const baseConfig = neostandard({ ts, env })\n' + 'if (Object.keys(rules).length) { baseConfig.push({ files: defaultFilePatterns.all, rules }) }\n' + 'const eslint = new ESLint({ cwd, fix, overrideConfigFile: true, baseConfig })\n' + 'process.stdout.write(JSON.stringify(await eslint.lintText(text, { filePath })))\n';
 const readEnv = cwd => {
   try {
     return JSON.parse(_nodeFs.default.readFileSync(_nodePath.default.join(cwd, 'package.json'), 'utf8')).standard?.env ?? [];
@@ -22,7 +22,8 @@ const readEnv = cwd => {
 const loadEslintViaSubprocess = ({
   cwd,
   ts,
-  fix
+  fix,
+  rules = {}
 }) => Promise.resolve({
   lintText: (text, {
     filePath
@@ -33,7 +34,8 @@ const loadEslintViaSubprocess = ({
       cwd,
       fix,
       ts,
-      env: readEnv(cwd)
+      env: readEnv(cwd),
+      rules
     }),
     encoding: 'utf8',
     cwd,

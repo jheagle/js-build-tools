@@ -53,7 +53,9 @@ const performDotNotate = (arrayObject, didRetain, prepend = '', results = {}) =>
     if (didRetain(currentKey, value, results)) {
       continue;
     }
-    if ((0, _isObject.isObject)(value)) {
+    // An empty object/array has no keys to flatten into - recursing into one would silently drop currentKey
+    // from the result entirely, rather than keeping it as the empty value it actually is. Treat it as a leaf.
+    if ((0, _isObject.isObject)(value) && Object.keys(value).length) {
       performDotNotate(value, didRetain, `${currentKey}.`, results);
       continue;
     }

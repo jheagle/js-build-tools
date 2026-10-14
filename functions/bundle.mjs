@@ -28,10 +28,10 @@ import { getBundleConfigs } from './utilities/getBundleConfigs.mjs'
 export const bundle = () => mergeStream(
   getBundleConfigs().map(({ name, main, ignore, exclude }) => {
     const bundler = browserify(main, { standalone: name })
-    if (ignore && ignore.length) {
+    if (ignore.length) {
       bundler.ignore(ignore)
     }
-    if (exclude && exclude.length) {
+    if (exclude.length) {
       bundler.exclude(exclude)
     }
     return bundler
