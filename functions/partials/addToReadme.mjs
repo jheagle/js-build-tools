@@ -15,7 +15,7 @@ import { convertMjsFilesForDocs } from '../utilities/convertMjsFilesForDocs.mjs'
  * @returns {string|Uint8Array}
  */
 export const addToReadme = () => {
-  const { filePaths: esmFilePaths, cleanUp } = convertMjsFilesForDocs(globSync(gulpConfig.get('readme.fromEsm') || []))
+  const { filePaths: esmFilePaths, cleanUp } = convertMjsFilesForDocs(globSync(gulpConfig.get('readme.fromEsm')))
   return jsdoc2md
     .render({ files: [...globSync(gulpConfig.get('readme.from')), ...esmFilePaths] })
     .finally(cleanUp)

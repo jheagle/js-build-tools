@@ -61,7 +61,15 @@ describe('neostandardLint', () => {
     expect.assertions(1)
     const loadEslint = jest.fn(() => Promise.resolve(fakeEslint(() => [{ messages: [], errorCount: 0, warningCount: 0 }])))
     await run(neostandardLint({ fix: false, ts: true }, loadEslint), [makeFile(Buffer.from('x'))])
-    expect(loadEslint).toHaveBeenCalledWith({ cwd: '/project', ts: true, fix: false })
+    expect(loadEslint).toHaveBeenCalledWith({ cwd: '/project', ts: true, fix: false, rules: {} })
+  })
+
+  test('passes rule overrides through to the loader', async () => {
+    expect.assertions(1)
+    const loadEslint = jest.fn(() => Promise.resolve(fakeEslint(() => [{ messages: [], errorCount: 0, warningCount: 0 }])))
+    const rules = { 'no-template-curly-in-string': 'off' }
+    await run(neostandardLint({ rules }, loadEslint), [makeFile(Buffer.from('x'))])
+    expect(loadEslint).toHaveBeenCalledWith({ cwd: '/project', ts: false, fix: true, rules })
   })
 
   test('passes a file through untouched when the project ignores it (ESLint returns no results)', async () => {

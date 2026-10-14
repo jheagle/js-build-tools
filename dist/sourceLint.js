@@ -27,7 +27,8 @@ const sourceLint = () => {
   }
   return (0, _gulp.src)(patterns).pipe((0, _neostandardLint.neostandardLint)({
     fix: true,
-    ts
+    ts,
+    rules: gulpConfig.get('lint.rules')
   })).pipe((0, _gulp.dest)(srcPath));
 };
 exports.sourceLint = sourceLint;

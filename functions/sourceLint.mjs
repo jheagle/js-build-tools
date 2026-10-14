@@ -19,6 +19,6 @@ export const sourceLint = () => {
     patterns.push(`${srcPath}/**/*.ts`)
   }
   return src(patterns)
-    .pipe(neostandardLint({ fix: true, ts }))
+    .pipe(neostandardLint({ fix: true, ts, rules: gulpConfig.get('lint.rules') }))
     .pipe(dest(srcPath))
 }

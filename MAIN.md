@@ -242,9 +242,14 @@ Update the test config as follows:
   "readme": {
     "template": "MAIN.md",
     "options": "utf8",
-    "toFile": "README.md",
+    "file": "README.md",
     "from": [
-      // Use the dist directory files to generate the jsdocs
+      // Use the dist directory files to generate the jsdocs - dist is always .js regardless of source
+      // extension, since Babel compiles .mjs source down to it, so this is enough on its own. If you instead
+      // have a handful of standalone .mjs files that never go through the normal dist compile (for example a
+      // config file read directly by the build itself), see 'Configure including ESM files in the generated
+      // readme' for readme.fromEsm instead - a lighter option than switching your whole project's dist/test
+      // config over to .mjs just to document a few files.
       "dist/!(*.test).js"
     ],
     "to": "./"
@@ -528,6 +533,30 @@ Add the following to the exports in your `build-tools.config.json`:
 While `docs.enabled` is on, `gulp build` generates the documentation instead of the readme, so your `README.md` stays
 hand-written (a short overview which links to the documentation). If you also export `docs` from your gulpfile you can
 run it on its own with `gulp docs`, and can then add the script `"docs": "gulp docs"`.
+
+### Configure lint rule overrides (optional)
+
+`sourceLint` lints your real source directly (not the compiled dist/browser output) with
+[neostandard](https://github.com/neostandard/neostandard). Occasionally a rule is wrong for your project
+specifically, rather than something to fix in your code - for example a test which deliberately contains a string
+of literal `${...}` text (simulating another module's real source, not a mistaken non-template string), which
+trips neostandard's `no-template-curly-in-string` rule as a false positive. `lint.rules` layers ESLint rule
+overrides on top of neostandard's own rules, scoped to the same files neostandard itself lints:
+
+```json
+{
+  "lint": {
+    // ESLint rule overrides, keyed and valued exactly as ESLint's own "rules" object.
+    "rules": {
+      "no-template-curly-in-string": "off"
+    }
+  }
+}
+```
+
+Empty by default, so a project that never sets this gets exactly neostandard's own rules, unchanged. Prefer fixing
+the actual code (or, for one specific line, an `eslint-disable-next-line` comment) over this when the finding is
+real - reach for `lint.rules` only when the rule itself doesn't fit your project.
 
 ### Configure Scripts
 

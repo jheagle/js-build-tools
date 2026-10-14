@@ -16,7 +16,7 @@ export const getBundleConfigs = () => {
     ignore: gulpConfig.get('browser.ignore'),
     exclude: gulpConfig.get('browser.exclude')
   }
-  const additional = gulpConfig.get('browser.bundles') || []
+  const additional = gulpConfig.get('browser.bundles')
   return [
     primary,
     ...additional.map((bundleConfig) => ({

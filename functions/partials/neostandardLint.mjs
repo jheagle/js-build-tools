@@ -6,7 +6,7 @@ import { importModule } from './loadPeer.mjs'
 
 // neostandard (js-build-tools' chosen style - a maintained, TypeScript-aware successor to `standard`, see
 // https://github.com/neostandard/neostandard) ships ESM-only, see importModule for how it is imported.
-const importNeostandard = () => importModule('neostandard').then(({ neostandard }) => neostandard)
+const importNeostandard = () => importModule('neostandard')
 
 /**
  * Read the `env` a project already declared for Standard (the `standard` field in its package.json), so a project
@@ -23,20 +23,30 @@ const readEnv = cwd => {
 }
 
 /**
- * Build an ESLint instance configured with neostandard, honoring the project's own package.json `standard.env`.
+ * Build an ESLint instance configured with neostandard, honoring the project's own package.json `standard.env`,
+ * plus an optional layer of rule overrides (see gulp.config.mjs's `lint.rules`) for a rule that is wrong for this
+ * project specifically rather than something to fix in its code - for example a test fixture whose content
+ * neostandard mistakes for a real syntax problem. Scoped to the same files neostandard itself lints (its own
+ * `defaultFilePatterns.all`), per neostandard's own guidance: an unscoped rule-tweak layer would otherwise apply
+ * to every lintable file, including ones from an unrelated plugin this project never defined.
  * @param {Object} options
  * @param {string} options.cwd
  * @param {boolean} options.ts
  * @param {boolean} options.fix
+ * @param {Object<string, *>} [options.rules={}]
  * @returns {Promise<import('eslint').ESLint>}
  */
-const buildEslint = async ({ cwd, ts, fix }) => {
-  const neostandard = await importNeostandard()
+const buildEslint = async ({ cwd, ts, fix, rules = {} }) => {
+  const { neostandard, defaultFilePatterns } = await importNeostandard()
+  const baseConfig = neostandard({ ts, env: readEnv(cwd) })
+  if (Object.keys(rules).length) {
+    baseConfig.push({ files: defaultFilePatterns.all, rules })
+  }
   return new ESLint({
     cwd,
     fix,
     overrideConfigFile: true,
-    baseConfig: neostandard({ ts, env: readEnv(cwd) })
+    baseConfig
   })
 }
 
@@ -67,13 +77,15 @@ const printFileReport = (file, result) => {
  * @param {Object} [options={}]
  * @param {boolean} [options.fix=true] - Apply neostandard's automatic fixes to the file contents.
  * @param {boolean} [options.ts=false] - Lint `.ts` files too, with type-aware rules (see neostandard's `ts` option).
+ * @param {Object<string, *>} [options.rules={}] - ESLint rule overrides layered on top of neostandard's own rules
+ * (see gulp.config.mjs's `lint.rules`).
  * @param {function(Object): Promise<{lintText: Function}>} [loadEslint] - Resolves an ESLint-shaped linter. Real
  * callers should never need to pass this - it exists so tests can supply a stand-in, since this project's
  * CommonJS-transform-based Jest setup cannot execute a real dynamic import() of neostandard (ESM-only).
  * @returns {import('stream').Transform}
  */
 export const neostandardLint = (
-  { fix = true, ts = false } = {},
+  { fix = true, ts = false, rules = {} } = {},
   loadEslint = buildEslint
 ) => {
   const totals = { errors: 0, warnings: 0 }
@@ -89,7 +101,7 @@ export const neostandardLint = (
         return
       }
       if (!eslintPromise) {
-        eslintPromise = loadEslint({ cwd: file.cwd, ts, fix })
+        eslintPromise = loadEslint({ cwd: file.cwd, ts, fix, rules })
       }
       eslintPromise
         .then(eslint => eslint.lintText(file.contents.toString(), { filePath: file.path }))

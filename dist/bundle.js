@@ -44,10 +44,10 @@ const bundle = () => (0, _mergeStream.default)((0, _getBundleConfigs.getBundleCo
   const bundler = (0, _browserify.default)(main, {
     standalone: name
   });
-  if (ignore && ignore.length) {
+  if (ignore.length) {
     bundler.ignore(ignore);
   }
-  if (exclude && exclude.length) {
+  if (exclude.length) {
     bundler.exclude(exclude);
   }
   return bundler.bundle().pipe((0, _vinylSourceStream.default)(`${name}.js`));

@@ -242,9 +242,14 @@ Update the test config as follows:
   "readme": {
     "template": "MAIN.md",
     "options": "utf8",
-    "toFile": "README.md",
+    "file": "README.md",
     "from": [
-      // Use the dist directory files to generate the jsdocs
+      // Use the dist directory files to generate the jsdocs - dist is always .js regardless of source
+      // extension, since Babel compiles .mjs source down to it, so this is enough on its own. If you instead
+      // have a handful of standalone .mjs files that never go through the normal dist compile (for example a
+      // config file read directly by the build itself), see 'Configure including ESM files in the generated
+      // readme' for readme.fromEsm instead - a lighter option than switching your whole project's dist/test
+      // config over to .mjs just to document a few files.
       "dist/!(*.test).js"
     ],
     "to": "./"
@@ -529,6 +534,30 @@ While `docs.enabled` is on, `gulp build` generates the documentation instead of 
 hand-written (a short overview which links to the documentation). If you also export `docs` from your gulpfile you can
 run it on its own with `gulp docs`, and can then add the script `"docs": "gulp docs"`.
 
+### Configure lint rule overrides (optional)
+
+`sourceLint` lints your real source directly (not the compiled dist/browser output) with
+[neostandard](https://github.com/neostandard/neostandard). Occasionally a rule is wrong for your project
+specifically, rather than something to fix in your code - for example a test which deliberately contains a string
+of literal `${...}` text (simulating another module's real source, not a mistaken non-template string), which
+trips neostandard's `no-template-curly-in-string` rule as a false positive. `lint.rules` layers ESLint rule
+overrides on top of neostandard's own rules, scoped to the same files neostandard itself lints:
+
+```json
+{
+  "lint": {
+    // ESLint rule overrides, keyed and valued exactly as ESLint's own "rules" object.
+    "rules": {
+      "no-template-curly-in-string": "off"
+    }
+  }
+}
+```
+
+Empty by default, so a project that never sets this gets exactly neostandard's own rules, unchanged. Prefer fixing
+the actual code (or, for one specific line, an `eslint-disable-next-line` comment) over this when the finding is
+real - reach for `lint.rules` only when the rule itself doesn't fit your project.
+
 ### Configure Scripts
 
 In your `package.json` file, add the following scripts:
@@ -605,6 +634,7 @@ Modify these configurations to match your project specifications.
         * [~DistConfig](#module_gulpConfig..DistConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~FontConfig](#module_gulpConfig..FontConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~ImageConfig](#module_gulpConfig..ImageConfig) : <code>Object.&lt;string, Setting&gt;</code>
+        * [~LintConfig](#module_gulpConfig..LintConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~ReadmeConfig](#module_gulpConfig..ReadmeConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~DocsConfig](#module_gulpConfig..DocsConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~SassConfig](#module_gulpConfig..SassConfig) : <code>Object.&lt;string, Setting&gt;</code>
@@ -767,6 +797,18 @@ Configurations to minify and copy the images.
 | from | <code>StringSetting</code> | Path to search for images. |
 | to | <code>StringSetting</code> | Path to output images. |
 
+<a name="module_gulpConfig..LintConfig"></a>
+
+### gulpConfig~LintConfig : <code>Object.&lt;string, Setting&gt;</code>
+Configurations for linting (see [module:partials.neostandardLint](module:partials.neostandardLint)).
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| rules | <code>Object.&lt;string, \*&gt;</code> | ESLint rule overrides layered on top of neostandard's own config, scoped to the same files neostandard itself lints. For a rule that is wrong for your project specifically (for example a test fixture that deliberately contains text neostandard mistakes for a real syntax problem), rather than something to fix in your code. Empty by default: a project that never sets this gets exactly neostandard's own rules, unchanged. Keyed and valued exactly as ESLint's own `rules` object - see https://eslint.org/docs/latest/use/configure/rules. |
+
 <a name="module_gulpConfig..ReadmeConfig"></a>
 
 ### gulpConfig~ReadmeConfig : <code>Object.&lt;string, Setting&gt;</code>
@@ -862,6 +904,7 @@ A set of Configurations options defined by Settings.
 | docs | <code>DocsConfig</code> | Generate the documentation of a TypeScript project configuration group. |
 | fonts | <code>FontConfig</code> | Fonts copy configuration group. |
 | images | <code>ImageConfig</code> | Minify and copy the images configuration. |
+| lint | <code>LintConfig</code> | Linting configuration group. |
 | readme | <code>ReadmeConfig</code> | Build readme files configuration. |
 | rootPath | <code>StringSetting</code> | Base directory of the project. |
 | sass | <code>SassConfig</code> | Compile CSS from SASS configuration. |

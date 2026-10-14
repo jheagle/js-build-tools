@@ -26,7 +26,7 @@ const addToReadme = () => {
   const {
     filePaths: esmFilePaths,
     cleanUp
-  } = (0, _convertMjsFilesForDocs.convertMjsFilesForDocs)((0, _glob.globSync)(gulpConfig.get('readme.fromEsm') || []));
+  } = (0, _convertMjsFilesForDocs.convertMjsFilesForDocs)((0, _glob.globSync)(gulpConfig.get('readme.fromEsm')));
   return _jsdocToMarkdown.default.render({
     files: [...(0, _glob.globSync)(gulpConfig.get('readme.from')), ...esmFilePaths]
   }).finally(cleanUp).then(readme => _fs.default.appendFileSync(gulpConfig.get('readme.to') + gulpConfig.get('readme.file'), readme, gulpConfig.get('readmeOptions')));

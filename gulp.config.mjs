@@ -97,6 +97,16 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} to - Path to output images.
  */
 /**
+ * Configurations for linting (see {@link module:partials.neostandardLint}).
+ * @typedef {Object<string, Setting>} module:gulpConfig~LintConfig
+ * @property {Object<string, *>} rules - ESLint rule overrides layered on top of neostandard's own config, scoped
+ * to the same files neostandard itself lints. For a rule that is wrong for your project specifically (for example
+ * a test fixture that deliberately contains text neostandard mistakes for a real syntax problem), rather than
+ * something to fix in your code. Empty by default: a project that never sets this gets exactly neostandard's own
+ * rules, unchanged. Keyed and valued exactly as ESLint's own `rules` object - see
+ * https://eslint.org/docs/latest/use/configure/rules.
+ */
+/**
  * Configurations to compile and generate the Readme file.
  * @typedef {Object<string, Setting>} module:gulpConfig~ReadmeConfig
  * @property {StringSetting} file - The name of the output documentation markdown file.
@@ -153,6 +163,7 @@ import { fileExists } from 'test-filesystem'
  * @property {DocsConfig} docs - Generate the documentation of a TypeScript project configuration group.
  * @property {FontConfig} fonts - Fonts copy configuration group.
  * @property {ImageConfig} images - Minify and copy the images configuration.
+ * @property {LintConfig} lint - Linting configuration group.
  * @property {ReadmeConfig} readme - Build readme files configuration.
  * @property {StringSetting} rootPath - Base directory of the project.
  * @property {SassConfig} sass - Compile CSS from SASS configuration.
@@ -199,6 +210,9 @@ const setDefaults = {
     enabled: false,
     from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
     to: 'browser/img',
+  },
+  lint: {
+    rules: {},
   },
   readme: {
     file: 'README.md',

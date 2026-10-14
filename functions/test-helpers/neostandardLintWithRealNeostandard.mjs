@@ -6,9 +6,11 @@ import path from 'node:path'
 // genuine neostandard behavior run the actual package in a plain Node subprocess instead of faking it.
 const script = 'import { readFileSync } from \'node:fs\'\n' +
   'import { ESLint } from \'eslint\'\n' +
-  'import { neostandard } from \'neostandard\'\n' +
-  'const { text, filePath, cwd, fix, ts, env } = JSON.parse(readFileSync(0, \'utf8\'))\n' +
-  'const eslint = new ESLint({ cwd, fix, overrideConfigFile: true, baseConfig: neostandard({ ts, env }) })\n' +
+  'import { neostandard, defaultFilePatterns } from \'neostandard\'\n' +
+  'const { text, filePath, cwd, fix, ts, env, rules } = JSON.parse(readFileSync(0, \'utf8\'))\n' +
+  'const baseConfig = neostandard({ ts, env })\n' +
+  'if (Object.keys(rules).length) { baseConfig.push({ files: defaultFilePatterns.all, rules }) }\n' +
+  'const eslint = new ESLint({ cwd, fix, overrideConfigFile: true, baseConfig })\n' +
   'process.stdout.write(JSON.stringify(await eslint.lintText(text, { filePath })))\n'
 
 const readEnv = cwd => {
@@ -19,12 +21,12 @@ const readEnv = cwd => {
   }
 }
 
-export const loadEslintViaSubprocess = ({ cwd, ts, fix }) => Promise.resolve({
+export const loadEslintViaSubprocess = ({ cwd, ts, fix, rules = {} }) => Promise.resolve({
   lintText: (text, { filePath }) => Promise.resolve().then(() => JSON.parse(execFileSync(
     process.execPath,
     ['--input-type=module', '--eval', script],
     {
-      input: JSON.stringify({ text, filePath, cwd, fix, ts, env: readEnv(cwd) }),
+      input: JSON.stringify({ text, filePath, cwd, fix, ts, env: readEnv(cwd), rules }),
       encoding: 'utf8',
       cwd,
       maxBuffer: 256 * 1024 * 1024

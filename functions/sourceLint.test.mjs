@@ -51,6 +51,30 @@ describe('sourceLint', () => {
       })
   }, 20000)
 
+  test('lint.rules actually suppresses a real neostandard finding', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    // A fixture string containing literal ${...} text (simulating real module source, not an accidental
+    // non-template string) - neostandard's no-template-curly-in-string rule flags this as an error by default.
+    const fixtureContents = 'const fixture = \'import(`imagemin-${pluginName}`)\'\n\nmodule.exports = fixture\n'
+    fs.writeFileSync(`${srcPath}/fixture.js`, fixtureContents)
+    gulpConfig.set('lint.rules', { 'no-template-curly-in-string': 'off' })
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    expect.assertions(1)
+    sourceLint()
+      .on('finish', () => {
+        gulpConfig.set('lint.rules', {})
+        expect(logSpy.mock.calls.flat().join('\n')).not.toMatch(/no-template-curly-in-string|template string expression/)
+        logSpy.mockRestore()
+        done()
+      })
+      .on('error', error => {
+        gulpConfig.set('lint.rules', {})
+        logSpy.mockRestore()
+        console.error('Encountered error', error)
+        done(error)
+      })
+  }, 20000)
+
   test('also lints .ts source when typescript.enabled', done => {
     const srcPath = gulpConfig.get('srcPath')
     gulpConfig.set('typescript.enabled', true)
