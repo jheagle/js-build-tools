@@ -3,6 +3,7 @@ import { bundleMinify } from './bundleMinify.mjs'
 import { clean, distSeries } from './partials.mjs'
 import { compileReadme } from './compileReadme.mjs'
 import { typeDocs } from './typeDocs.mjs'
+import { jsdocDocs } from './jsdocDocs.mjs'
 import { distMinify } from './distMinify.mjs'
 import { sourceLint } from './sourceLint.mjs'
 import { parallel, series } from 'gulp'
@@ -22,9 +23,13 @@ import { testFull } from './testFull.mjs'
 export const build = (done = null) => {
   const buildActions = [distSeries(), distMinify]
   const generateDocs = gulpConfig.get('docs.enabled')
+  // docs.method picks the engine explicitly; left unset (false, the default), it's inferred from
+  // typescript.enabled - every existing TypeScript project's config, which never sets method, keeps producing
+  // TypeDoc output exactly as it always has.
+  const docsMethod = gulpConfig.get('docs.method') || (gulpConfig.get('typescript.enabled') ? 'typedoc' : 'jsdoc')
   if (generateDocs) {
-    // The documentation is generated from the TypeScript source itself, the readme is written by hand
-    buildActions.push(typeDocs)
+    // The documentation is generated from the source itself, the readme is written by hand
+    buildActions.push(docsMethod === 'jsdoc' ? jsdocDocs : typeDocs)
   } else if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(compileReadme)
