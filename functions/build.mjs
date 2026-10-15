@@ -10,6 +10,7 @@ import { parallel, series } from 'gulp'
 import * as gulpConfig from '../gulp.config.mjs'
 import { copyFonts } from './copyFonts.mjs'
 import { images } from './images.mjs'
+import { resolveDocsMethod } from './partials/resolveDocsMethod.mjs'
 import { sass } from './sass.mjs'
 import { testFull } from './testFull.mjs'
 
@@ -23,10 +24,7 @@ import { testFull } from './testFull.mjs'
 export const build = (done = null) => {
   const buildActions = [distSeries(), distMinify]
   const generateDocs = gulpConfig.get('docs.enabled')
-  // docs.method picks the engine explicitly; left unset (false, the default), it's inferred from
-  // typescript.enabled - every existing TypeScript project's config, which never sets method, keeps producing
-  // TypeDoc output exactly as it always has.
-  const docsMethod = gulpConfig.get('docs.method') || (gulpConfig.get('typescript.enabled') ? 'typedoc' : 'jsdoc')
+  const docsMethod = resolveDocsMethod()
   if (generateDocs) {
     // The documentation is generated from the source itself, the readme is written by hand
     buildActions.push(docsMethod === 'jsdoc' ? jsdocDocs : typeDocs)

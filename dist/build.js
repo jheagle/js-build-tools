@@ -17,6 +17,7 @@ var _gulp = require("gulp");
 var gulpConfig = _interopRequireWildcard(require("../gulp.config.js"));
 var _copyFonts = require("./copyFonts.js");
 var _images = require("./images.js");
+var _resolveDocsMethod = require("./partials/resolveDocsMethod.js");
 var _sass = require("./sass.js");
 var _testFull = require("./testFull.js");
 var cache;
@@ -31,10 +32,7 @@ function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; 
 const build = (done = null) => {
   const buildActions = [(0, _partials.distSeries)(), _distMinify.distMinify];
   const generateDocs = gulpConfig.get('docs.enabled');
-  // docs.method picks the engine explicitly; left unset (false, the default), it's inferred from
-  // typescript.enabled - every existing TypeScript project's config, which never sets method, keeps producing
-  // TypeDoc output exactly as it always has.
-  const docsMethod = gulpConfig.get('docs.method') || (gulpConfig.get('typescript.enabled') ? 'typedoc' : 'jsdoc');
+  const docsMethod = (0, _resolveDocsMethod.resolveDocsMethod)();
   if (generateDocs) {
     // The documentation is generated from the source itself, the readme is written by hand
     buildActions.push(docsMethod === 'jsdoc' ? _jsdocDocs.jsdocDocs : _typeDocs.typeDocs);

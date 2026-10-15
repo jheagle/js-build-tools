@@ -63,6 +63,12 @@ Object.defineProperty(exports, "importPeer", {
     return _loadPeer.importPeer;
   }
 });
+Object.defineProperty(exports, "jsdocDocsFor", {
+  enumerable: true,
+  get: function () {
+    return _jsdocDocsFor.jsdocDocsFor;
+  }
+});
 Object.defineProperty(exports, "minifyFor", {
   enumerable: true,
   get: function () {
@@ -91,6 +97,12 @@ Object.defineProperty(exports, "requirePeer", {
   enumerable: true,
   get: function () {
     return _loadPeer.requirePeer;
+  }
+});
+Object.defineProperty(exports, "resolveDocsMethod", {
+  enumerable: true,
+  get: function () {
+    return _resolveDocsMethod.resolveDocsMethod;
   }
 });
 Object.defineProperty(exports, "runOnChange", {
@@ -126,10 +138,12 @@ var _distForSrc = require("./partials/distForSrc.js");
 var _distSeries = require("./partials/distSeries.js");
 var _imagesFor = require("./partials/imagesFor.js");
 var _loadPeer = require("./partials/loadPeer.js");
+var _jsdocDocsFor = require("./partials/jsdocDocsFor.js");
 var _minifyFor = require("./partials/minifyFor.js");
 var _neostandardLint = require("./partials/neostandardLint.js");
 var _readmeTemplate = require("./partials/readmeTemplate.js");
 var _removeDirectory = require("./partials/removeDirectory.js");
+var _resolveDocsMethod = require("./partials/resolveDocsMethod.js");
 var _runOnChange = require("./partials/runOnChange.js");
 var _sassFor = require("./partials/sassFor.js");
 var _tsFor = require("./partials/tsFor.js");
