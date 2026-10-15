@@ -46,6 +46,15 @@ import { fileExists } from 'test-filesystem'
  * @typedef {ArrayableSetting|BooleanSetting|FlagsSetting|StringSetting} Setting
  */
 /**
+ * One copy-files entry: a glob (or array of globs) to copy, and where to copy it.
+ * @typedef {Object} module:gulpConfig~CopyFilesEntry
+ * @property {ArrayableSetting} from - The glob pattern(s) of files to copy.
+ * @property {StringSetting} to - The directory to copy them into.
+ * @property {FlagStringSetting} base - Optional base for gulp's own src(pattern, {base}), to preserve a glob's
+ * own subdirectory structure in the destination instead of flattening it. false (the default) uses gulp's own
+ * default base behaviour.
+ */
+/**
  * Configurations for building the browser files.
  * @typedef {Object<string, Setting>} module:gulpConfig~BrowserConfig
  * @property {BooleanSetting} enabled - 'true' to generate browser bundled files; 'false' for node environment only
@@ -159,6 +168,9 @@ import { fileExists } from 'test-filesystem'
  * @typedef {Object<string, Setting>} module:gulpConfig~Configurations
  * @property {BrowserConfig} browser - Browser bundling configuration group.
  * @property {ArrayableSetting} cleanPaths - The paths for directories to delete before build.
+ * @property {Array<CopyFilesEntry>} copyFiles - Files to copy elsewhere, run via the copyFiles task - never
+ * automatically as part of build, since what this copies is often the live, publicly-reachable version of
+ * something (e.g. a bundle), and publishing it should be a deliberate step.
  * @property {DistConfig} dist - Distribution file generation configuration group.
  * @property {DocsConfig} docs - Generate the documentation of a TypeScript project configuration group.
  * @property {FontConfig} fonts - Fonts copy configuration group.
@@ -187,6 +199,7 @@ const setDefaults = {
     to: 'browser',
   },
   cleanPaths: ['dist', 'browser'],
+  copyFiles: [],
   dist: {
     from: 'src/**/!(*.test).js',
     main: 'dist/main',

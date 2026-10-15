@@ -629,6 +629,7 @@ Modify these configurations to match your project specifications.
         * [~JestTestFlags](#module_gulpConfig..JestTestFlags) : <code>FlagsSetting</code>
         * [~StringSetting](#module_gulpConfig..StringSetting) : <code>string</code>
         * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+        * [~CopyFilesEntry](#module_gulpConfig..CopyFilesEntry) : <code>Object</code>
         * [~BrowserConfig](#module_gulpConfig..BrowserConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~AdditionalBundleConfig](#module_gulpConfig..AdditionalBundleConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~DistConfig](#module_gulpConfig..DistConfig) : <code>Object.&lt;string, Setting&gt;</code>
@@ -722,6 +723,20 @@ A setting that may only be a string.
 Any single configuration option is a Setting.
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..CopyFilesEntry"></a>
+
+### gulpConfig~CopyFilesEntry : <code>Object</code>
+One copy-files entry: a glob (or array of globs) to copy, and where to copy it.
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| from | <code>ArrayableSetting</code> | The glob pattern(s) of files to copy. |
+| to | <code>StringSetting</code> | The directory to copy them into. |
+| base | <code>FlagStringSetting</code> | Optional base for gulp's own src(pattern, {base}), to preserve a glob's own subdirectory structure in the destination instead of flattening it. false (the default) uses gulp's own default base behaviour. |
+
 <a name="module_gulpConfig..BrowserConfig"></a>
 
 ### gulpConfig~BrowserConfig : <code>Object.&lt;string, Setting&gt;</code>
@@ -900,6 +915,7 @@ A set of Configurations options defined by Settings.
 | --- | --- | --- |
 | browser | <code>BrowserConfig</code> | Browser bundling configuration group. |
 | cleanPaths | <code>ArrayableSetting</code> | The paths for directories to delete before build. |
+| copyFiles | <code>Array.&lt;CopyFilesEntry&gt;</code> | Files to copy elsewhere, run via the copyFiles task - never automatically as part of build, since what this copies is often the live, publicly-reachable version of something (e.g. a bundle), and publishing it should be a deliberate step. |
 | dist | <code>DistConfig</code> | Distribution file generation configuration group. |
 | docs | <code>DocsConfig</code> | Generate the documentation of a TypeScript project configuration group. |
 | fonts | <code>FontConfig</code> | Fonts copy configuration group. |
