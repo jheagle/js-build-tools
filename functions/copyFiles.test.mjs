@@ -59,4 +59,20 @@ describe('copyFiles', () => {
 
     expect(fs.readFileSync(`${destDir}/inner/deep.txt`).toString()).toBe('nested file\n')
   })
+
+  // The real bug this guards against: a fresh src()/dest() pair (what this used to do) loses copyFor.mjs's own
+  // encoding: false fix - Gulp 5's default utf8 handling corrupts binary files such as fonts or a minified
+  // bundle. Reusing copyFor instead of duplicating its logic keeps that fix automatically.
+  test('copies binary files byte for byte, including bytes above 0x7f', async () => {
+    const sourceDir = `${gulpConfig.get('rootPath')}copy-source-binary`
+    const destDir = `${gulpConfig.get('rootPath')}copy-dest-binary`
+    fs.mkdirSync(sourceDir, { recursive: true })
+    const original = Buffer.from(Array.from({ length: 512 }, (_, i) => i % 256))
+    fs.writeFileSync(`${sourceDir}/font.woff`, original)
+    gulpConfig.set('copyFiles', [{ from: `${sourceDir}/*.woff`, to: destDir }])
+
+    await copyFiles()
+
+    expect(fs.readFileSync(`${destDir}/font.woff`).equals(original)).toBe(true)
+  })
 })

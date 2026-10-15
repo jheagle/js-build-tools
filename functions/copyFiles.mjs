@@ -1,4 +1,4 @@
-import { dest, src } from 'gulp'
+import { copyFor } from './partials/copyFor.mjs'
 import * as gulpConfig from '../gulp.config.mjs'
 
 /**
@@ -8,10 +8,14 @@ import * as gulpConfig from '../gulp.config.mjs'
  * the live, publicly-reachable version of something, so publishing it elsewhere should be a deliberate step, not
  * a side effect of every routine local build.
  *
- * Each entry runs as its own independent src().pipe(dest()), awaited via Promise.all rather than merged into one
- * combined stream (mergeStream, the pattern bundle.mjs uses) - that pattern assumes every merged stream ends up
- * at the same shared destination; here, each entry can have a genuinely different one, and merging streams that
- * each already terminate at their own separate dest() hit a real "write after end" error in practice.
+ * Reuses copyFor (already shared with copyFonts) rather than a fresh src()/dest() pair - that keeps its existing
+ * encoding: false fix (Gulp 5's default utf8 handling corrupts binary files such as fonts or a minified bundle)
+ * instead of silently losing it in a parallel implementation.
+ *
+ * Each entry runs as its own independent copyFor(), awaited via Promise.all rather than merged into one combined
+ * stream (mergeStream, the pattern bundle.mjs uses) - that pattern assumes every merged stream ends up at the
+ * same shared destination; here, each entry can have a genuinely different one, and merging streams that each
+ * already terminate at their own separate dest() hit a real "write after end" error in practice.
  * @memberOf module:js-build-tools
  * @returns {Promise<void>}
  */
@@ -21,8 +25,7 @@ export const copyFiles = () => {
     return Promise.resolve()
   }
   return Promise.all(copies.map(({ from, to, base }) => new Promise((resolve, reject) => {
-    src(from, base ? { base } : {})
-      .pipe(dest(to))
+    copyFor(from, to, { base })
       .on('finish', resolve)
       .on('error', reject)
   }))).then(() => {})
