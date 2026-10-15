@@ -128,16 +128,24 @@ import { fileExists } from 'test-filesystem'
  * @property {StringSetting} to - The directory to output the readme file in.
  */
 /**
- * Configurations for generating the HTML documentation of a TypeScript project (with TypeDoc, from the source).
+ * Configurations for generating the HTML documentation of a project's own source, with either TypeDoc (real
+ * TypeScript types) or jsdoc (a modern theme over jsdoc's own classic default) - see docs.method.
  * @typedef {Object<string, Setting>} module:gulpConfig~DocsConfig
- * @property {BooleanSetting} enabled - Toggle generating the documentation from the TypeScript source. When it is on the
+ * @property {BooleanSetting} enabled - Toggle generating the documentation from the source. When it is on the
  * build does this instead of generating the readme from the jsdoc comments of the compiled files.
- * @property {StringSetting} from - The directory holding the TypeScript source, each folder in it becomes a module.
+ * @property {StringSetting} from - The directory holding the source, each folder in it becomes a module (TypeDoc) or
+ * is scanned recursively (jsdoc).
  * @property {StringSetting} index - The markdown file used as the front page of the documentation.
- * @property {StringSetting} logLevel - How much TypeDoc reports: Verbose, Info, Warn, Error or None.
+ * @property {StringSetting} logLevel - How much TypeDoc reports: Verbose, Info, Warn, Error or None. Not used by jsdoc.
+ * @property {FlagStringSetting} method - 'typedoc' or 'jsdoc'. False (the default) infers it from typescript.enabled -
+ * 'typedoc' when on, 'jsdoc' when off - so an existing TypeScript project's config needs no change to keep working
+ * exactly as it already does; set this explicitly to override that inference either way.
+ * @property {StringSetting} theme - The jsdoc theme package to use (only meaningful when method is 'jsdoc' - TypeDoc
+ * keeps its own default regardless). Defaults to 'clean-jsdoc-theme'.
  * @property {StringSetting} title - The name of the documentation, defaults to the name in the package.json.
  * @property {StringSetting} to - The directory to generate the documentation in (it is cleared first).
- * @property {FlagStringSetting} tsconfig - The tsconfig file to read the source with, defaults to the one of typescript.config.
+ * @property {FlagStringSetting} tsconfig - The tsconfig file to read the source with (TypeDoc only), defaults to the
+ * one of typescript.config.
  */
 /**
  * Configurations to compile and copy the sass files into css.
@@ -210,6 +218,8 @@ const setDefaults = {
     from: 'src',
     index: 'MAIN.md',
     logLevel: 'Warn',
+    method: false,
+    theme: 'clean-jsdoc-theme',
     title: '',
     to: 'docs',
     tsconfig: false,

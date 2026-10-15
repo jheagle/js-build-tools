@@ -1,0 +1,132 @@
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { createRequire } from 'node:module'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import * as gulpConfig from '../../gulp.config.mjs'
+import { removeDirectory } from './removeDirectory.mjs'
+// jsdoc.base.js is CommonJS (it's also required directly by consuming projects' own .jsdoc.conf.js, and by this
+// project's own legacy htmldocs script) - Node's ESM loader imports a CJS module's module.exports as the default
+// export directly, no createRequire/import.meta needed (import.meta.url tripped up this project's own Babel CJS
+// transform, which Jest relies on to run .mjs test files - confirmed by removing it and nothing else changing).
+import jsdocBase from '../../jsdoc.base.js'
+
+const execFileAsync = promisify(execFile)
+
+const jsdocInstallHint = 'Install it in your project with: npm install --save-dev jsdoc'
+const themeInstallHint = name => `Install it in your project with: npm install --save-dev ${name}`
+
+/**
+ * Resolve the installed directory of an optional peer dependency, from the project being built rather than from
+ * this package. Deliberately not requirePeer/importPeer's own `require(name + '/package.json')` approach - that
+ * breaks for any package whose own package.json restricts its exports map and does not expose that subpath
+ * (clean-jsdoc-theme does; confirmed live, not assumed - resolving its own package.json throws
+ * ERR_PACKAGE_PATH_NOT_EXPORTED in plain Node, and a differently-shaped MODULE_NOT_FOUND under Jest's own
+ * resolver, which still is not "not installed" either way). Walking Node's own real module-lookup directories
+ * (require.resolve.paths) and checking each on disk sidesteps the exports map entirely - this only ever reads
+ * whether `<dir>/<name>/package.json` exists, never asks the module system to resolve a restricted subpath.
+ * @memberOf module:partials
+ * @param {string} name - The package name.
+ * @param {Object} options
+ * @param {string} options.task
+ * @param {string} options.installHint
+ * @param {string} [options.projectPath=process.cwd()]
+ * @returns {string}
+ * @throws {Error} With install instructions when the package is not installed.
+ */
+const resolvePeerDir = (name, { task, installHint, projectPath = process.cwd() }) => {
+  const req = createRequire(path.join(projectPath, 'package.json'))
+  const found = (req.resolve.paths(name) || [])
+    .map(dir => path.join(dir, name))
+    .find(dir => fs.existsSync(path.join(dir, 'package.json')))
+  if (!found) {
+    throw new Error(`The ${task} task needs the optional peer dependency ${name}, which is not installed. ${installHint}`)
+  }
+  return found
+}
+
+/**
+ * Resolve jsdoc's own CLI entry point. jsdoc has no stable programmatic Node API for generating HTML docs (unlike
+ * TypeDoc's Application.bootstrap()/convert()/generateDocs()) - gulp-jsdoc3, the established gulp wrapper, is
+ * stale, and its own README admits jsdoc does not support piped input in the first place, a real anti-pattern for
+ * this project's own gulp-stream conventions. Running its real CLI via child_process is the portable way in -
+ * confirmed via `npm view jsdoc bin`, which reports "jsdoc.js" at the package root.
+ * @memberOf module:partials
+ * @param {string} [projectPath=process.cwd()]
+ * @returns {string}
+ */
+export const resolveJsdocBin = (projectPath = process.cwd()) =>
+  path.join(resolvePeerDir('jsdoc', { task: 'docs', installHint: jsdocInstallHint, projectPath }), 'jsdoc.js')
+
+/**
+ * Resolve a jsdoc theme package's own template directory, for jsdoc's own opts.template config key. Not
+ * necessarily the package's own root - clean-jsdoc-theme's own docs say to point opts.template at its `dist`
+ * subdirectory specifically, confirmed by reading its real README rather than assuming every theme follows the
+ * classic jsdoc template layout (a bare package root with its own tmpl/static folders) - clean-jsdoc-theme does
+ * not (it is a modern, self-contained, server-rendered theme with no such folders at its package root at all).
+ * @memberOf module:partials
+ * @param {string} name
+ * @param {string} [projectPath=process.cwd()]
+ * @returns {string}
+ */
+export const resolveJsdocTheme = (name, projectPath = process.cwd()) => {
+  const packageDir = resolvePeerDir(name, { task: 'docs', installHint: themeInstallHint(name), projectPath })
+  return name === 'clean-jsdoc-theme' ? path.join(packageDir, 'dist') : packageDir
+}
+
+/**
+ * Generate the HTML documentation of a plain-JavaScript project with jsdoc, using jsdoc.base.js's own shared
+ * config (plugins, includePattern/excludePattern) as the starting point rather than a parallel one - the same
+ * base a project's own .jsdoc.conf.js has always been able to extend, just with source.include and the output
+ * options generated here instead of hand-maintained per project. Configure this with 'docs.from', 'docs.to',
+ * 'docs.index', 'docs.theme' and 'docs.title'.
+ * @memberOf module:partials
+ * @param {string} [srcPath=gulpConfig.get('docs.from')] - The directory (or glob) holding the JS source.
+ * @param {string} [outPath=gulpConfig.get('docs.to')] - The directory the documentation is generated into (cleared first).
+ * @param {function(string, Array<string>): Promise<Object>} [runJsdoc] - Runs the jsdoc CLI, tests can inject a stand-in.
+ * @returns {Function} A gulp task, it accepts an optional callback and returns a promise.
+ */
+export const jsdocDocsFor = (
+  srcPath = gulpConfig.get('docs.from'),
+  outPath = gulpConfig.get('docs.to'),
+  runJsdoc = (bin, args) => execFileAsync(process.execPath, [bin, ...args])
+) => {
+  if (gulpConfig.get('docs.enabled') === false) {
+    return () => {}
+  }
+  return (done) => {
+    const generate = async () => {
+      const theme = gulpConfig.get('docs.theme') || 'clean-jsdoc-theme'
+      const themeDir = resolveJsdocTheme(theme)
+      const indexFile = gulpConfig.get('docs.index')
+      await removeDirectory(outPath)
+      const config = {
+        ...jsdocBase,
+        source: {
+          ...jsdocBase.source,
+          include: [path.resolve(srcPath)]
+        },
+        opts: {
+          destination: path.resolve(outPath),
+          // jsdoc does not recurse into source.include's own subdirectories by default - without this, only
+          // the top level of docs.from would ever be scanned. Confirmed from clean-jsdoc-theme's own README
+          // quick-start example, which sets this explicitly, not assumed from jsdoc's own classic defaults.
+          recurse: true,
+          template: themeDir,
+          ...(indexFile && fs.existsSync(indexFile) ? { readme: path.resolve(indexFile) } : {})
+        }
+      }
+      const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'jsdocdocs-'))
+      try {
+        const configPath = path.join(workDir, 'jsdoc.conf.json')
+        fs.writeFileSync(configPath, JSON.stringify(config))
+        const bin = resolveJsdocBin()
+        await runJsdoc(bin, ['-c', configPath])
+      } finally {
+        await removeDirectory(workDir)
+      }
+    }
+    return typeof done === 'function' ? generate().then(() => done(), done) : generate()
+  }
+}

@@ -79,12 +79,20 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
+    "clean-jsdoc-theme": ">=4.0.0",
     "gulp-imagemin": ">=9.0.0",
+    "jsdoc": ">=4.0.0",
     "typedoc": ">=0.28.0",
     "typescript": ">=5.0.0 <7.0.0"
   },
   "peerDependenciesMeta": {
+    "clean-jsdoc-theme": {
+      "optional": true
+    },
     "gulp-imagemin": {
+      "optional": true
+    },
+    "jsdoc": {
       "optional": true
     },
     "typedoc": {
@@ -106,7 +114,9 @@
   ],
   "funding": "https://www.paypal.com/donate/?business=LRYR6SZRWKXVY&no_recurring=0&item_name=Let%27s+build+together+today+to+simplify+our+jobs+tomorrow.&currency_code=CAD",
   "devDependencies": {
+    "clean-jsdoc-theme": "^5.2.0",
     "gulp-imagemin": "github:jheagle/gulp-imagemin#common-js-compatibility",
+    "jsdoc": "^4.0.5",
     "typedoc": "^0.28.20",
     "typescript": "^6.0.3"
   },

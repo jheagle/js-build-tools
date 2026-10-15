@@ -10,6 +10,7 @@ var _bundleMinify = require("./bundleMinify.js");
 var _partials = require("./partials.js");
 var _compileReadme = require("./compileReadme.js");
 var _typeDocs = require("./typeDocs.js");
+var _jsdocDocs = require("./jsdocDocs.js");
 var _distMinify = require("./distMinify.js");
 var _sourceLint = require("./sourceLint.js");
 var _gulp = require("gulp");
@@ -30,9 +31,13 @@ function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; 
 const build = (done = null) => {
   const buildActions = [(0, _partials.distSeries)(), _distMinify.distMinify];
   const generateDocs = gulpConfig.get('docs.enabled');
+  // docs.method picks the engine explicitly; left unset (false, the default), it's inferred from
+  // typescript.enabled - every existing TypeScript project's config, which never sets method, keeps producing
+  // TypeDoc output exactly as it always has.
+  const docsMethod = gulpConfig.get('docs.method') || (gulpConfig.get('typescript.enabled') ? 'typedoc' : 'jsdoc');
   if (generateDocs) {
-    // The documentation is generated from the TypeScript source itself, the readme is written by hand
-    buildActions.push(_typeDocs.typeDocs);
+    // The documentation is generated from the source itself, the readme is written by hand
+    buildActions.push(docsMethod === 'jsdoc' ? _jsdocDocs.jsdocDocs : _typeDocs.typeDocs);
   } else if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(_compileReadme.compileReadme);

@@ -11,7 +11,9 @@ Using this tool suite, you can:
 * Bundle your distribution files to be used in a browser environment.
 * Run tests and watch for changes.
 * Generate jsdoc readme files.
-* Generate HTML documentation straight from your TypeScript source (with TypeDoc), with a module for each of your folders.
+* Generate real HTML documentation straight from your source - TypeDoc for a TypeScript project (a module for
+  each of your folders), or jsdoc with a modern theme for a plain JavaScript one.
+* Copy files (a bundle, or anything else) to another location, on demand.
 
 ## Installation
 
@@ -281,10 +283,12 @@ module.exports = {
 }
 ```
 
-### Configure HTML JS Documentation (optional)
+### Configure HTML JS Documentation, full manual control (optional, advanced)
 
-It may be desirable to generate HTML documentation for your JS files.
-(For a TypeScript project, see 'Configure TypeScript documentation' instead.)
+For most projects, `docs.enabled` with `docs.method: 'jsdoc'` (see 'Configure HTML documentation' below) is the
+simpler path - no `.jsdoc.conf.js` file to maintain by hand, wired straight into `gulp build`/`gulp docs`. This
+section is for when you want full, direct control over jsdoc's own config instead (a plugin or option this
+project's own generated config does not expose, for example).
 
 Create a `.jsdoc.conf.js` file and add the following:
 
@@ -375,6 +379,33 @@ exports if you want it documented this cleanly:
   }
 }
 ```
+
+### Configure copy files (optional)
+
+Copy files (a bundle, or anything else) to another location - any number of entries, each independent. Unlike
+every other task here, this is never run automatically as part of `gulp build` - what this copies is often the
+live, publicly-reachable version of something, so publishing it should be a deliberate step your own script
+opts into, not a side effect of a routine local build.
+
+Add the following to the exports in your `build-tools.config.json`:
+
+```json
+{
+  "copyFiles": [
+    {
+      // The glob pattern(s) of files to copy
+      "from": "browser/**/*.js",
+      // The directory to copy them into
+      "to": "../my-other-project/vendor",
+      // Optional - preserves this glob's own subdirectory structure in the destination, instead of flattening it
+      "base": "browser"
+    }
+  ]
+}
+```
+
+If you also export `copyFiles` from your gulpfile you can run it on its own with `gulp copyFiles`, and can then
+add your own script for it, for example `"publish:bundle": "gulp copyFiles"`.
 
 ### Configure move fonts (optional)
 
@@ -498,32 +529,46 @@ babelConfig.presets.push('@babel/preset-typescript')
 module.exports = babelConfig
 ```
 
-### Configure TypeScript documentation (optional)
+### Configure HTML documentation (optional)
 
-`jsdoc-to-markdown` only reads `.js` files, so the types in your `.ts` files (and the comments on them) do not reach
-the readme it generates. Instead, this can generate HTML documentation straight from the TypeScript source with
-[TypeDoc](https://typedoc.org/). Every folder in your source directory becomes a module of the documentation, the default
-export of each file (one function per file) is listed under the name of the file, and everything else a file exports (for
-example the types in a `types.ts`) is listed as it is. Index files, tests and declaration files are left out. A file
-which sits directly in the source directory, beside the folders, is a module of its own (unless it is `index` or
-`main`). The first comment of a folder's `index.ts` (or the header comment of such a file) describes its module. The
-comments on your code are the documentation, and the types come from the code itself, so `@module`, `@memberOf`,
-`@typedef` and the `{Type}` of `@param` are not needed.
+`jsdoc-to-markdown` (the readme generator) only reads `.js` files, so the types in your `.ts` files (and the
+comments on them) never reach the readme it generates, and even for a plain JavaScript project a single
+markdown readme is a thinner result than a real browsable site. Instead, `docs.enabled` generates real HTML
+documentation straight from your source, with either engine:
 
-`typedoc` is an optional peer dependency (like `typescript`), install it in your project with
-`npm install --save-dev typedoc` (this needs a `typescript` version it supports).
+* **TypeDoc** (for a TypeScript project) - every folder in your source directory becomes a module of the
+  documentation, the default export of each file (one function per file) is listed under the name of the file,
+  and everything else a file exports (for example the types in a `types.ts`) is listed as it is. Index files,
+  tests and declaration files are left out. A file which sits directly in the source directory, beside the
+  folders, is a module of its own (unless it is `index` or `main`). The first comment of a folder's `index.ts`
+  (or the header comment of such a file) describes its module. The comments on your code are the documentation,
+  and the types come from the code itself, so `@module`, `@memberOf`, `@typedef` and the `{Type}` of `@param`
+  are not needed. `typedoc` is an optional peer dependency (like `typescript`), install it in your project with
+  `npm install --save-dev typedoc` (this needs a `typescript` version it supports).
+* **jsdoc** (for a plain JavaScript project, where TypeDoc has no real types to read) - scans your source
+  recursively with jsdoc itself, rendered with a modern theme (`clean-jsdoc-theme` by default, used instead of
+  jsdoc's own classic default template) instead of the manual `.jsdoc.conf.js` setup described further below.
+  `jsdoc` and whichever theme you configure are optional peer dependencies, install them with
+  `npm install --save-dev jsdoc clean-jsdoc-theme` (or your own chosen theme package).
 
 Add the following to the exports in your `build-tools.config.json`:
 
 ```json
 {
   "docs": {
-    // Generate the documentation from the TypeScript source
+    // Generate the documentation from the source
     "enabled": true,
-    // The directory holding the TypeScript source, each folder in it becomes a module
+    // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc)
     "from": "src",
     // The markdown file used as the front page of the documentation (a short overview of your project)
     "index": "MAIN.md",
+    // 'typedoc' or 'jsdoc'. Left out (or false), it's inferred from typescript.enabled - 'typedoc' when your
+    // project is TypeScript, 'jsdoc' when it is not - so most projects never need to set this at all. Set it
+    // explicitly to override that inference either way.
+    "method": false,
+    // Only meaningful when method is (or resolves to) 'jsdoc' - the theme package to render with. TypeDoc
+    // always keeps its own default regardless of this setting.
+    "theme": "clean-jsdoc-theme",
     // Where the HTML is generated (the directory is cleared first)
     "to": "docs"
   }
@@ -569,6 +614,7 @@ In your `package.json` file, add the following scripts:
     "dev": "gulp",
     "docs": "gulp docs",
     "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
+    "publish:bundle": "gulp copyFiles",
     "readme": "gulp readme",
     "sass": "gulp sass",
     "test": "gulp testFull",
@@ -844,20 +890,22 @@ Configurations to compile and generate the Readme file.
 <a name="module_gulpConfig..DocsConfig"></a>
 
 ### gulpConfig~DocsConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations for generating the HTML documentation of a TypeScript project (with TypeDoc, from the source).
+Configurations for generating the HTML documentation of a project's own source, with either TypeDoc (realTypeScript types) or jsdoc (a modern theme over jsdoc's own classic default) - see docs.method.
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| enabled | <code>BooleanSetting</code> | Toggle generating the documentation from the TypeScript source. When it is on the build does this instead of generating the readme from the jsdoc comments of the compiled files. |
-| from | <code>StringSetting</code> | The directory holding the TypeScript source, each folder in it becomes a module. |
+| enabled | <code>BooleanSetting</code> | Toggle generating the documentation from the source. When it is on the build does this instead of generating the readme from the jsdoc comments of the compiled files. |
+| from | <code>StringSetting</code> | The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc). |
 | index | <code>StringSetting</code> | The markdown file used as the front page of the documentation. |
-| logLevel | <code>StringSetting</code> | How much TypeDoc reports: Verbose, Info, Warn, Error or None. |
+| logLevel | <code>StringSetting</code> | How much TypeDoc reports: Verbose, Info, Warn, Error or None. Not used by jsdoc. |
+| method | <code>FlagStringSetting</code> | 'typedoc' or 'jsdoc'. False (the default) infers it from typescript.enabled - 'typedoc' when on, 'jsdoc' when off - so an existing TypeScript project's config needs no change to keep working exactly as it already does; set this explicitly to override that inference either way. |
+| theme | <code>StringSetting</code> | The jsdoc theme package to use (only meaningful when method is 'jsdoc' - TypeDoc keeps its own default regardless). Defaults to 'clean-jsdoc-theme'. |
 | title | <code>StringSetting</code> | The name of the documentation, defaults to the name in the package.json. |
 | to | <code>StringSetting</code> | The directory to generate the documentation in (it is cleared first). |
-| tsconfig | <code>FlagStringSetting</code> | The tsconfig file to read the source with, defaults to the one of typescript.config. |
+| tsconfig | <code>FlagStringSetting</code> | The tsconfig file to read the source with (TypeDoc only), defaults to the one of typescript.config. |
 
 <a name="module_gulpConfig..SassConfig"></a>
 
