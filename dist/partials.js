@@ -69,6 +69,18 @@ Object.defineProperty(exports, "jsdocDocsFor", {
     return _jsdocDocsFor.jsdocDocsFor;
   }
 });
+Object.defineProperty(exports, "launchBrowser", {
+  enumerable: true,
+  get: function () {
+    return _loadPlaywright.launchBrowser;
+  }
+});
+Object.defineProperty(exports, "loadPlaywright", {
+  enumerable: true,
+  get: function () {
+    return _loadPlaywright.loadPlaywright;
+  }
+});
 Object.defineProperty(exports, "minifyFor", {
   enumerable: true,
   get: function () {
@@ -117,6 +129,12 @@ Object.defineProperty(exports, "sassFor", {
     return _sassFor.sassFor;
   }
 });
+Object.defineProperty(exports, "serveStatic", {
+  enumerable: true,
+  get: function () {
+    return _serveStatic.serveStatic;
+  }
+});
 Object.defineProperty(exports, "tsFor", {
   enumerable: true,
   get: function () {
@@ -139,6 +157,7 @@ var _distSeries = require("./partials/distSeries.js");
 var _imagesFor = require("./partials/imagesFor.js");
 var _loadPeer = require("./partials/loadPeer.js");
 var _jsdocDocsFor = require("./partials/jsdocDocsFor.js");
+var _loadPlaywright = require("./partials/loadPlaywright.js");
 var _minifyFor = require("./partials/minifyFor.js");
 var _neostandardLint = require("./partials/neostandardLint.js");
 var _readmeTemplate = require("./partials/readmeTemplate.js");
@@ -146,5 +165,6 @@ var _removeDirectory = require("./partials/removeDirectory.js");
 var _resolveDocsMethod = require("./partials/resolveDocsMethod.js");
 var _runOnChange = require("./partials/runOnChange.js");
 var _sassFor = require("./partials/sassFor.js");
+var _serveStatic = require("./partials/serveStatic.js");
 var _tsFor = require("./partials/tsFor.js");
 var _typeDocsFor = require("./partials/typeDocsFor.js");

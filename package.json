@@ -84,6 +84,7 @@
     "clean-jsdoc-theme": ">=4.0.0",
     "gulp-imagemin": ">=9.0.0",
     "jsdoc": ">=4.0.0",
+    "playwright": ">=1.40.0",
     "typedoc": ">=0.28.0",
     "typescript": ">=5.0.0 <7.0.0"
   },
@@ -95,6 +96,9 @@
       "optional": true
     },
     "jsdoc": {
+      "optional": true
+    },
+    "playwright": {
       "optional": true
     },
     "typedoc": {
@@ -119,6 +123,7 @@
     "clean-jsdoc-theme": "^5.2.0",
     "gulp-imagemin": "github:jheagle/gulp-imagemin#common-js-compatibility",
     "jsdoc": "^4.0.5",
+    "playwright": "^1.48.0",
     "release-it": "^21.1.1",
     "typedoc": "^0.28.20",
     "typescript": "^6.0.3"

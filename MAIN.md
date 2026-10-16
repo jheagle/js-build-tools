@@ -579,6 +579,35 @@ While `docs.enabled` is on, `gulp build` generates the documentation instead of 
 hand-written (a short overview which links to the documentation). If you also export `docs` from your gulpfile you can
 run it on its own with `gulp docs`, and can then add the script `"docs": "gulp docs"`.
 
+### Browser automation (optional)
+
+Unlike the rest of this file, this isn't a `build-tools.config.json`-driven feature with its own task - it's a pair
+of plain functions (`partials.loadPlaywright`/`partials.launchBrowser` and `partials.serveStatic`) for whatever your
+own script needs a real browser for: verifying a page that only works correctly in a real browser (for example one
+using `<script type="module">`, which no DOM-simulation library executes at all), or taking a real screenshot.
+
+`playwright` is an optional peer dependency, install it in your project with `npm install --save-dev playwright`,
+then fetch a real browser binary once per machine (not per project) with `npx playwright install chromium` - if
+that fails with "Playwright does not support chromium on <your distro>", your OS is too old for the current
+release; either upgrade it or pin an older `playwright` version known to still support it (confirmed: `1.48.0`
+still installs and runs real headless Chromium on Ubuntu 20.04, which the current release has dropped).
+
+```js
+const { launchBrowser, serveStatic } = require('js-build-tools').partials
+
+const { server, url } = await serveStatic('browser') // serves ./browser/ over a real local HTTP server
+const browser = await launchBrowser()
+const page = await browser.newPage()
+await page.goto(`${url}/index.html`)
+await page.screenshot({ path: 'homepage.png' }) // a real screenshot, to actually look at
+await browser.close()
+server.close()
+```
+
+`serveStatic` exists because a page loaded directly from a `file://` path resolves any root-relative asset path
+(`/browser/...`) against the filesystem root instead of the page's own directory - serving it over real HTTP avoids
+that entirely, and is also the right fix for the exact same problem in a jsdom-based test.
+
 ### Configure lint rule overrides (optional)
 
 `sourceLint` lints your real source directly (not the compiled dist/browser output) with
