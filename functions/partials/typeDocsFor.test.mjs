@@ -120,6 +120,7 @@ describe('writeDocEntries', () => {
     const srcPath = gulpConfig.get('srcPath')
     write(`${srcPath}/simulate.ts`, "/**\n * Simulate what a user does.\n */\nimport add from './point/add'\nexport const click = () => add(1, 2)\nexport default { click }\n")
     write(`${srcPath}/simulate.test.ts`, "test('x', () => {})\n")
+    write(`${srcPath}/browser.ts`, "export * from './main'\n")
     const entryDir = `${srcPath}/../entries`
     const entries = writeDocEntries(ts, srcPath, entryDir)
     expect(entries.map(entry => path.basename(entry)).sort()).toEqual(['line.ts', 'point.ts', 'simulate.ts'])

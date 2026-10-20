@@ -140,7 +140,7 @@ const describeFile = filePath => {
  * re-exported under the name of the file (the source files hold one function each), and anything else a file exports
  * is re-exported as it is (that is where the types.ts files go). Index files (the barrels), tests and declaration
  * files are left out, but the first doc comment of a folder's index file becomes the description of its module.
- * A file which sits beside the folders (not an index or main file) is a module of its own, described by its header
+ * A file which sits beside the folders (not an index, main or browser file) is a module of its own, described by its header
  * comment. A source directory with no folders gets a single entry called index.
  * @memberOf module:partials
  * @param {Object} ts - The TypeScript compiler API.
@@ -155,9 +155,9 @@ const writeDocEntries = (ts, srcDir, entryDir) => {
     recursive: true
   });
   const folders = listFolders(absoluteSrc).filter(folder => folder.files.some(file => !/^index\./.test(_nodePath.default.basename(file))));
-  const rootFiles = listSources(absoluteSrc).filter(file => !/^(index|main)\./.test(_nodePath.default.basename(file)));
-  // Folders make modules, and so do the files which sit beside them (except the barrel: index and main). A source
-  // directory with no folders gets a single module called index which holds its files.
+  const rootFiles = listSources(absoluteSrc).filter(file => !/^(index|main|browser)\./.test(_nodePath.default.basename(file)));
+  // Folders make modules, and so do the files which sit beside them (except the barrels: index, main and browser, the
+  // browser bundle's entry). A source directory with no folders gets a single module called index which holds its files.
   const groups = folders.length ? [...folders, ...rootFiles.map(file => ({
     name: toIdentifier(_nodePath.default.basename(file).replace(/\.[cm]?tsx?$/, '')),
     files: [file],
