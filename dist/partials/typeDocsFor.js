@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.writeDocEntries = exports.typeDocsFor = exports.loadTypeDoc = exports.describeFolder = exports.describeFile = exports.describeExports = void 0;
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
@@ -42,12 +43,19 @@ exports.loadTypeDoc = loadTypeDoc;
 const isSource = fileName => /\.(ts|tsx|mts|cts)$/.test(fileName) && !/\.d\.[cm]?ts$/.test(fileName) && !/\.(test|spec)\./.test(fileName);
 const listSources = dirPath => _nodeFs.default.readdirSync(dirPath, {
   withFileTypes: true
-}).flatMap(entry => {
-  const entryPath = _nodePath.default.join(dirPath, entry.name);
-  if (entry.isDirectory()) {
-    return entry.name === 'node_modules' ? [] : listSources(entryPath);
-  }
-  return isSource(entry.name) ? [entryPath] : [];
+}).filter(entry => entry.isFile() && isSource(entry.name)).map(entry => _nodePath.default.join(dirPath, entry.name));
+
+// Every folder below dirPath (at any depth), named by its path from dirPath, with the source files directly in it
+const listFolders = (dirPath, prefix = '') => _nodeFs.default.readdirSync(dirPath, {
+  withFileTypes: true
+}).filter(entry => entry.isDirectory() && entry.name !== 'node_modules').flatMap(entry => {
+  const folderPath = _nodePath.default.join(dirPath, entry.name);
+  const name = `${prefix}${entry.name}`;
+  return [{
+    name,
+    path: folderPath,
+    files: listSources(folderPath)
+  }, ...listFolders(folderPath, `${name}/`)];
 });
 const toIdentifier = fileName => fileName.replace(/[^\w$]+(\w)?/g, (match, letter) => (letter || '').toUpperCase()).replace(/^(\d)/, '_$1');
 const toModulePath = filePath => filePath.replace(/\.[cm]?tsx?$/, '').split(_nodePath.default.sep).join('/');
@@ -127,11 +135,12 @@ const describeFile = filePath => {
 
 /**
  * Write one entry file per folder of the source directory into the entry directory. TypeDoc makes a module of every
- * entry file, so the modules of the documentation mirror the folders. The default export of each source file is
+ * entry file, so the modules of the documentation mirror the folders. Nested folders are modules of their own, named
+ * by their path (utilities/parsers), and a folder's module holds only the files directly in it. The default export of each source file is
  * re-exported under the name of the file (the source files hold one function each), and anything else a file exports
  * is re-exported as it is (that is where the types.ts files go). Index files (the barrels), tests and declaration
  * files are left out, but the first doc comment of a folder's index file becomes the description of its module.
- * A file which sits beside the folders (not an index or main file) is a module of its own, described by its header
+ * A file which sits beside the folders (not an index, main or browser file) is a module of its own, described by its header
  * comment. A source directory with no folders gets a single entry called index.
  * @memberOf module:partials
  * @param {Object} ts - The TypeScript compiler API.
@@ -145,18 +154,10 @@ const writeDocEntries = (ts, srcDir, entryDir) => {
   _nodeFs.default.mkdirSync(entryDir, {
     recursive: true
   });
-  const folders = _nodeFs.default.readdirSync(absoluteSrc, {
-    withFileTypes: true
-  }).filter(entry => entry.isDirectory() && entry.name !== 'node_modules').map(entry => ({
-    name: entry.name,
-    path: _nodePath.default.join(absoluteSrc, entry.name),
-    files: listSources(_nodePath.default.join(absoluteSrc, entry.name))
-  })).filter(folder => folder.files.length);
-  const rootFiles = _nodeFs.default.readdirSync(absoluteSrc, {
-    withFileTypes: true
-  }).filter(entry => entry.isFile() && isSource(entry.name) && !/^(index|main)\./.test(entry.name)).map(entry => _nodePath.default.join(absoluteSrc, entry.name));
-  // Folders make modules, and so do the files which sit beside them (except the barrel: index and main). A source
-  // directory with no folders gets a single module called index which holds its files.
+  const folders = listFolders(absoluteSrc).filter(folder => folder.files.some(file => !/^index\./.test(_nodePath.default.basename(file))));
+  const rootFiles = listSources(absoluteSrc).filter(file => !/^(index|main|browser)\./.test(_nodePath.default.basename(file)));
+  // Folders make modules, and so do the files which sit beside them (except the barrels: index, main and browser, the
+  // browser bundle's entry). A source directory with no folders gets a single module called index which holds its files.
   const groups = folders.length ? [...folders, ...rootFiles.map(file => ({
     name: toIdentifier(_nodePath.default.basename(file).replace(/\.[cm]?tsx?$/, '')),
     files: [file],
@@ -178,8 +179,13 @@ const writeDocEntries = (ts, srcDir, entryDir) => {
     });
     const description = group.description ?? (group.path ? describeFolder(group.path) : '');
     // TypeDoc takes the first comment of an entry file which has the @module tag as the description of the module
-    const moduleComment = description ? `/**\n${description.split('\n').map(line => ` * ${line}`.trimEnd()).join('\n')}\n * @module\n */\n\n` : '';
+    // A nested folder's module is named by its path (utilities/parsers), so it is not mistaken for its parent's
+    const moduleName = group.name.includes('/') ? ` ${group.name}` : '';
+    const moduleComment = description || moduleName ? `/**\n${description ? description.split('\n').map(line => ` * ${line}`.trimEnd()).join('\n') + '\n' : ''} * @module${moduleName}\n */\n\n` : '';
     const entryPath = _nodePath.default.join(entryDir, `${group.name}.ts`);
+    _nodeFs.default.mkdirSync(_nodePath.default.dirname(entryPath), {
+      recursive: true
+    });
     _nodeFs.default.writeFileSync(entryPath, moduleComment + lines.join('\n') + '\n');
     return entryPath;
   });
@@ -225,7 +231,7 @@ const typeDocsFor = (srcPath = gulpConfig.get('docs.from'), outPath = gulpConfig
           ...(projectConfig ? {
             extends: _nodePath.default.resolve(projectConfig)
           } : {}),
-          include: [_nodePath.default.join(workDir, 'entries', '*.ts').split(_nodePath.default.sep).join('/'), _nodePath.default.resolve(srcPath).split(_nodePath.default.sep).join('/') + '/**/*.ts'],
+          include: [_nodePath.default.join(workDir, 'entries', '**', '*.ts').split(_nodePath.default.sep).join('/'), _nodePath.default.resolve(srcPath).split(_nodePath.default.sep).join('/') + '/**/*.ts'],
           exclude: [_nodePath.default.resolve(srcPath).split(_nodePath.default.sep).join('/') + '/**/*.test.*']
         }));
         const indexFile = gulpConfig.get('docs.index');
