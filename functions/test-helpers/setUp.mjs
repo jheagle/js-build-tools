@@ -23,6 +23,12 @@ export const setDefaults = (testDir = 'test-temp') => {
   gulpConfig.set('dist.from', `${srcPath}/**/!(*.test).js`)
   gulpConfig.set('dist.main', `${distPath}/main`)
   gulpConfig.set('dist.to', distPath)
+  // Reset explicitly, for the same reason as readme.fromEsm below: this project's own build-tools.config.json turns
+  // docs on and points them at the website checkout, which would leak into every test that never sets these itself.
+  gulpConfig.set('docs.enabled', false)
+  gulpConfig.set('docs.from', srcPath)
+  gulpConfig.set('docs.to', `${tempDir}docs`)
+  gulpConfig.set('docs.title', '')
   gulpConfig.set('fonts.from', `${srcPath}/fonts/**/*`)
   gulpConfig.set('fonts.to', `${browserPath}/fonts`)
   gulpConfig.set('images.from', `${srcPath}/img/**/*.+(png|jpg|jpeg|gif|svg)`)

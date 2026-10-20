@@ -9,6 +9,7 @@ import { strBefore } from './strBefore.mjs'
  * @param {string} [dotNotation=''] - The path to the property
  * @param {string|null} [defaultValue=null] - The default value to return if the property is not found
  * @returns {*} The value of the property
+ * @private
  */
 export const dotGet = (arrayObject = {}, dotNotation= '', defaultValue = null) => {
   if (!dotNotation) {

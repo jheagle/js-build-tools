@@ -9,7 +9,7 @@ const importGulpTsCompile = () => importModule('gulp-ts-compile')
 /**
  * Wrap a stream in a promise that resolves once it finishes writing.
  * @memberOf module:partials
- * @param {import('node:stream').Stream} stream
+ * @param {stream.Stream} stream
  * @returns {Promise<void>}
  */
 const installHint = 'Install it in your project with: npm install --save-dev typescript'
@@ -36,7 +36,7 @@ const streamToPromise = (stream) => new Promise((resolve, reject) => {
  * gulp-typescript when a removed API call started throwing under TypeScript 7.
  * @memberOf module:partials
  * @param {string} configPath - Path to a tsconfig.json file.
- * @returns {import('typescript').CompilerOptions}
+ * @returns {ts.CompilerOptions} TypeScript's compiler options
  */
 const readCompilerOptions = (ts, configPath) => {
   const configFile = ts.readConfigFile(configPath, ts.sys.readFile)

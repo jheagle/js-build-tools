@@ -6,13 +6,15 @@ import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import * as gulpConfig from '../../gulp.config.mjs'
 import { removeDirectory } from './removeDirectory.mjs'
-// jsdoc.base.js is CommonJS (it's also required directly by consuming projects' own .jsdoc.conf.js, and by this
-// project's own legacy htmldocs script) - Node's ESM loader imports a CJS module's module.exports as the default
-// export directly, no createRequire/import.meta needed (import.meta.url tripped up this project's own Babel CJS
-// transform, which Jest relies on to run .mjs test files - confirmed by removing it and nothing else changing).
+// jsdoc.base.js is CommonJS (it's also required directly by consuming projects' own .jsdoc.conf.js) - Node's ESM
+// loader imports a CJS module's module.exports as the default export directly, no createRequire/import.meta needed
+// (import.meta.url tripped up this project's own Babel CJS transform, which Jest relies on to run .mjs test files -
+// confirmed by removing it and nothing else changing).
 import jsdocBase from '../../jsdoc.base.js'
 
 const execFileAsync = promisify(execFile)
+
+const escapeHtml = text => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 const jsdocInstallHint = 'Install it in your project with: npm install --save-dev jsdoc'
 const themeInstallHint = name => `Install it in your project with: npm install --save-dev ${name}`
@@ -60,11 +62,9 @@ export const resolveJsdocBin = (projectPath = process.cwd()) =>
   path.join(resolvePeerDir('jsdoc', { task: 'docs', installHint: jsdocInstallHint, projectPath }), 'jsdoc.js')
 
 /**
- * Resolve a jsdoc theme package's own template directory, for jsdoc's own opts.template config key. Not
- * necessarily the package's own root - clean-jsdoc-theme's own docs say to point opts.template at its `dist`
- * subdirectory specifically, confirmed by reading its real README rather than assuming every theme follows the
- * classic jsdoc template layout (a bare package root with its own tmpl/static folders) - clean-jsdoc-theme does
- * not (it is a modern, self-contained, server-rendered theme with no such folders at its package root at all).
+ * Resolve a jsdoc theme package's own template directory, for jsdoc's own opts.template config key: the folder
+ * holding its publish.js. That is the package root for a classic jsdoc template (clean-jsdoc-theme 4.x included),
+ * but `dist` for a bundled one (clean-jsdoc-theme 5.x).
  * @memberOf module:partials
  * @param {string} name
  * @param {string} [projectPath=process.cwd()]
@@ -72,7 +72,8 @@ export const resolveJsdocBin = (projectPath = process.cwd()) =>
  */
 export const resolveJsdocTheme = (name, projectPath = process.cwd()) => {
   const packageDir = resolvePeerDir(name, { task: 'docs', installHint: themeInstallHint(name), projectPath })
-  return name === 'clean-jsdoc-theme' ? path.join(packageDir, 'dist') : packageDir
+  const distDir = path.join(packageDir, 'dist')
+  return fs.existsSync(path.join(distDir, 'publish.js')) ? distDir : packageDir
 }
 
 /**
@@ -82,7 +83,8 @@ export const resolveJsdocTheme = (name, projectPath = process.cwd()) => {
  * options generated here instead of hand-maintained per project. Configure this with 'docs.from', 'docs.to',
  * 'docs.index', 'docs.theme' and 'docs.title'.
  * @memberOf module:partials
- * @param {string} [srcPath=gulpConfig.get('docs.from')] - The directory (or glob) holding the JS source.
+ * @param {string|Array<string>} [srcPath=gulpConfig.get('docs.from')] - The directory (or directories and files) holding
+ * the JS source.
  * @param {string} [outPath=gulpConfig.get('docs.to')] - The directory the documentation is generated into (cleared first).
  * @param {function(string, Array<string>): Promise<Object>} [runJsdoc] - Runs the jsdoc CLI, tests can inject a stand-in.
  * @returns {Function} A gulp task, it accepts an optional callback and returns a promise.
@@ -100,12 +102,13 @@ export const jsdocDocsFor = (
       const theme = gulpConfig.get('docs.theme') || 'clean-jsdoc-theme'
       const themeDir = resolveJsdocTheme(theme)
       const indexFile = gulpConfig.get('docs.index')
+      const title = gulpConfig.get('docs.title')
       await removeDirectory(outPath)
       const config = {
         ...jsdocBase,
         source: {
           ...jsdocBase.source,
-          include: [path.resolve(srcPath)]
+          include: [].concat(srcPath).map(includePath => path.resolve(includePath))
         },
         opts: {
           destination: path.resolve(outPath),
@@ -114,6 +117,9 @@ export const jsdocDocsFor = (
           // quick-start example, which sets this explicitly, not assumed from jsdoc's own classic defaults.
           recurse: true,
           template: themeDir,
+          // clean-jsdoc-theme's own option for the name in its header. Given as a link: a plain-text title links to the
+          // site root ("/"), while every page is in one folder, so index.html is the home page wherever they are served
+          ...(title ? { theme_opts: { title: `<a href="index.html" class="sidebar-title sidebar-title-anchor">${escapeHtml(title)}</a>` } } : {}),
           ...(indexFile && fs.existsSync(indexFile) ? { readme: path.resolve(indexFile) } : {})
         }
       }
@@ -122,7 +128,13 @@ export const jsdocDocsFor = (
         const configPath = path.join(workDir, 'jsdoc.conf.json')
         fs.writeFileSync(configPath, JSON.stringify(config))
         const bin = resolveJsdocBin()
-        await runJsdoc(bin, ['-c', configPath])
+        // Pass on what jsdoc and the theme report (warnings such as a page which failed to render), which would
+        // otherwise be lost with the captured output
+        const { stdout = '', stderr = '' } = (await runJsdoc(bin, ['-c', configPath])) || {}
+        const report = `${stdout}${stderr}`.trim()
+        if (report) {
+          console.warn(report)
+        }
       } finally {
         await removeDirectory(workDir)
       }

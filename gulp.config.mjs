@@ -133,8 +133,8 @@ import { fileExists } from 'test-filesystem'
  * @typedef {Object<string, Setting>} module:gulpConfig~DocsConfig
  * @property {BooleanSetting} enabled - Toggle generating the documentation from the source. When it is on the
  * build does this instead of generating the readme from the jsdoc comments of the compiled files.
- * @property {StringSetting} from - The directory holding the source, each folder in it becomes a module (TypeDoc) or
- * is scanned recursively (jsdoc).
+ * @property {ArrayableSetting} from - The directory holding the source, each folder in it becomes a module (TypeDoc) or
+ * is scanned recursively (jsdoc). jsdoc also takes a list of directories and files.
  * @property {StringSetting} index - The markdown file used as the front page of the documentation.
  * @property {StringSetting} logLevel - How much TypeDoc reports: Verbose, Info, Warn, Error or None. Not used by jsdoc.
  * @property {FlagStringSetting} method - 'typedoc' or 'jsdoc'. False (the default) infers it from typescript.enabled -

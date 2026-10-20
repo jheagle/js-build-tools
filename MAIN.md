@@ -546,7 +546,7 @@ documentation straight from your source, with either engine:
   are not needed. `typedoc` is an optional peer dependency (like `typescript`), install it in your project with
   `npm install --save-dev typedoc` (this needs a `typescript` version it supports).
 * **jsdoc** (for a plain JavaScript project, where TypeDoc has no real types to read) - scans your source
-  recursively with jsdoc itself, rendered with a modern theme (`clean-jsdoc-theme` by default, used instead of
+  (`.js`, `.mjs` and `.cjs` files, leaving out tests and minified `.min.js` copies) recursively with jsdoc itself, rendered with a modern theme (`clean-jsdoc-theme` by default, used instead of
   jsdoc's own classic default template) instead of the manual `.jsdoc.conf.js` setup described further below.
   `jsdoc` and whichever theme you configure are optional peer dependencies, install them with
   `npm install --save-dev jsdoc clean-jsdoc-theme` (or your own chosen theme package).
@@ -558,7 +558,8 @@ Add the following to the exports in your `build-tools.config.json`:
   "docs": {
     // Generate the documentation from the source
     "enabled": true,
-    // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc)
+    // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc).
+    // jsdoc also takes a list of directories and files, for example ["functions", "gulpfile.base.mjs"]
     "from": "src",
     // The markdown file used as the front page of the documentation (a short overview of your project)
     "index": "MAIN.md",
@@ -569,6 +570,8 @@ Add the following to the exports in your `build-tools.config.json`:
     // Only meaningful when method is (or resolves to) 'jsdoc' - the theme package to render with. TypeDoc
     // always keeps its own default regardless of this setting.
     "theme": "clean-jsdoc-theme",
+    // The name of the documentation (TypeDoc's title, the theme's title for jsdoc), defaults to the package name
+    "title": "",
     // Where the HTML is generated (the directory is cleared first)
     "to": "docs"
   }
@@ -642,7 +645,6 @@ In your `package.json` file, add the following scripts:
     "build": "gulp build",
     "dev": "gulp",
     "docs": "gulp docs",
-    "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
     "publish:bundle": "gulp copyFiles",
     "readme": "gulp readme",
     "sass": "gulp sass",
@@ -657,6 +659,4 @@ In your `package.json` file, add the following scripts:
 ## Usage
 
 Run any of the above commands with `gulp` or `npm run`.
-
-# Available functions documentation
 

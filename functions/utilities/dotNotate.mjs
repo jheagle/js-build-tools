@@ -4,12 +4,14 @@ import { isObject } from './isObject.mjs'
  * Convert an array of keys into a regex, return a function to test if incoming keys match.
  * @param {Array.<string>} [retainObjects=[]] - An array of keys to retain as objects
  * @returns {Function} The dot-notated array
+ * @private
  */
 const handleRetainObjects = (retainObjects = []) => {
   if (!retainObjects.length) {
     /**
      * Bypass the test function if there are no retainObjects.
      * @returns {false}
+     * @private
      */
     return (currentKey, value, results) => false
   }
@@ -21,6 +23,7 @@ const handleRetainObjects = (retainObjects = []) => {
    * @param {*} value - The value of the key
    * @param {Object} results - The result object to add to
    * @returns {boolean}
+   * @private
    */
   return (currentKey, value, results) => {
     if (!currentKey.match(retainRegex)) {
@@ -38,6 +41,7 @@ const handleRetainObjects = (retainObjects = []) => {
  * @param {string} [prepend=''] - The path for the property being processed
  * @param {Object<string, *>} [results={}] - The final notated object to return
  * @returns {Object<string, *>} The dot-notated object
+ * @private
  */
 const performDotNotate = (arrayObject, didRetain, prepend = '', results = {}) => {
   for (let key in arrayObject) {
@@ -64,5 +68,6 @@ const performDotNotate = (arrayObject, didRetain, prepend = '', results = {}) =>
  * @param {Object} arrayObject - The array or object to dot-notate
  * @param {Array.<string>} [retainObjects=[]] - An array of keys to retain as objects
  * @returns {Object<string, *>} The dot-notated object
+ * @private
  */
 export const dotNotate = (arrayObject, retainObjects = []) => performDotNotate(arrayObject, handleRetainObjects(retainObjects))

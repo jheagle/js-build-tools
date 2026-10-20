@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'node:path'
 import * as setUp from '../test-helpers/setUp.mjs'
 import { jsdocDocsFor, resolveJsdocBin, resolveJsdocTheme } from './jsdocDocsFor.mjs'
+import jsdocBase from '../../jsdoc.base.js'
 
 setUp.setDefaults('test-jsdoc-docs-for')
 const gulpConfig = setUp.gulpConfig
@@ -57,6 +58,53 @@ describe('jsdocDocsFor', () => {
     expect(fs.existsSync(`${outPath}/index.html`)).toBe(true)
     expect(calls.config.opts.destination).toBe(path.resolve(outPath))
     expect(calls.config.source.include).toEqual([path.resolve(gulpConfig.get('srcPath'))])
+    // Headings of the front page get ids, so the theme's table of contents can follow them
+    expect(calls.config.markdown).toEqual({ idInHeadings: true })
+  })
+
+  test('passes on what jsdoc reports', async () => {
+    gulpConfig.set('docs.enabled', true)
+    const srcPath = gulpConfig.get('srcPath')
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const calls = {}
+    const reporting = (bin, args) => fakeRunJsdoc(calls)(bin, args).then(() => ({ stdout: '', stderr: 'WARNING: a page failed\n' }))
+    await jsdocDocsFor(srcPath, `${srcPath}/../docs`, reporting)()
+    expect(warn).toHaveBeenCalledWith('WARNING: a page failed')
+    warn.mockClear()
+    await jsdocDocsFor(srcPath, `${srcPath}/../docs`, fakeRunJsdoc(calls))()
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+  })
+
+  test('takes a list of directories and files to document', async () => {
+    gulpConfig.set('docs.enabled', true)
+    const srcPath = gulpConfig.get('srcPath')
+    const calls = {}
+    await jsdocDocsFor([srcPath, `${srcPath}/../gulp.config.mjs`], `${srcPath}/../docs`, fakeRunJsdoc(calls))()
+    expect(calls.config.source.include).toEqual([path.resolve(srcPath), path.resolve(`${srcPath}/../gulp.config.mjs`)])
+  })
+
+  test('documents .js, .mjs and .cjs files, but not tests or minified copies', () => {
+    const include = new RegExp(jsdocBase.source.includePattern)
+    const exclude = new RegExp(jsdocBase.source.excludePattern)
+    const documented = file => include.test(file) && !exclude.test(file)
+    expect(['a.js', 'a.mjs', 'a.cjs', 'dir/a.mjs'].filter(documented)).toEqual(['a.js', 'a.mjs', 'a.cjs', 'dir/a.mjs'])
+    expect(['a.test.mjs', 'a.min.js', 'a.min.mjs', 'dir/_private.mjs', 'a.ts'].filter(documented)).toEqual([])
+  })
+
+  test('passes docs.title to the theme as a link to the home page of the docs, and leaves it out when unset', async () => {
+    gulpConfig.set('docs.enabled', true)
+    const srcPath = gulpConfig.get('srcPath')
+    const calls = {}
+    gulpConfig.set('docs.title', 'Tom & Jerry <Tools>')
+    await jsdocDocsFor(srcPath, `${srcPath}/../docs`, fakeRunJsdoc(calls))()
+    expect(calls.config.opts.theme_opts).toEqual({
+      title: '<a href="index.html" class="sidebar-title sidebar-title-anchor">Tom &amp; Jerry &lt;Tools&gt;</a>'
+    })
+
+    gulpConfig.set('docs.title', '')
+    await jsdocDocsFor(srcPath, `${srcPath}/../docs`, fakeRunJsdoc(calls))()
+    expect(calls.config.opts.theme_opts).toBeUndefined()
   })
 
   test('uses the configured theme as the template directory', async () => {

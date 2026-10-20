@@ -17,7 +17,7 @@ export const loadPlaywright = (projectPath = process.cwd()) => requirePeer('play
  * @memberOf module:partials
  * @param {Function} [load=loadPlaywright] Which Playwright to launch - swappable in tests.
  * @param {string} [projectPath=process.cwd()] The folder of the project (which has the package.json) being built.
- * @returns {Promise<import('playwright').Browser>} The running browser - close it yourself (browser.close()) once done with it.
+ * @returns {Promise<Browser>} The running Playwright browser - close it yourself (browser.close()) once done with it.
  * @throws {Error} With install instructions when playwright is not installed.
  */
 export const launchBrowser = (load = loadPlaywright, projectPath = process.cwd()) => load(projectPath).chromium.launch()
