@@ -76,7 +76,7 @@
     "postcss": "^8.5.31",
     "regenerator-runtime": "^0.14.1",
     "sass": "^1.105.2",
-    "test-filesystem": "^2.0.1",
+    "test-filesystem": "^2.0.2",
     "through2": "^4.0.2",
     "vinyl-source-stream": "^2.0.0"
   },
