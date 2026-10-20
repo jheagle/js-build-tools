@@ -58,6 +58,8 @@ describe('jsdocDocsFor', () => {
     expect(fs.existsSync(`${outPath}/index.html`)).toBe(true)
     expect(calls.config.opts.destination).toBe(path.resolve(outPath))
     expect(calls.config.source.include).toEqual([path.resolve(gulpConfig.get('srcPath'))])
+    // Headings of the front page get ids, so the theme's table of contents can follow them
+    expect(calls.config.markdown).toEqual({ idInHeadings: true })
   })
 
   test('passes on what jsdoc reports', async () => {

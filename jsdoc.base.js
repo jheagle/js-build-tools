@@ -3,6 +3,9 @@ const gulpConfig = require('./gulp.config.js')
 
 module.exports = {
   plugins: ['plugins/markdown', path.join(__dirname, 'jsdoc.esmExports.js')],
+  // Give markdown headings ids (the README / docs.index front page), so they can be linked to and a theme's
+  // table of contents can follow them
+  markdown: { idInHeadings: true },
   source: {
     include: [gulpConfig.get('dist.to')],
     // .mjs / .cjs too, so ES module source can be documented as it is, not only its compiled CommonJS
