@@ -129,6 +129,28 @@ describe('writeDocEntries', () => {
     )
   })
 
+  test('makes a module of each nested folder, named by its path, holding only the files directly in it', () => {
+    const srcPath = gulpConfig.get('srcPath')
+    write(`${srcPath}/point/polar/to-polar.ts`, 'export default (x: number): number => x\n')
+    write(`${srcPath}/point/polar/index.ts`, "/**\n * Polar coordinates.\n */\nexport * from './to-polar'\n")
+    write(`${srcPath}/point/deep/index.ts`, "export * from './deeper/far'\n")
+    write(`${srcPath}/point/deep/deeper/far.ts`, 'export const far = 1\n')
+    const entryDir = `${srcPath}/../entries`
+    const entries = writeDocEntries(ts, srcPath, entryDir)
+    const absoluteEntries = path.resolve(entryDir)
+    expect(entries.map(entry => path.relative(absoluteEntries, entry).split(path.sep).join('/')).sort())
+      .toEqual(['line.ts', 'point.ts', 'point/deep/deeper.ts', 'point/polar.ts'])
+    const absoluteSrc = path.resolve(srcPath).split(path.sep).join('/')
+    expect(fs.readFileSync(`${entryDir}/point.ts`, 'utf8')).not.toMatch(/polar|deep/)
+    expect(fs.readFileSync(`${entryDir}/point/polar.ts`, 'utf8')).toBe(
+      `/**\n * Polar coordinates.\n * @module point/polar\n */\n\nexport { default as toPolar } from '${absoluteSrc}/point/polar/to-polar'\n`
+    )
+    // A folder with only an index file (point/deep) has no module, and one without a description is still named
+    expect(fs.readFileSync(`${entryDir}/point/deep/deeper.ts`, 'utf8')).toBe(
+      `/**\n * @module point/deep/deeper\n */\n\nexport * from '${absoluteSrc}/point/deep/deeper/far'\n`
+    )
+  })
+
   test('makes one entry called index when the source has no folders', () => {
     const flat = `${gulpConfig.get('srcPath')}/../flat`
     write(`${flat}/one.ts`, 'export default 1\n')
