@@ -128,7 +128,13 @@ export const jsdocDocsFor = (
         const configPath = path.join(workDir, 'jsdoc.conf.json')
         fs.writeFileSync(configPath, JSON.stringify(config))
         const bin = resolveJsdocBin()
-        await runJsdoc(bin, ['-c', configPath])
+        // Pass on what jsdoc and the theme report (warnings such as a page which failed to render), which would
+        // otherwise be lost with the captured output
+        const { stdout = '', stderr = '' } = (await runJsdoc(bin, ['-c', configPath])) || {}
+        const report = `${stdout}${stderr}`.trim()
+        if (report) {
+          console.warn(report)
+        }
       } finally {
         await removeDirectory(workDir)
       }

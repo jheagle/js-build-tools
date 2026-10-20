@@ -153,7 +153,16 @@ const jsdocDocsFor = (srcPath = gulpConfig.get('docs.from'), outPath = gulpConfi
         const configPath = _nodePath.default.join(workDir, 'jsdoc.conf.json');
         _nodeFs.default.writeFileSync(configPath, JSON.stringify(config));
         const bin = resolveJsdocBin();
-        await runJsdoc(bin, ['-c', configPath]);
+        // Pass on what jsdoc and the theme report (warnings such as a page which failed to render), which would
+        // otherwise be lost with the captured output
+        const {
+          stdout = '',
+          stderr = ''
+        } = (await runJsdoc(bin, ['-c', configPath])) || {};
+        const report = `${stdout}${stderr}`.trim();
+        if (report) {
+          console.warn(report);
+        }
       } finally {
         await (0, _removeDirectory.removeDirectory)(workDir);
       }

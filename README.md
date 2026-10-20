@@ -570,11 +570,8 @@ Add the following to the exports in your `build-tools.config.json`:
     // Only meaningful when method is (or resolves to) 'jsdoc' - the theme package to render with. TypeDoc
     // always keeps its own default regardless of this setting.
     "theme": "clean-jsdoc-theme",
-    // The name of the documentation (TypeDoc's title, the theme's site name for jsdoc), defaults to the package name
+    // The name of the documentation (TypeDoc's title, the theme's title for jsdoc), defaults to the package name
     "title": "",
-    // jsdoc only: the URL path the docs are served from, when that is not the site root (clean-jsdoc-theme's links
-    // are root-relative), for example "/projects/my-project/docs". TypeDoc's links are relative and need nothing.
-    "basePath": false,
     // Where the HTML is generated (the directory is cleared first)
     "to": "docs"
   }
@@ -820,7 +817,7 @@ Creates the minified file for every bundle (the primary bundle, plus any additio
 <a name="module_js-build-tools.bundle"></a>
 
 ### js-build-tools.bundle() ⇒ <code>stream.Stream</code>
-Starting at each bundle's own entry point (dist.main for the primary bundle, or its ownoverride from browser.bundles), bundle all the reachable files into a single file per bundle andstore them in the specified output directory. A project with no browser.bundles entries getsexactly the one bundle it always did; each additional entry produces its own separate bundle(for example, a render-only variant built from a different entry point than the full bundle).A bundle's name does double duty: it names the output file (name.js) and, via browserify's`standalone` option, is also the name its exports are exposed under - as a global when loadedwith a bare <script> tag, or as the module when required via CommonJS/AMD. Without this, abundle built from a real entry point (one that actually exports something) builds successfullybut exposes nothing a consumer can reach.Two escape hatches from browser.config.json keep an unwanted dependency (or a dependency's dependency) out of thebundle: 'ignore' replaces it with an empty object (safe when your code never actually calls into it - for examplea library's default option value you always override with your own) and 'exclude' leaves it out entirely (yourcode must not require it, or provide it another way, such as a separate script tag).
+Starting at each bundle's own entry point (dist.main for the primary bundle, or its ownoverride from browser.bundles), bundle all the reachable files into a single file per bundle andstore them in the specified output directory. A project with no browser.bundles entries getsexactly the one bundle it always did; each additional entry produces its own separate bundle(for example, a render-only variant built from a different entry point than the full bundle).A bundle's name does double duty: it names the output file (name.js) and, via browserify's`standalone` option, is also the name its exports are exposed under - as a global when loadedwith a bare `<script>` tag, or as the module when required via CommonJS/AMD. Without this, abundle built from a real entry point (one that actually exports something) builds successfullybut exposes nothing a consumer can reach.Two escape hatches from browser.config.json keep an unwanted dependency (or a dependency's dependency) out of thebundle: 'ignore' replaces it with an empty object (safe when your code never actually calls into it - for examplea library's default option value you always override with your own) and 'exclude' leaves it out entirely (yourcode must not require it, or provide it another way, such as a separate script tag).
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.build"></a>
@@ -1073,7 +1070,6 @@ TypeScript types) or jsdoc (a modern theme over jsdoc's own classic default) - s
 
 | Name | Type | Description |
 | --- | --- | --- |
-| basePath | <code>FlagStringSetting</code> | The URL path the documentation is served from, when it is not the root of the site (for example '/projects/my-project/docs'). jsdoc only: clean-jsdoc-theme's links are root-relative, so without it they point at the site root. TypeDoc's links are relative and need nothing. |
 | enabled | <code>BooleanSetting</code> | Toggle generating the documentation from the source. When it is on the build does this instead of generating the readme from the jsdoc comments of the compiled files. |
 | from | <code>ArrayableSetting</code> | The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc). jsdoc also takes a list of directories and files. |
 | index | <code>StringSetting</code> | The markdown file used as the front page of the documentation. |

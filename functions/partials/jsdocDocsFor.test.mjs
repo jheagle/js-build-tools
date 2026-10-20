@@ -60,6 +60,20 @@ describe('jsdocDocsFor', () => {
     expect(calls.config.source.include).toEqual([path.resolve(gulpConfig.get('srcPath'))])
   })
 
+  test('passes on what jsdoc reports', async () => {
+    gulpConfig.set('docs.enabled', true)
+    const srcPath = gulpConfig.get('srcPath')
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const calls = {}
+    const reporting = (bin, args) => fakeRunJsdoc(calls)(bin, args).then(() => ({ stdout: '', stderr: 'WARNING: a page failed\n' }))
+    await jsdocDocsFor(srcPath, `${srcPath}/../docs`, reporting)()
+    expect(warn).toHaveBeenCalledWith('WARNING: a page failed')
+    warn.mockClear()
+    await jsdocDocsFor(srcPath, `${srcPath}/../docs`, fakeRunJsdoc(calls))()
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+  })
+
   test('takes a list of directories and files to document', async () => {
     gulpConfig.set('docs.enabled', true)
     const srcPath = gulpConfig.get('srcPath')

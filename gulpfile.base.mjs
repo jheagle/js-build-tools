@@ -1,5 +1,5 @@
 /**
- * import these functions to your own project to customize your build pipeline.
+ * Import these functions to your own project to customize your build pipeline.
  * @author Joshua Heagle <joshuaheagle@gmail.com>
  * @module js-build-tools
  */
