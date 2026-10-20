@@ -4,6 +4,7 @@
  * @param {string} str
  * @param {string} search
  * @returns {string}
+ * @private
  */
 export const strBefore = (str, search) => {
   const index = str.indexOf(search)

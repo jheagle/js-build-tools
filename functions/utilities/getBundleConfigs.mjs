@@ -8,6 +8,7 @@ import * as gulpConfig from '../../gulp.config.mjs'
  * specify what's actually different about it.
  * @memberOf module:utilities
  * @returns {Array<{name: string, main: string, ignore: Array, exclude: Array}>}
+ * @private
  */
 export const getBundleConfigs = () => {
   const primary = {

@@ -18,6 +18,7 @@ function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; 
  * specify what's actually different about it.
  * @memberOf module:utilities
  * @returns {Array<{name: string, main: string, ignore: Array, exclude: Array}>}
+ * @private
  */
 const getBundleConfigs = () => {
   const primary = {

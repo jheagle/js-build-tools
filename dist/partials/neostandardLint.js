@@ -21,6 +21,7 @@ const importNeostandard = () => (0, _loadPeer.importModule)('neostandard');
  * migrating from `standard` keeps its globals (jest, browser, ...) without touching package.json.
  * @param {string} cwd
  * @returns {Array<string>}
+ * @private
  */
 const readEnv = cwd => {
   try {
@@ -42,7 +43,8 @@ const readEnv = cwd => {
  * @param {boolean} options.ts
  * @param {boolean} options.fix
  * @param {Object<string, *>} [options.rules={}]
- * @returns {Promise<import('eslint').ESLint>}
+ * @returns {Promise<ESLint>} eslint's ESLint instance
+ * @private
  */
 const buildEslint = async ({
   cwd,
@@ -75,7 +77,7 @@ const buildEslint = async ({
 /**
  * Print a file's lint messages, if it has any.
  * @memberOf module:partials
- * @param {import('vinyl')} file
+ * @param {Vinyl} file
  * @param {{messages: Array<{line: number, column: number, message: string}>, errorCount: number, warningCount: number}} result
  * @returns {undefined}
  */
@@ -108,7 +110,7 @@ const printFileReport = (file, result) => {
  * @param {function(Object): Promise<{lintText: Function}>} [loadEslint] - Resolves an ESLint-shaped linter. Real
  * callers should never need to pass this - it exists so tests can supply a stand-in, since this project's
  * CommonJS-transform-based Jest setup cannot execute a real dynamic import() of neostandard (ESM-only).
- * @returns {import('stream').Transform}
+ * @returns {stream.Transform}
  */
 const neostandardLint = ({
   fix = true,

@@ -12,6 +12,7 @@
  * @memberOf module:utilities
  * @param {string} source - The raw ESM source text (never executed, just rewritten as text).
  * @returns {string} The rewritten text, safe to write out with a `.js` extension for jsdoc-to-markdown to read.
+ * @private
  */
 export const esmNamedExportsToCjs = (source) => {
   const exportedNames = []

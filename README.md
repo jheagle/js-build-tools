@@ -546,7 +546,7 @@ documentation straight from your source, with either engine:
   are not needed. `typedoc` is an optional peer dependency (like `typescript`), install it in your project with
   `npm install --save-dev typedoc` (this needs a `typescript` version it supports).
 * **jsdoc** (for a plain JavaScript project, where TypeDoc has no real types to read) - scans your source
-  recursively with jsdoc itself, rendered with a modern theme (`clean-jsdoc-theme` by default, used instead of
+  (`.js`, `.mjs` and `.cjs` files, leaving out tests and minified `.min.js` copies) recursively with jsdoc itself, rendered with a modern theme (`clean-jsdoc-theme` by default, used instead of
   jsdoc's own classic default template) instead of the manual `.jsdoc.conf.js` setup described further below.
   `jsdoc` and whichever theme you configure are optional peer dependencies, install them with
   `npm install --save-dev jsdoc clean-jsdoc-theme` (or your own chosen theme package).
@@ -558,7 +558,8 @@ Add the following to the exports in your `build-tools.config.json`:
   "docs": {
     // Generate the documentation from the source
     "enabled": true,
-    // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc)
+    // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc).
+    // jsdoc also takes a list of directories and files, for example ["functions", "gulpfile.base.mjs"]
     "from": "src",
     // The markdown file used as the front page of the documentation (a short overview of your project)
     "index": "MAIN.md",
@@ -569,6 +570,11 @@ Add the following to the exports in your `build-tools.config.json`:
     // Only meaningful when method is (or resolves to) 'jsdoc' - the theme package to render with. TypeDoc
     // always keeps its own default regardless of this setting.
     "theme": "clean-jsdoc-theme",
+    // The name of the documentation (TypeDoc's title, the theme's site name for jsdoc), defaults to the package name
+    "title": "",
+    // jsdoc only: the URL path the docs are served from, when that is not the site root (clean-jsdoc-theme's links
+    // are root-relative), for example "/projects/my-project/docs". TypeDoc's links are relative and need nothing.
+    "basePath": false,
     // Where the HTML is generated (the directory is cleared first)
     "to": "docs"
   }
@@ -642,7 +648,6 @@ In your `package.json` file, add the following scripts:
     "build": "gulp build",
     "dev": "gulp",
     "docs": "gulp docs",
-    "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
     "publish:bundle": "gulp copyFiles",
     "readme": "gulp readme",
     "sass": "gulp sass",
@@ -678,6 +683,146 @@ Export these functions to your own project to customize your build pipeline.
 
 **Version**: 3.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
+
+* [js-build-tools](#module_js-build-tools)
+    * [.typeScript](#module_js-build-tools.typeScript) ⇒ <code>function</code>
+    * [.typeDocs](#module_js-build-tools.typeDocs) ⇒ <code>function</code>
+    * [.jsdocDocs](#module_js-build-tools.jsdocDocs) ⇒ <code>function</code>
+    * [.compileReadme](#module_js-build-tools.compileReadme) ⇒ <code>stream.Stream</code>
+    * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
+    * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
+    * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.sourceLint()](#module_js-build-tools.sourceLint) ⇒ <code>\*</code>
+    * [.images()](#module_js-build-tools.images) ⇒ <code>stream.Stream</code>
+    * [.docs([done])](#module_js-build-tools.docs) ⇒ <code>\*</code>
+    * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
+    * [.dist()](#module_js-build-tools.dist) ⇒ <code>\*</code>
+    * [.defaultCmd([done])](#module_js-build-tools.defaultCmd) ⇒ <code>stream.Stream</code>
+    * [.copyFonts()](#module_js-build-tools.copyFonts) ⇒ <code>stream.Stream</code>
+    * [.copyFiles()](#module_js-build-tools.copyFiles) ⇒ <code>Promise.&lt;void&gt;</code>
+    * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
+    * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>stream.Stream</code>
+    * [.build()](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
+
+<a name="module_js-build-tools.typeScript"></a>
+
+### js-build-tools.typeScript ⇒ <code>function</code>
+Simplified typescript task using tsFor.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.typeDocs"></a>
+
+### js-build-tools.typeDocs ⇒ <code>function</code>
+Generate the HTML documentation of a TypeScript project from its source, with the modules mirroring the sourcefolders. Turn it on with docs.enabled, see [typeDocsFor](#module_partials.typeDocsFor).
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.jsdocDocs"></a>
+
+### js-build-tools.jsdocDocs ⇒ <code>function</code>
+Generate the HTML documentation of a plain-JavaScript project from its source, with a modern jsdoc themeinstead of jsdoc's own classic default. Turn it on with docs.enabled and docs.method: 'jsdoc' (the defaultwhen typescript.enabled is off), see [module:partials.jsdocDocsFor](module:partials.jsdocDocsFor).
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.compileReadme"></a>
+
+### js-build-tools.compileReadme ⇒ <code>stream.Stream</code>
+Generate the README.md file based off of the template, then append the generated documentation.
+
+**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.watchTest"></a>
+
+### js-build-tools.watchTest() ⇒ <code>\*</code>
+Watch for changes and run the tests.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.watchFull"></a>
+
+### js-build-tools.watchFull() ⇒ <code>FSWatcher</code>
+Watch for changes and run the distribution for the changed files, then bundle and test the changed files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.testQuick"></a>
+
+### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run the Jest tests for files which have been modified (based on git status).Configure where tests are located by using 'testPath'.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.testFull"></a>
+
+### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
+Run all tests with jest.Configure where tests are located by using 'testPath'.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.sourceLint"></a>
+
+### js-build-tools.sourceLint() ⇒ <code>\*</code>
+Applies neostandard linting (js-build-tools' chosen style) to the real, hand-written source - not the compileddist/browser output, which is generated and so was never going to pass a hand-authored-code style check (everycompiler/bundler emits its own boilerplate - import aliasing, interop headers - that only looks like a styleviolation). Includes test files: there is no reason to hold tests to a lower style bar than the rest of thesource. When typescript.enabled, the real TypeScript source is linted too, with type-aware rules.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.images"></a>
+
+### js-build-tools.images() ⇒ <code>stream.Stream</code>
+Move and optimize the images into the browser folder using configured settings.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.docs"></a>
+
+### js-build-tools.docs([done]) ⇒ <code>\*</code>
+Generate the HTML documentation with whichever engine docs.method (or its typescript.enabled-based default)resolves to - see [resolveDocsMethod](#module_partials.resolveDocsMethod). The standalone counterpart to build's owninternal branching, for running `gulp docs` directly instead of as part of a full build.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
+<a name="module_js-build-tools.distMinify"></a>
+
+### js-build-tools.distMinify() ⇒ <code>\*</code>
+Creates minified versions of the dist files.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.dist"></a>
+
+### js-build-tools.dist() ⇒ <code>\*</code>
+Simplified distribution tasks which will use arguments from distFor.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.defaultCmd"></a>
+
+### js-build-tools.defaultCmd([done]) ⇒ <code>stream.Stream</code>
+Recommended as the default task, runs the simple dist and bundle tasks.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
+<a name="module_js-build-tools.copyFonts"></a>
+
+### js-build-tools.copyFonts() ⇒ <code>stream.Stream</code>
+Move the font files into the browser directory.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.copyFiles"></a>
+
+### js-build-tools.copyFiles() ⇒ <code>Promise.&lt;void&gt;</code>
+Copy files from one place to another - any number of { from, to, base? } entries, configured via copyFiles.A project with no copyFiles entries gets a task that does nothing. Meant to be run explicitly (its own script,e.g. `gulp copyFiles`), not folded into the default build - a bundle (or any other file this copies) is oftenthe live, publicly-reachable version of something, so publishing it elsewhere should be a deliberate step, nota side effect of every routine local build.Reuses copyFor (already shared with copyFonts) rather than a fresh src()/dest() pair - that keeps its existingencoding: false fix (Gulp 5's default utf8 handling corrupts binary files such as fonts or a minified bundle)instead of silently losing it in a parallel implementation.Each entry runs as its own independent copyFor(), awaited via Promise.all rather than merged into one combinedstream (mergeStream, the pattern bundle.mjs uses) - that pattern assumes every merged stream ends up at thesame shared destination; here, each entry can have a genuinely different one, and merging streams that eachalready terminate at their own separate dest() hit a real "write after end" error in practice.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundleMinify"></a>
+
+### js-build-tools.bundleMinify() ⇒ <code>\*</code>
+Creates the minified file for every bundle (the primary bundle, plus any additional ones frombrowser.bundles). The minify step itself never varies per bundle, so this is one sharedsrc()/dest() pipeline (inside minifyFor) fed every bundle's filename at once, rather than onepipeline per bundle - gulp's src() accepts an array of paths natively.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.bundle"></a>
+
+### js-build-tools.bundle() ⇒ <code>stream.Stream</code>
+Starting at each bundle's own entry point (dist.main for the primary bundle, or its ownoverride from browser.bundles), bundle all the reachable files into a single file per bundle andstore them in the specified output directory. A project with no browser.bundles entries getsexactly the one bundle it always did; each additional entry produces its own separate bundle(for example, a render-only variant built from a different entry point than the full bundle).A bundle's name does double duty: it names the output file (name.js) and, via browserify's`standalone` option, is also the name its exports are exposed under - as a global when loadedwith a bare <script> tag, or as the module when required via CommonJS/AMD. Without this, abundle built from a real entry point (one that actually exports something) builds successfullybut exposes nothing a consumer can reach.Two escape hatches from browser.config.json keep an unwanted dependency (or a dependency's dependency) out of thebundle: 'ignore' replaces it with an empty object (safe when your code never actually calls into it - for examplea library's default option value you always override with your own) and 'exclude' leaves it out entirely (yourcode must not require it, or provide it another way, such as a separate script tag).
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.build"></a>
 
 ### js-build-tools.build() ⇒ <code>stream.Stream</code>
@@ -833,7 +978,8 @@ Configurations for building the browser files.
 <a name="module_gulpConfig..AdditionalBundleConfig"></a>
 
 ### gulpConfig~AdditionalBundleConfig : <code>Object.&lt;string, Setting&gt;</code>
-One additional bundle - everything but `name` falls back to the primary bundle's own value when omitted, so anadditional bundle only has to specify what's actually different about it.
+One additional bundle - everything but `name` falls back to the primary bundle's own value when omitted, so an
+additional bundle only has to specify what's actually different about it.
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
 **Properties**
@@ -890,7 +1036,7 @@ Configurations to minify and copy the images.
 <a name="module_gulpConfig..LintConfig"></a>
 
 ### gulpConfig~LintConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations for linting (see [module:partials.neostandardLint](module:partials.neostandardLint)).
+Configurations for linting (see [neostandardLint](#module_partials.neostandardLint)).
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
 **Properties**
@@ -919,15 +1065,17 @@ Configurations to compile and generate the Readme file.
 <a name="module_gulpConfig..DocsConfig"></a>
 
 ### gulpConfig~DocsConfig : <code>Object.&lt;string, Setting&gt;</code>
-Configurations for generating the HTML documentation of a project's own source, with either TypeDoc (realTypeScript types) or jsdoc (a modern theme over jsdoc's own classic default) - see docs.method.
+Configurations for generating the HTML documentation of a project's own source, with either TypeDoc (real
+TypeScript types) or jsdoc (a modern theme over jsdoc's own classic default) - see docs.method.
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
+| basePath | <code>FlagStringSetting</code> | The URL path the documentation is served from, when it is not the root of the site (for example '/projects/my-project/docs'). jsdoc only: clean-jsdoc-theme's links are root-relative, so without it they point at the site root. TypeDoc's links are relative and need nothing. |
 | enabled | <code>BooleanSetting</code> | Toggle generating the documentation from the source. When it is on the build does this instead of generating the readme from the jsdoc comments of the compiled files. |
-| from | <code>StringSetting</code> | The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc). |
+| from | <code>ArrayableSetting</code> | The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc). jsdoc also takes a list of directories and files. |
 | index | <code>StringSetting</code> | The markdown file used as the front page of the documentation. |
 | logLevel | <code>StringSetting</code> | How much TypeDoc reports: Verbose, Info, Warn, Error or None. Not used by jsdoc. |
 | method | <code>FlagStringSetting</code> | 'typedoc' or 'jsdoc'. False (the default) infers it from typescript.enabled - 'typedoc' when on, 'jsdoc' when off - so an existing TypeScript project's config needs no change to keep working exactly as it already does; set this explicitly to override that inference either way. |

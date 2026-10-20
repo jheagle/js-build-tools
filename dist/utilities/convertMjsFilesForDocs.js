@@ -22,6 +22,7 @@ function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e
  * @param {Array<string>} mjsFilePaths - Real `.mjs` files to convert. An empty array is a safe, cheap no-op.
  * @returns {{filePaths: Array<string>, cleanUp: function(): void}} The temp `.js` file paths to pass to
  * jsdoc-to-markdown instead of the real `.mjs` ones, and a function to remove the temp directory afterward.
+ * @private
  */
 const convertMjsFilesForDocs = (mjsFilePaths = []) => {
   if (mjsFilePaths.length === 0) {

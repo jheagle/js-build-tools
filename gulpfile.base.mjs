@@ -1,8 +1,6 @@
 /**
  * import these functions to your own project to customize your build pipeline.
- * @file
  * @author Joshua Heagle <joshuaheagle@gmail.com>
- * @version 3.0.0
  * @module js-build-tools
  */
 export { build } from './functions/build.mjs'

@@ -14,6 +14,7 @@ var _strBefore = require("./strBefore.js");
  * @param {string} dotNotation - The path for the property
  * @param {*} value - The default value to return if the property is not found
  * @returns {Object} The modified object
+ * @private
  */
 const dotSet = (arrayObject, dotNotation, value = null) => {
   let key = (0, _strBefore.strBefore)(dotNotation, '.');

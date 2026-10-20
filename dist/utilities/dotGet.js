@@ -14,6 +14,7 @@ var _strBefore = require("./strBefore.js");
  * @param {string} [dotNotation=''] - The path to the property
  * @param {string|null} [defaultValue=null] - The default value to return if the property is not found
  * @returns {*} The value of the property
+ * @private
  */
 const dotGet = (arrayObject = {}, dotNotation = '', defaultValue = null) => {
   if (!dotNotation) {

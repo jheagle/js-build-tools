@@ -14,7 +14,7 @@ import { getBundleConfigs } from './utilities/getBundleConfigs.mjs'
  *
  * A bundle's name does double duty: it names the output file (name.js) and, via browserify's
  * `standalone` option, is also the name its exports are exposed under - as a global when loaded
- * with a bare <script> tag, or as the module when required via CommonJS/AMD. Without this, a
+ * with a bare `<script>` tag, or as the module when required via CommonJS/AMD. Without this, a
  * bundle built from a real entry point (one that actually exports something) builds successfully
  * but exposes nothing a consumer can reach.
  *

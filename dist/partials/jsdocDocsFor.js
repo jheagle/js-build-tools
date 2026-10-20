@@ -21,12 +21,13 @@ var _jsdocBase = _interopRequireDefault(require("../../jsdoc.base.js"));
 var cache;
 function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var r, c, a = Object.defineProperty, n = { __proto__: null, default: e }; if (Object(e) !== e) return n; if (cache || "function" != typeof WeakMap || (cache = new WeakMap()), cache) { if (cache.has(e)) return cache.get(e); cache.set(e, n); } for (c in e) "default" !== c && {}.hasOwnProperty.call(e, c) && ((r = a && Object.getOwnPropertyDescriptor(e, c)) && (r.get || r.set) ? a(n, c, r) : n[c] = e[c]); return n; }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-// jsdoc.base.js is CommonJS (it's also required directly by consuming projects' own .jsdoc.conf.js, and by this
-// project's own legacy htmldocs script) - Node's ESM loader imports a CJS module's module.exports as the default
-// export directly, no createRequire/import.meta needed (import.meta.url tripped up this project's own Babel CJS
-// transform, which Jest relies on to run .mjs test files - confirmed by removing it and nothing else changing).
+// jsdoc.base.js is CommonJS (it's also required directly by consuming projects' own .jsdoc.conf.js) - Node's ESM
+// loader imports a CJS module's module.exports as the default export directly, no createRequire/import.meta needed
+// (import.meta.url tripped up this project's own Babel CJS transform, which Jest relies on to run .mjs test files -
+// confirmed by removing it and nothing else changing).
 
 const execFileAsync = (0, _nodeUtil.promisify)(_nodeChild_process.execFile);
+const escapeHtml = text => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const jsdocInstallHint = 'Install it in your project with: npm install --save-dev jsdoc';
 const themeInstallHint = name => `Install it in your project with: npm install --save-dev ${name}`;
 
@@ -78,11 +79,9 @@ const resolveJsdocBin = (projectPath = process.cwd()) => _nodePath.default.join(
 }), 'jsdoc.js');
 
 /**
- * Resolve a jsdoc theme package's own template directory, for jsdoc's own opts.template config key. Not
- * necessarily the package's own root - clean-jsdoc-theme's own docs say to point opts.template at its `dist`
- * subdirectory specifically, confirmed by reading its real README rather than assuming every theme follows the
- * classic jsdoc template layout (a bare package root with its own tmpl/static folders) - clean-jsdoc-theme does
- * not (it is a modern, self-contained, server-rendered theme with no such folders at its package root at all).
+ * Resolve a jsdoc theme package's own template directory, for jsdoc's own opts.template config key: the folder
+ * holding its publish.js. That is the package root for a classic jsdoc template (clean-jsdoc-theme 4.x included),
+ * but `dist` for a bundled one (clean-jsdoc-theme 5.x).
  * @memberOf module:partials
  * @param {string} name
  * @param {string} [projectPath=process.cwd()]
@@ -95,7 +94,8 @@ const resolveJsdocTheme = (name, projectPath = process.cwd()) => {
     installHint: themeInstallHint(name),
     projectPath
   });
-  return name === 'clean-jsdoc-theme' ? _nodePath.default.join(packageDir, 'dist') : packageDir;
+  const distDir = _nodePath.default.join(packageDir, 'dist');
+  return _nodeFs.default.existsSync(_nodePath.default.join(distDir, 'publish.js')) ? distDir : packageDir;
 };
 
 /**
@@ -105,7 +105,8 @@ const resolveJsdocTheme = (name, projectPath = process.cwd()) => {
  * options generated here instead of hand-maintained per project. Configure this with 'docs.from', 'docs.to',
  * 'docs.index', 'docs.theme' and 'docs.title'.
  * @memberOf module:partials
- * @param {string} [srcPath=gulpConfig.get('docs.from')] - The directory (or glob) holding the JS source.
+ * @param {string|Array<string>} [srcPath=gulpConfig.get('docs.from')] - The directory (or directories and files) holding
+ * the JS source.
  * @param {string} [outPath=gulpConfig.get('docs.to')] - The directory the documentation is generated into (cleared first).
  * @param {function(string, Array<string>): Promise<Object>} [runJsdoc] - Runs the jsdoc CLI, tests can inject a stand-in.
  * @returns {Function} A gulp task, it accepts an optional callback and returns a promise.
@@ -120,12 +121,13 @@ const jsdocDocsFor = (srcPath = gulpConfig.get('docs.from'), outPath = gulpConfi
       const theme = gulpConfig.get('docs.theme') || 'clean-jsdoc-theme';
       const themeDir = resolveJsdocTheme(theme);
       const indexFile = gulpConfig.get('docs.index');
+      const title = gulpConfig.get('docs.title');
       await (0, _removeDirectory.removeDirectory)(outPath);
       const config = {
         ..._jsdocBase.default,
         source: {
           ..._jsdocBase.default.source,
-          include: [_nodePath.default.resolve(srcPath)]
+          include: [].concat(srcPath).map(includePath => _nodePath.default.resolve(includePath))
         },
         opts: {
           destination: _nodePath.default.resolve(outPath),
@@ -134,6 +136,13 @@ const jsdocDocsFor = (srcPath = gulpConfig.get('docs.from'), outPath = gulpConfi
           // quick-start example, which sets this explicitly, not assumed from jsdoc's own classic defaults.
           recurse: true,
           template: themeDir,
+          // clean-jsdoc-theme's own option for the name in its header. Given as a link: a plain-text title links to the
+          // site root ("/"), while every page is in one folder, so index.html is the home page wherever they are served
+          ...(title ? {
+            theme_opts: {
+              title: `<a href="index.html" class="sidebar-title sidebar-title-anchor">${escapeHtml(title)}</a>`
+            }
+          } : {}),
           ...(indexFile && _nodeFs.default.existsSync(indexFile) ? {
             readme: _nodePath.default.resolve(indexFile)
           } : {})

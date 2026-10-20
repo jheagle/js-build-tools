@@ -20,7 +20,7 @@
   "scripts": {
     "build": "gulp build",
     "dev": "gulp",
-    "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
+    "docs": "gulp docs",
     "readme": "gulp readme",
     "release": "release-it",
     "release:dry-run": "release-it --dry-run",
@@ -116,11 +116,12 @@
     "gulpfile.base.mjs",
     "gulp.config.js",
     "gulp.config.mjs",
-    "jsdoc.base.js"
+    "jsdoc.base.js",
+    "jsdoc.esmExports.js"
   ],
   "funding": "https://www.paypal.com/donate/?business=LRYR6SZRWKXVY&no_recurring=0&item_name=Let%27s+build+together+today+to+simplify+our+jobs+tomorrow.&currency_code=CAD",
   "devDependencies": {
-    "clean-jsdoc-theme": "^5.2.0",
+    "clean-jsdoc-theme": "^4.3.3",
     "gulp-imagemin": "github:jheagle/gulp-imagemin#common-js-compatibility",
     "jsdoc": "^4.0.5",
     "playwright": "~1.62.1",
