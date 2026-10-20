@@ -12,3 +12,7 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      # Playwright 1.63+ refuses to install browsers on Ubuntu 20.04 (the local WSL distro); 1.62.1 is the newest
+      # that works there. Remove this once WSL is upgraded.
+      - dependency-name: "playwright"
+        versions: [">=1.63.0"]
