@@ -117,9 +117,17 @@ export const jsdocDocsFor = (
           // quick-start example, which sets this explicitly, not assumed from jsdoc's own classic defaults.
           recurse: true,
           template: themeDir,
-          // clean-jsdoc-theme's own option for the name in its header. Given as a link: a plain-text title links to the
-          // site root ("/"), while every page is in one folder, so index.html is the home page wherever they are served
-          ...(title ? { theme_opts: { title: `<a href="index.html" class="sidebar-title sidebar-title-anchor">${escapeHtml(title)}</a>` } } : {}),
+          // clean-jsdoc-theme's own options for the name in its header and the home page's <title> (otherwise "Home").
+          // The header is given as a link: a plain-text title links to the site root ("/"), while every page is in one
+          // folder, so index.html is the home page wherever they are served. Both are printed unescaped by the theme.
+          ...(title
+            ? {
+                theme_opts: {
+                  title: `<a href="index.html" class="sidebar-title sidebar-title-anchor">${escapeHtml(title)}</a>`,
+                  homepageTitle: escapeHtml(title)
+                }
+              }
+            : {}),
           ...(indexFile && fs.existsSync(indexFile) ? { readme: path.resolve(indexFile) } : {})
         }
       }

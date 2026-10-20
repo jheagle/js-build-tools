@@ -92,14 +92,15 @@ describe('jsdocDocsFor', () => {
     expect(['a.test.mjs', 'a.min.js', 'a.min.mjs', 'dir/_private.mjs', 'a.ts'].filter(documented)).toEqual([])
   })
 
-  test('passes docs.title to the theme as a link to the home page of the docs, and leaves it out when unset', async () => {
+  test('passes docs.title to the theme as a link to the home page of the docs and as its page title, and leaves it out when unset', async () => {
     gulpConfig.set('docs.enabled', true)
     const srcPath = gulpConfig.get('srcPath')
     const calls = {}
     gulpConfig.set('docs.title', 'Tom & Jerry <Tools>')
     await jsdocDocsFor(srcPath, `${srcPath}/../docs`, fakeRunJsdoc(calls))()
     expect(calls.config.opts.theme_opts).toEqual({
-      title: '<a href="index.html" class="sidebar-title sidebar-title-anchor">Tom &amp; Jerry &lt;Tools&gt;</a>'
+      title: '<a href="index.html" class="sidebar-title sidebar-title-anchor">Tom &amp; Jerry &lt;Tools&gt;</a>',
+      homepageTitle: 'Tom &amp; Jerry &lt;Tools&gt;'
     })
 
     gulpConfig.set('docs.title', '')
@@ -139,11 +140,13 @@ describe('jsdocDocsFor', () => {
 describe('jsdocDocsFor, end to end with the real jsdoc CLI and clean-jsdoc-theme', () => {
   test('produces a real browsable HTML page from real JSDoc comments', async () => {
     gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('docs.title', 'Tom & Jerry')
     const outPath = `${gulpConfig.get('srcPath')}/../docs`
     await jsdocDocsFor(gulpConfig.get('srcPath'), outPath)()
     // clean-jsdoc-theme nests its real output under its own route folders (global/, source/...), not flat at
     // outPath's own root - confirmed by actually running it, not assumed from the classic jsdoc template shape.
     const files = fs.readdirSync(outPath, { recursive: true })
     expect(files.some(file => file.endsWith('.html'))).toBe(true)
+    expect(fs.readFileSync(`${outPath}/index.html`, 'utf8')).toMatch(/<title>\s*Tom &amp; Jerry\s*<\/title>/)
   }, 30000)
 })
