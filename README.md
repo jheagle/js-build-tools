@@ -660,8 +660,6 @@ In your `package.json` file, add the following scripts:
 
 Run any of the above commands with `gulp` or `npm run`.
 
-# Available functions documentation
-
 ## Modules
 
 <dl>
