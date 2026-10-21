@@ -132,5 +132,14 @@
   },
   "engines": {
     "node": ">=22.12.0"
+  },
+  "allowScripts": {
+    "gifsicle@5.3.0": true,
+    "mozjpeg@8.0.0": true,
+    "optipng-bin@7.0.1": true,
+    "core-js": false,
+    "core-js-pure": false,
+    "@parcel/watcher": false,
+    "unrs-resolver": false
   }
 }
