@@ -1,8 +1,10 @@
+import { execFileSync } from 'child_process'
 import fs from 'fs'
 import * as setUp from '../test-helpers/setUp.mjs'
 import os from 'os'
+import path from 'path'
 import zlib from 'zlib'
-import { imagesFor, loadImagemin } from './imagesFor.mjs'
+import { imageminPlugins, imagesFor, loadImagemin } from './imagesFor.mjs'
 import { isolateGulpCache } from '../test-helpers/isolateGulpCache.mjs'
 
 setUp.setDefaults('test-images-for')
@@ -158,6 +160,25 @@ const makePng = (size = 32) => {
   ])
 }
 
+// A JPEG at quality 100, encoded from a generated image by the cjpeg binary the mozjpeg dependency installs
+const makeJpeg = (size = 64) => {
+  const pixels = Buffer.alloc(size * size * 3)
+  for (let i = 0; i < pixels.length; i++) {
+    pixels[i] = (i * 37 + Math.floor(i / (size * 3)) * 91) % 256
+  }
+  const ppm = Buffer.concat([Buffer.from(`P6\n${size} ${size}\n255\n`), pixels])
+  // mozjpeg's exports field hides its files, and Jest runs from the project root
+  const cjpeg = path.resolve('node_modules', 'mozjpeg', 'vendor', 'cjpeg')
+  return execFileSync(cjpeg, ['-quality', '100'], { input: ppm })
+}
+
+// Run imagesFor over one file and resolve with the written output
+const optimize = (file, to) => new Promise((resolve, reject) => {
+  imagesFor(file, to)
+    .on('finish', () => resolve(fs.readFileSync(`${to}/${path.basename(file)}`)))
+    .on('error', reject)
+})
+
 // The cache outlives a run, so clear it or a stale result from an older imagemin can pass
 beforeEach(() => clearImageCache().then(setUp.beforeEach))
 
@@ -207,6 +228,43 @@ describe('imagesFor', () => {
         console.error('Encountered error', error)
         done()
       })
+  })
+})
+
+describe('images.jpegQuality', () => {
+  test('compresses JPEGs to the configured quality, never reusing another quality\'s cached result', async () => {
+    expect.assertions(4)
+    const srcPath = gulpConfig.get('srcPath')
+    const jpegFile = `${srcPath}/photo.jpg`
+    fs.writeFileSync(jpegFile, makeJpeg())
+    const browserPath = gulpConfig.get('browser.to')
+    try {
+      const atDefault = await optimize(jpegFile, `${browserPath}/default`)
+      gulpConfig.set('images.jpegQuality', 95)
+      const at95 = await optimize(jpegFile, `${browserPath}/q95`)
+      // Both still JPEGs (start-of-image marker)
+      expect(atDefault.subarray(0, 2).equals(Buffer.from([0xff, 0xd8]))).toBeTruthy()
+      expect(at95.subarray(0, 2).equals(Buffer.from([0xff, 0xd8]))).toBeTruthy()
+      // Same input, so a shared cache entry would make these identical: 95 keeps more detail than mozjpeg's 75
+      expect(at95.equals(atDefault)).toBe(false)
+      expect(at95.length).toBeGreaterThan(atDefault.length)
+    } finally {
+      gulpConfig.set('images.jpegQuality', false)
+    }
+  }, 30000)
+})
+
+describe('imageminPlugins', () => {
+  test('builds imagemin\'s default plugins in order, passing the quality to mozjpeg only', async () => {
+    expect.assertions(2)
+    const calls = []
+    const factory = name => Promise.resolve((...args) => {
+      calls.push([name, ...args])
+      return name
+    })
+    const plugins = { gifsicle: factory('gifsicle'), mozjpeg: factory('mozjpeg'), optipng: factory('optipng'), svgo: factory('svgo') }
+    expect(await Promise.all(imageminPlugins(85, plugins))).toEqual(['gifsicle', 'mozjpeg', 'optipng', 'svgo'])
+    expect(calls).toEqual([['gifsicle'], ['mozjpeg', { quality: 85 }], ['optipng'], ['svgo']])
   })
 })
 
