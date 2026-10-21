@@ -592,8 +592,8 @@ using `<script type="module">`, which no DOM-simulation library executes at all)
 `playwright` is an optional peer dependency, install it in your project with `npm install --save-dev playwright`,
 then fetch a real browser binary once per machine (not per project) with `npx playwright install chromium` - if
 that fails with "Playwright does not support chromium on <your distro>", your OS is too old for the current
-release; either upgrade it or pin an older `playwright` version known to still support it (confirmed: `1.48.0`
-still installs and runs real headless Chromium on Ubuntu 20.04, which the current release has dropped).
+release; either upgrade it or pin an older `playwright` version known to still support it (confirmed: `1.62.1`
+is the newest release that still installs and runs real headless Chromium on Ubuntu 20.04).
 
 ```js
 const { launchBrowser, serveStatic } = require('js-build-tools').partials
