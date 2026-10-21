@@ -90,6 +90,8 @@ provided are the defaults):
     "enabled": false,
     // Path to search for images
     "from": "src/img/**/*.+(png|jpg|jpeg|gif|svg)",
+    // The JPEG quality (0 to 100) to compress to, false keeps mozjpeg's own default (75)
+    "jpegQuality": false,
     // Path to output images
     "to": "browser/img"
   },
@@ -439,6 +441,9 @@ Add the following to the exports in your `build-tools.config.json`:
     "enabled": false,
     // Search pattern to find your images
     "from": "src/img/**/*.+(png|jpg|jpeg|gif|svg)",
+    // The JPEG quality (0 to 100) to compress to. Left false, mozjpeg uses its own default of 75, which can
+    // visibly band smooth gradients in photos; 85 is usually indistinguishable from the original
+    "jpegQuality": false,
     // Output directory for your images files
     "to": "browser/img"
   }

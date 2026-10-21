@@ -17,6 +17,10 @@ import { fileExists } from 'test-filesystem'
  * @typedef {boolean} module:gulpConfig~BooleanSetting
  */
 /**
+ * A setting that may be flag 'false' or provide a number
+ * @typedef {false|number} module:gulpConfig~FlagNumberSetting
+ */
+/**
  * A setting that may be flag 'false' or provide a StringSetting
  * @typedef {false|StringSetting} module:gulpConfig~FlagStringSetting
  */
@@ -43,7 +47,7 @@ import { fileExists } from 'test-filesystem'
  */
 /**
  * Any single configuration option is a Setting.
- * @typedef {ArrayableSetting|BooleanSetting|FlagsSetting|StringSetting} Setting
+ * @typedef {ArrayableSetting|BooleanSetting|FlagNumberSetting|FlagsSetting|StringSetting} Setting
  */
 /**
  * One copy-files entry: a glob (or array of globs) to copy, and where to copy it.
@@ -103,6 +107,9 @@ import { fileExists } from 'test-filesystem'
  * @typedef {Object<string, Setting>} module:gulpConfig~ImageConfig
  * @property {BooleanSetting} enabled - Toggle image minify and copy process.
  * @property {StringSetting} from - Path to search for images.
+ * @property {FlagNumberSetting} jpegQuality - The JPEG quality (0 to 100) mozjpeg compresses to. False (the
+ * default) keeps mozjpeg's own default, 75. Raise it (85 is usually indistinguishable from the original) when 75
+ * visibly bands smooth gradients.
  * @property {StringSetting} to - Path to output images.
  */
 /**
@@ -236,6 +243,7 @@ const setDefaults = {
   images: {
     enabled: false,
     from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+    jpegQuality: false,
     to: 'browser/img',
   },
   lint: {
