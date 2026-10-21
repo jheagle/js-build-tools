@@ -204,6 +204,7 @@ export const typeDocsFor = (
           exclude: [path.resolve(srcPath).split(path.sep).join('/') + '/**/*.test.*']
         }))
         const indexFile = gulpConfig.get('docs.index')
+        const gitRevision = gulpConfig.get('docs.gitRevision')
         await removeDirectory(outPath)
         const app = await Application.bootstrap({
           entryPoints,
@@ -211,7 +212,10 @@ export const typeDocsFor = (
           name: gulpConfig.get('docs.title') || projectName(),
           readme: indexFile && fs.existsSync(indexFile) ? indexFile : 'none',
           logLevel: gulpConfig.get('docs.logLevel') || 'Warn',
-          skipErrorChecking: true
+          skipErrorChecking: true,
+          // Left out, TypeDoc links each declaration to its source at the current commit, so every commit changes
+          // every page; a branch name keeps the pages the same until the documentation itself changes.
+          ...(gitRevision ? { gitRevision } : {})
         })
         const project = await app.convert()
         if (!project) {
