@@ -113,7 +113,7 @@ const printFileReport = (file, result) => {
  * @param {function(Object): Promise<{lintText: Function}>} [loadEslint] - Resolves an ESLint-shaped linter. Real
  * callers should never need to pass this - it exists so tests can supply a stand-in, since this project's
  * CommonJS-transform-based Jest setup cannot execute a real dynamic import() of neostandard (ESM-only).
- * @returns {stream.Transform}
+ * @returns {stream.Transform} With a `totals` property ({errors, warnings}), complete once the stream ends.
  */
 const neostandardLint = ({
   fix = true,
@@ -126,7 +126,7 @@ const neostandardLint = ({
     warnings: 0
   };
   let eslintPromise = null;
-  return _through.default.obj(function (file, enc, callback) {
+  const linter = _through.default.obj(function (file, enc, callback) {
     if (file.isNull()) {
       callback(null, file);
       return;
@@ -169,5 +169,8 @@ const neostandardLint = ({
     }
     callback();
   });
+  // Read by lintSource, which can only fail once the fixed files have been written, after this stream has ended.
+  linter.totals = totals;
+  return linter;
 };
 exports.neostandardLint = neostandardLint;

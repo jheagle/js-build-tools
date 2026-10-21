@@ -1,6 +1,7 @@
 import * as gulpConfig from '../../gulp.config.mjs'
 import { dest, src } from 'gulp'
 import { neostandardLint } from './neostandardLint.mjs'
+import { Transform } from 'node:stream'
 
 /**
  * Lint the project's source (srcPath: .js, .mjs and .cjs, plus .ts when typescript.enabled) with neostandard and
@@ -17,11 +18,24 @@ export const lintSource = ({ failOnError = false } = {}) => {
   if (ts) {
     patterns.push(`${srcPath}/**/*.ts`)
   }
-  const linter = neostandardLint({ fix: true, ts, rules: gulpConfig.get('lint.rules'), failOnError })
-  const written = src(patterns)
+  const linter = neostandardLint({ fix: true, ts, rules: gulpConfig.get('lint.rules') })
+  // Fail only once dest() has written every fixed file: gulp exits as soon as a task fails, so failing from the
+  // linter itself (before dest() finished) could leave a file that dest() had opened, but not yet written, empty.
+  // dest() passes each file on only after writing it, so this last step's flush runs after the final write. Files
+  // are consumed here rather than passed on, so nothing downstream has to read them.
+  const written = new Transform({
+    objectMode: true,
+    transform: (file, enc, callback) => callback(),
+    flush: callback => failOnError && linter.totals.errors
+      ? callback(new Error(`neostandard found ${linter.totals.errors} lint error(s) that could not be fixed automatically.`))
+      : callback()
+  })
+  const saved = src(patterns)
     .pipe(linter)
     .pipe(dest(srcPath))
-  // pipe() does not forward errors, and gulp only watches the returned stream, so pass the linter's failure along.
-  linter.on('error', error => written.emit('error', error))
+  saved.pipe(written)
+  // pipe() does not forward errors, and gulp only watches the returned stream, so pass any failure along.
+  linter.on('error', error => written.destroy(error))
+  saved.on('error', error => written.destroy(error))
   return written
 }
