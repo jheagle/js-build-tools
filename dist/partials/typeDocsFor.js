@@ -235,6 +235,7 @@ const typeDocsFor = (srcPath = gulpConfig.get('docs.from'), outPath = gulpConfig
           exclude: [_nodePath.default.resolve(srcPath).split(_nodePath.default.sep).join('/') + '/**/*.test.*']
         }));
         const indexFile = gulpConfig.get('docs.index');
+        const gitRevision = gulpConfig.get('docs.gitRevision');
         await (0, _removeDirectory.removeDirectory)(outPath);
         const app = await Application.bootstrap({
           entryPoints,
@@ -242,7 +243,12 @@ const typeDocsFor = (srcPath = gulpConfig.get('docs.from'), outPath = gulpConfig
           name: gulpConfig.get('docs.title') || projectName(),
           readme: indexFile && _nodeFs.default.existsSync(indexFile) ? indexFile : 'none',
           logLevel: gulpConfig.get('docs.logLevel') || 'Warn',
-          skipErrorChecking: true
+          skipErrorChecking: true,
+          // Left out, TypeDoc links each declaration to its source at the current commit, so every commit changes
+          // every page; a branch name keeps the pages the same until the documentation itself changes.
+          ...(gitRevision ? {
+            gitRevision
+          } : {})
         });
         const project = await app.convert();
         if (!project) {

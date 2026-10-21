@@ -566,6 +566,10 @@ Add the following to the exports in your `build-tools.config.json`:
     // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc).
     // jsdoc also takes a list of directories and files, for example ["functions", "gulpfile.base.mjs"]
     "from": "src",
+    // TypeDoc only: the git revision the "Defined in" source links point to. Left false, TypeDoc uses the current
+    // commit, so every commit changes every page; a branch name such as "main" keeps them the same until the
+    // documentation itself changes
+    "gitRevision": false,
     // Generate the documentation as part of build (the default). Set it to false to only generate it when you run
     // the docs task yourself (see below)
     "inBuild": true,

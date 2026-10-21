@@ -211,6 +211,17 @@ describe('typeDocsFor', () => {
     expect(calls.options.readme).toBe('none')
   })
 
+  test('passes docs.gitRevision on to TypeDoc, and leaves TypeDoc\'s own default when it is false', async () => {
+    gulpConfig.set('docs.enabled', true)
+    const calls = {}
+    await typeDocsFor(gulpConfig.get('srcPath'), `${gulpConfig.get('srcPath')}/../docs`, fakeTypeDoc(calls))()
+    expect('gitRevision' in calls.options).toBe(false)
+    gulpConfig.set('docs.gitRevision', 'main')
+    await typeDocsFor(gulpConfig.get('srcPath'), `${gulpConfig.get('srcPath')}/../docs`, fakeTypeDoc(calls))()
+    expect(calls.options.gitRevision).toBe('main')
+    gulpConfig.set('docs.gitRevision', false)
+  })
+
   test('reads the source with the tsconfig of the project, adding the entries to it', async () => {
     gulpConfig.set('docs.enabled', true)
     gulpConfig.set('typescript.config', 'tsconfig.json')

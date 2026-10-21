@@ -142,6 +142,10 @@ import { fileExists } from 'test-filesystem'
  * build does this instead of generating the readme from the jsdoc comments of the compiled files.
  * @property {ArrayableSetting} from - The directory holding the source, each folder in it becomes a module (TypeDoc) or
  * is scanned recursively (jsdoc). jsdoc also takes a list of directories and files.
+ * @property {FlagStringSetting} gitRevision - The git revision TypeDoc's "Defined in" source links point to (TypeDoc
+ * only). False (the default) is TypeDoc's own: the current commit, which changes every page on every commit. A
+ * branch name such as 'main' keeps the pages unchanged until the documentation itself changes; '{branch}' is the
+ * branch being built.
  * @property {BooleanSetting} inBuild - Generate the documentation as part of build (the default). Turn it off to only
  * generate it when you run the docs task yourself (gulp docs), for example when docs.to points into another
  * repository and you only want to publish the documentation of a release.
@@ -226,6 +230,7 @@ const setDefaults = {
   docs: {
     enabled: false,
     from: 'src',
+    gitRevision: false,
     inBuild: true,
     index: 'MAIN.md',
     logLevel: 'Warn',
