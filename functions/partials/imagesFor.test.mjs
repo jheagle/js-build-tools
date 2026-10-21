@@ -1,11 +1,12 @@
-import cache from 'gulp-cache'
 import fs from 'fs'
 import * as setUp from '../test-helpers/setUp.mjs'
 import os from 'os'
 import zlib from 'zlib'
 import { imagesFor, loadImagemin } from './imagesFor.mjs'
+import { isolateGulpCache } from '../test-helpers/isolateGulpCache.mjs'
 
 setUp.setDefaults('test-images-for')
+const clearImageCache = isolateGulpCache('images-for')
 const gulpConfig = setUp.gulpConfig
 
 const imageContents = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' +
@@ -157,8 +158,8 @@ const makePng = (size = 32) => {
   ])
 }
 
-// gulp-cache is shared across runs (in os.tmpdir()), so clear it or a stale result from an older imagemin can pass
-beforeEach(() => cache.clearAll().then(setUp.beforeEach))
+// The cache outlives a run, so clear it or a stale result from an older imagemin can pass
+beforeEach(() => clearImageCache().then(setUp.beforeEach))
 
 afterEach(setUp.afterEach)
 
