@@ -143,4 +143,24 @@ describe('lint', () => {
         done(new Error('lint should have failed on the unused variable'))
       })
   }, 20000)
+
+  test('only fails once every fixed file has been written back', done => {
+    // gulp exits as soon as a task fails, so failing while a file is still being written can leave that file empty.
+    const srcPath = gulpConfig.get('srcPath')
+    const fixable = ['a', 'b', 'c'].map(name => `${srcPath}/fixable-${name}.js`)
+    fixable.forEach(file => fs.writeFileSync(file, 'const x = "y";\n\nmodule.exports = x;\n'))
+    fs.writeFileSync(`${srcPath}/unfixable.js`, 'const unused = 1\n')
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    expect.assertions(fixable.length)
+    lint()
+      .on('error', () => {
+        logSpy.mockRestore()
+        fixable.forEach(file => expect(fs.readFileSync(file).toString()).toEqual('const x = \'y\'\n\nmodule.exports = x\n'))
+        done()
+      })
+      .on('finish', () => {
+        logSpy.mockRestore()
+        done(new Error('lint should have failed on the unused variable'))
+      })
+  }, 30000)
 })
