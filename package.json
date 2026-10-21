@@ -124,7 +124,7 @@
     "clean-jsdoc-theme": "^4.3.3",
     "gulp-imagemin": "github:jheagle/gulp-imagemin#common-js-compatibility",
     "jsdoc": "^4.0.5",
-    "playwright": "~1.62.1",
+    "playwright": "^1.64.1",
     "release-it": "^21.1.1",
     "typedoc": "^0.28.20",
     "typescript": "^6.0.3"
