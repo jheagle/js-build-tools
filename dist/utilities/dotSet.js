@@ -23,7 +23,7 @@ const dotSet = (arrayObject, dotNotation, value = null) => {
     key = dotNotation;
   }
   if (key === '*') {
-    for (let wildKey in arrayObject) {
+    for (const wildKey in arrayObject) {
       if (lastKey) {
         arrayObject[wildKey] = value;
         continue;

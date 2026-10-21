@@ -21,6 +21,7 @@
     "build": "gulp build",
     "dev": "gulp",
     "docs": "gulp docs",
+    "lint": "gulp lint",
     "readme": "gulp readme",
     "release": "release-it",
     "release:dry-run": "release-it --dry-run",

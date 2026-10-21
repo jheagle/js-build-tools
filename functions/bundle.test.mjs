@@ -217,4 +217,3 @@ describe('bundle ignore / exclude', () => {
       .on('error', error => done(error))
   })
 })
-

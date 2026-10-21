@@ -71,7 +71,8 @@ const printFileReport = (file, result) => {
 /**
  * Lint every file streaming through with neostandard and, unless `fix` is false, apply the automatic fixes to the
  * file's contents so a following `dest()` writes the fixed version. Remaining problems are printed along with a
- * summary once the stream ends; they never fail the build.
+ * summary once the stream ends; they only fail the stream when `failOnError` is set (the standalone `lint` task),
+ * never during `build`.
  *
  * One ESLint instance is built from the first file's own cwd and reused for the rest of the stream, since every
  * file in a given lint pass shares the same project (and so the same config).
@@ -81,13 +82,15 @@ const printFileReport = (file, result) => {
  * @param {boolean} [options.ts=false] - Lint `.ts` files too, with type-aware rules (see neostandard's `ts` option).
  * @param {Object<string, *>} [options.rules={}] - ESLint rule overrides layered on top of neostandard's own rules
  * (see gulp.config.mjs's `lint.rules`).
+ * @param {boolean} [options.failOnError=false] - Emit an error once the stream ends if any lint errors remain after
+ * fixing, so a command-line run exits non-zero.
  * @param {function(Object): Promise<{lintText: Function}>} [loadEslint] - Resolves an ESLint-shaped linter. Real
  * callers should never need to pass this - it exists so tests can supply a stand-in, since this project's
  * CommonJS-transform-based Jest setup cannot execute a real dynamic import() of neostandard (ESM-only).
  * @returns {stream.Transform}
  */
 export const neostandardLint = (
-  { fix = true, ts = false, rules = {} } = {},
+  { fix = true, ts = false, rules = {}, failOnError = false } = {},
   loadEslint = buildEslint
 ) => {
   const totals = { errors: 0, warnings: 0 }
@@ -126,6 +129,10 @@ export const neostandardLint = (
       console.log('======================================')
       console.log(`✖ Errors total: ${totals.errors}`)
       console.log(`⚠ Warnings total: ${totals.warnings}\n`)
+      if (failOnError && totals.errors) {
+        callback(new Error(`neostandard found ${totals.errors} lint error(s) that could not be fixed automatically.`))
+        return
+      }
       callback()
     }
   )

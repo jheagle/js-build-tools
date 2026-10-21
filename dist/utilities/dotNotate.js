@@ -22,7 +22,7 @@ const handleRetainObjects = (retainObjects = []) => {
      */
     return (currentKey, value, results) => false;
   }
-  retainObjects = retainObjects.map(key => key.replace('\.', '\\.'));
+  retainObjects = retainObjects.map(key => key.replaceAll('.', '\\.'));
   const retainRegex = new RegExp(`(${retainObjects.join('|')})$`);
   /**
    * Test if a key should be retained as an object.
@@ -51,7 +51,7 @@ const handleRetainObjects = (retainObjects = []) => {
  * @private
  */
 const performDotNotate = (arrayObject, didRetain, prepend = '', results = {}) => {
-  for (let key in arrayObject) {
+  for (const key in arrayObject) {
     const value = arrayObject[key];
     const currentKey = `${prepend}${key}`;
     if (didRetain(currentKey, value, results)) {

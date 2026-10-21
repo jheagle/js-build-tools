@@ -1,5 +1,4 @@
 import fs from 'fs'
-import path from 'node:path'
 import * as setUp from '../test-helpers/setUp.mjs'
 import { loadPlaywright, launchBrowser } from './loadPlaywright.mjs'
 import { serveStatic } from './serveStatic.mjs'
@@ -61,7 +60,7 @@ describe('a real page, served and loaded end to end', () => {
       const page = await browser.newPage()
       await page.goto(`${url}/index.html`)
       expect(await page.title()).toBe('loaded via a real module script')
-      const backgroundColor = await page.evaluate(() => getComputedStyle(document.body).backgroundColor)
+      const backgroundColor = await page.evaluate(() => globalThis.getComputedStyle(document.body).backgroundColor)
       expect(backgroundColor).toBe('rgb(1, 2, 3)')
     } finally {
       await browser.close()

@@ -31,4 +31,11 @@ describe('dotNotate', () => {
       options: { fix: true }
     })
   })
+
+  test('treats every dot in a retained key literally, not as a regex wildcard', () => {
+    expect(dotNotate({ a: { bXc: { d: 1 }, b: { c: { d: 2 } } } }, ['a.b.c'])).toEqual({
+      'a.bXc.d': 1,
+      'a.b.c': { d: 2 }
+    })
+  })
 })
