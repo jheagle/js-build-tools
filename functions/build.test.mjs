@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import cache from 'gulp-cache'
 import fs from 'fs'
 import * as setUp from './test-helpers/setUp.mjs'

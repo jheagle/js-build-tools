@@ -110,6 +110,20 @@ describe('neostandardLint', () => {
     expect(logSpy).toHaveBeenCalledWith('⚠ Warnings total: 1\n')
   })
 
+  test('with failOnError, fails the stream once it ends if any errors remain', async () => {
+    expect.assertions(2)
+    const eslint = fakeEslint(() => [{ messages: [{ line: 1, column: 1, message: 'bad thing' }], errorCount: 1, warningCount: 0 }])
+    await expect(run(neostandardLint({ failOnError: true }, () => Promise.resolve(eslint)), [makeFile(Buffer.from('a'))]))
+      .rejects.toThrow('neostandard found 1 lint error(s)')
+    expect(logSpy).toHaveBeenCalledWith('✖ Errors total: 1')
+  })
+
+  test('with failOnError, still passes when there are only warnings', async () => {
+    expect.assertions(1)
+    const eslint = fakeEslint(() => [{ messages: [{ line: 1, column: 1, message: 'just a warning' }], errorCount: 0, warningCount: 1 }])
+    await expect(run(neostandardLint({ failOnError: true }, () => Promise.resolve(eslint)), [makeFile(Buffer.from('a'))])).resolves.toHaveLength(1)
+  })
+
   test('surfaces a failure to load or run the linter as a stream error', async () => {
     expect.assertions(1)
     await expect(run(neostandardLint({}, () => Promise.reject(new Error('cannot load'))), [makeFile(Buffer.from('x'))])).rejects.toThrow('cannot load')

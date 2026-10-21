@@ -5,7 +5,7 @@ import { testFull } from './testFull.mjs'
 const gulpConfig = testHelpers.gulpConfig
 
 jest.mock('jest', () => ({
-  'runCLI': jest.fn(() => Promise.resolve(true))
+  runCLI: jest.fn(() => Promise.resolve(true))
 }))
 
 describe('testFull', () => {

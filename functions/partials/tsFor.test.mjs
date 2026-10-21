@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import fs from 'fs'
 import { Transform, PassThrough } from 'node:stream'
 import ts from 'typescript'

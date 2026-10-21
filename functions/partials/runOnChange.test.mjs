@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import fs from 'fs'
 import * as setUp from '../test-helpers/setUp.mjs'
 import { bundle } from '../bundle.mjs'
@@ -26,10 +27,10 @@ const srcFile = `${srcPath}/runOnChange.js`
 const srcTsFile = `${srcPath}/runOnChange.ts`
 
 beforeEach(() => {
-    return setUp.beforeEach()
-      .then(() => fs.writeFileSync(srcTsFile, rawContents))
-      .then(() => fs.writeFileSync(srcFile, rawContents))
-  }
+  return setUp.beforeEach()
+    .then(() => fs.writeFileSync(srcTsFile, rawContents))
+    .then(() => fs.writeFileSync(srcFile, rawContents))
+}
 )
 
 afterEach(() => {

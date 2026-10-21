@@ -27,7 +27,7 @@ const dotGet = (arrayObject = {}, dotNotation = '', defaultValue = null) => {
   }
   if (key === '*') {
     const result = [];
-    for (let wildKey in arrayObject) {
+    for (const wildKey in arrayObject) {
       const wildValue = arrayObject[wildKey];
       if (lastKey) {
         result[wildKey] = wildValue;

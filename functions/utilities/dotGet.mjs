@@ -11,7 +11,7 @@ import { strBefore } from './strBefore.mjs'
  * @returns {*} The value of the property
  * @private
  */
-export const dotGet = (arrayObject = {}, dotNotation= '', defaultValue = null) => {
+export const dotGet = (arrayObject = {}, dotNotation = '', defaultValue = null) => {
   if (!dotNotation) {
     return arrayObject
   }
@@ -22,7 +22,7 @@ export const dotGet = (arrayObject = {}, dotNotation= '', defaultValue = null) =
   }
   if (key === '*') {
     const result = []
-    for (let wildKey in arrayObject) {
+    for (const wildKey in arrayObject) {
       const wildValue = arrayObject[wildKey]
       if (lastKey) {
         result[wildKey] = wildValue
