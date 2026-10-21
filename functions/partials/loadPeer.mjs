@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url'
 // build (dist/*.js) whose babel transform would turn even a dynamic import() into a require() that cannot load an ES
 // module. Hiding the import() inside a Function constructor keeps it a genuine dynamic import that works from either
 // build, because babel cannot see (and so cannot rewrite) an import expression which only exists as a runtime string.
+// eslint-disable-next-line no-new-func -- deliberate, see above
 const dynamicImport = new Function('specifier', 'return import(specifier)')
 
 /**

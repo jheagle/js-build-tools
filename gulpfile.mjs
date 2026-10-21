@@ -4,6 +4,7 @@ export {
   dist,
   distMinify,
   docs,
+  lint,
   readme,
   testFull,
   testQuick,

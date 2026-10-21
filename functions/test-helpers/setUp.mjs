@@ -60,41 +60,41 @@ export {
    * @param {boolean} [exists=true]
    * @returns {Promise<*|void>}
    */
-    createTempDir,
+  createTempDir,
   /**
    * In the Jest.beforeEach function call this one to set up the temp directory.
    * @memberOf module:testHelpers
    * @returns {Promise<*|void>}
    */
-    beforeEach,
+  beforeEach,
   /**
    * In the Jest.afterEach function call this one to clean up and remove the temp directory.
    * @memberOf module:testHelpers
    * @returns {Promise<*>}
    */
-    afterEach,
+  afterEach,
   /**
    * Return number of occurrences of substring in another string.
    * @memberOf module:testHelpers
    * @returns {int}
    */
-    countMatches,
+  countMatches,
   /**
    * Returns true if the given file or directory exists, otherwise false.
    * @memberOf module:testHelpers
    * @returns {boolean}
    */
-    fileExists,
+  fileExists,
   /**
    * Console log objects in a readable format, returns the given object.
    * @memberOf module:testHelpers
    * @returns {*}
    */
-    logObject,
+  logObject,
   /**
    * Delete a directory and subcontents.
    * @memberOf module:testHelpers
    * @returns {Promise<*>}
    */
-    removeDirectory,
+  removeDirectory,
 } from 'test-filesystem'

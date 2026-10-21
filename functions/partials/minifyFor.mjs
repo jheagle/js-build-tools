@@ -2,7 +2,7 @@ import { dest, src } from 'gulp'
 import { default as gulpUglify } from 'gulp-uglify-es'
 import rename from 'gulp-rename'
 
-const uglify = gulpUglify.hasOwnProperty('default') ? gulpUglify.default : gulpUglify
+const uglify = Object.hasOwn(gulpUglify, 'default') ? gulpUglify.default : gulpUglify
 
 /**
  * Minify files and rename the output with '.min' extension.

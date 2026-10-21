@@ -689,6 +689,7 @@ Export these functions to your own project to customize your build pipeline.
     * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
     * [.sourceLint()](#module_js-build-tools.sourceLint) ⇒ <code>\*</code>
+    * [.lint()](#module_js-build-tools.lint) ⇒ <code>\*</code>
     * [.images()](#module_js-build-tools.images) ⇒ <code>stream.Stream</code>
     * [.docs([done])](#module_js-build-tools.docs) ⇒ <code>\*</code>
     * [.distMinify()](#module_js-build-tools.distMinify) ⇒ <code>\*</code>
@@ -751,7 +752,13 @@ Run all tests with jest.Configure where tests are located by using 'testPath'.
 <a name="module_js-build-tools.sourceLint"></a>
 
 ### js-build-tools.sourceLint() ⇒ <code>\*</code>
-Applies neostandard linting (js-build-tools' chosen style) to the real, hand-written source - not the compileddist/browser output, which is generated and so was never going to pass a hand-authored-code style check (everycompiler/bundler emits its own boilerplate - import aliasing, interop headers - that only looks like a styleviolation). Includes test files: there is no reason to hold tests to a lower style bar than the rest of thesource. When typescript.enabled, the real TypeScript source is linted too, with type-aware rules.
+Applies neostandard linting (js-build-tools' chosen style) to the real, hand-written source - not the compileddist/browser output, which is generated and so was never going to pass a hand-authored-code style check (everycompiler/bundler emits its own boilerplate - import aliasing, interop headers - that only looks like a styleviolation). Includes test files: there is no reason to hold tests to a lower style bar than the rest of thesource. When typescript.enabled, the real TypeScript source is linted too, with type-aware rules. Runs as part of`build`, where remaining errors are reported but never fail it.
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.lint"></a>
+
+### js-build-tools.lint() ⇒ <code>\*</code>
+The standalone lint command (`gulp lint`, or `npm run lint`): the same linting and fixing as sourceLint, but itfails (exits non-zero) when any errors remain that neostandard could not fix automatically.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.images"></a>

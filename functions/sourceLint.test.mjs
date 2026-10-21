@@ -1,5 +1,7 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import fs from 'fs'
 import * as setUp from './test-helpers/setUp.mjs'
+import { lint } from './lint.mjs'
 import { sourceLint } from './sourceLint.mjs'
 import { countMatches } from 'test-filesystem'
 
@@ -51,6 +53,23 @@ describe('sourceLint', () => {
       })
   }, 20000)
 
+  test('also lints .mjs and .cjs source, not just .js', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    fs.writeFileSync(`${srcPath}/example.mjs`, 'const m = "d";\n\nexport default m;\n')
+    fs.writeFileSync(`${srcPath}/example.cjs`, 'const c = "e";\n\nmodule.exports = c;\n')
+    expect.assertions(2)
+    sourceLint()
+      .on('finish', () => {
+        expect(fs.readFileSync(`${srcPath}/example.mjs`).toString()).toEqual('const m = \'d\'\n\nexport default m\n')
+        expect(fs.readFileSync(`${srcPath}/example.cjs`).toString()).toEqual('const c = \'e\'\n\nmodule.exports = c\n')
+        done()
+      })
+      .on('error', error => {
+        console.error('Encountered error', error)
+        done(error)
+      })
+  }, 20000)
+
   test('lint.rules actually suppresses a real neostandard finding', done => {
     const srcPath = gulpConfig.get('srcPath')
     // A fixture string containing literal ${...} text (simulating real module source, not an accidental
@@ -92,6 +111,36 @@ describe('sourceLint', () => {
         gulpConfig.set('typescript.enabled', false)
         console.error('Encountered error', error)
         done(error)
+      })
+  }, 20000)
+})
+
+describe('lint', () => {
+  test('fixes the source and finishes without error when nothing unfixable remains', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    expect.assertions(1)
+    lint()
+      .on('finish', () => {
+        expect(countMatches(fs.readFileSync(`${srcPath}/example.js`).toString(), ';')).toEqual(0)
+        done()
+      })
+      .on('error', error => done(error))
+  }, 20000)
+
+  test('fails when an error remains that neostandard cannot fix', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    fs.writeFileSync(`${srcPath}/unfixable.js`, 'const unused = 1\n')
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    expect.assertions(1)
+    lint()
+      .on('error', error => {
+        logSpy.mockRestore()
+        expect(error.message).toMatch('neostandard found 1 lint error(s)')
+        done()
+      })
+      .on('finish', () => {
+        logSpy.mockRestore()
+        done(new Error('lint should have failed on the unused variable'))
       })
   }, 20000)
 })

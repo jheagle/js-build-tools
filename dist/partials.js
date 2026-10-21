@@ -75,6 +75,12 @@ Object.defineProperty(exports, "launchBrowser", {
     return _loadPlaywright.launchBrowser;
   }
 });
+Object.defineProperty(exports, "lintSource", {
+  enumerable: true,
+  get: function () {
+    return _lintSource.lintSource;
+  }
+});
 Object.defineProperty(exports, "loadPlaywright", {
   enumerable: true,
   get: function () {
@@ -158,6 +164,7 @@ var _imagesFor = require("./partials/imagesFor.js");
 var _loadPeer = require("./partials/loadPeer.js");
 var _jsdocDocsFor = require("./partials/jsdocDocsFor.js");
 var _loadPlaywright = require("./partials/loadPlaywright.js");
+var _lintSource = require("./partials/lintSource.js");
 var _minifyFor = require("./partials/minifyFor.js");
 var _neostandardLint = require("./partials/neostandardLint.js");
 var _readmeTemplate = require("./partials/readmeTemplate.js");

@@ -1,7 +1,6 @@
 import cache from 'gulp-cache'
 import { requirePeer } from './loadPeer.mjs'
 import { dest, src } from 'gulp'
-import path from 'node:path'
 import * as gulpConfig from '../../gulp.config.mjs'
 
 const installHint = 'Add it to your project with: npm install --save-dev github:jheagle/gulp-imagemin#common-js-compatibility ' +
