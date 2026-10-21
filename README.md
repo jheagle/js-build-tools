@@ -561,6 +561,9 @@ Add the following to the exports in your `build-tools.config.json`:
     // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc).
     // jsdoc also takes a list of directories and files, for example ["functions", "gulpfile.base.mjs"]
     "from": "src",
+    // Generate the documentation as part of build (the default). Set it to false to only generate it when you run
+    // the docs task yourself (see below)
+    "inBuild": true,
     // The markdown file used as the front page of the documentation (a short overview of your project)
     "index": "MAIN.md",
     // 'typedoc' or 'jsdoc'. Left out (or false), it's inferred from typescript.enabled - 'typedoc' when your
@@ -581,6 +584,20 @@ Add the following to the exports in your `build-tools.config.json`:
 While `docs.enabled` is on, `gulp build` generates the documentation instead of the readme, so your `README.md` stays
 hand-written (a short overview which links to the documentation). If you also export `docs` from your gulpfile you can
 run it on its own with `gulp docs`, and can then add the script `"docs": "gulp docs"`.
+
+To make generating the documentation a deliberate step instead, set `docs.inBuild` to `false`: `gulp build` then
+generates neither the documentation nor the readme, and `gulp docs` is the only thing that writes to `docs.to`. This
+suits a `docs.to` which points into another repository (a website, say): a build on a work-in-progress branch no
+longer rewrites the published documentation, which you regenerate when you release instead. For example with
+release-it, in `.release-it.json`:
+
+```json
+{
+  "hooks": {
+    "after:bump": "npm run docs"
+  }
+}
+```
 
 ### Browser automation (optional)
 

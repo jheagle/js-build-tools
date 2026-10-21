@@ -26,8 +26,11 @@ export const build = (done = null) => {
   const generateDocs = gulpConfig.get('docs.enabled')
   const docsMethod = resolveDocsMethod()
   if (generateDocs) {
-    // The documentation is generated from the source itself, the readme is written by hand
-    buildActions.push(docsMethod === 'jsdoc' ? jsdocDocs : typeDocs)
+    // The documentation is generated from the source itself, the readme is written by hand. With docs.inBuild off,
+    // generating it is left to the standalone docs task (gulp docs), so a build never rewrites it.
+    if (gulpConfig.get('docs.inBuild') !== false) {
+      buildActions.push(docsMethod === 'jsdoc' ? jsdocDocs : typeDocs)
+    }
   } else if (gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(compileReadme)
