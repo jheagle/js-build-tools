@@ -135,6 +135,9 @@ import { fileExists } from 'test-filesystem'
  * build does this instead of generating the readme from the jsdoc comments of the compiled files.
  * @property {ArrayableSetting} from - The directory holding the source, each folder in it becomes a module (TypeDoc) or
  * is scanned recursively (jsdoc). jsdoc also takes a list of directories and files.
+ * @property {BooleanSetting} inBuild - Generate the documentation as part of build (the default). Turn it off to only
+ * generate it when you run the docs task yourself (gulp docs), for example when docs.to points into another
+ * repository and you only want to publish the documentation of a release.
  * @property {StringSetting} index - The markdown file used as the front page of the documentation.
  * @property {StringSetting} logLevel - How much TypeDoc reports: Verbose, Info, Warn, Error or None. Not used by jsdoc.
  * @property {FlagStringSetting} method - 'typedoc' or 'jsdoc'. False (the default) infers it from typescript.enabled -
@@ -216,6 +219,7 @@ const setDefaults = {
   docs: {
     enabled: false,
     from: 'src',
+    inBuild: true,
     index: 'MAIN.md',
     logLevel: 'Warn',
     method: false,

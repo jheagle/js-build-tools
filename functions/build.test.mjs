@@ -676,6 +676,29 @@ describe('build', () => {
     })
   }, 30000)
 
+  test('with docs.inBuild off, build generates neither the documentation nor the readme', done => {
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
+    fs.rmSync(`${readmePath}/${readmeFile}`, { force: true })
+    typeDocs.mockClear()
+    jsdocDocs.mockClear()
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('typescript.enabled', false)
+    gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('docs.inBuild', false)
+    expect.assertions(4)
+    build(() => {
+      gulpConfig.set('docs.enabled', false)
+      gulpConfig.set('docs.inBuild', true)
+      expect(jsdocDocs).not.toHaveBeenCalled()
+      expect(typeDocs).not.toHaveBeenCalled()
+      // The readme is still written by hand while docs.enabled is on
+      expect(fs.existsSync(`${readmePath}/${readmeFile}`)).toBe(false)
+      expect(testFull).toHaveBeenCalled()
+      done()
+    })
+  }, 30000)
+
   test('docs.method overrides the typescript.enabled inference either way', done => {
     const srcPath = gulpConfig.get('srcPath')
     const rootPath = gulpConfig.get('rootPath')
