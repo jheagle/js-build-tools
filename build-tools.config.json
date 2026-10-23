@@ -23,7 +23,8 @@
     ],
     "index": "MAIN.md",
     "title": "JS Build Tools",
-    "to": "../joshuaheagle.local/projects/js-build-tools/docs"
+    "to": "../joshuaheagle.local/projects/js-build-tools/docs",
+    "inBuild": false
   },
   "readme": {
     "template": "MAIN.md",

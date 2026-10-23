@@ -645,6 +645,8 @@ describe('build', () => {
     gulpConfig.set('typescript.config', tsConfig)
     gulpConfig.set('typescript.enabled', true)
     gulpConfig.set('docs.enabled', true)
+    // Set explicitly: the project's own build-tools.config.json has docs.inBuild off
+    gulpConfig.set('docs.inBuild', true)
     expect.assertions(3)
     build(() => {
       gulpConfig.set('docs.enabled', false)
@@ -665,6 +667,7 @@ describe('build', () => {
     gulpConfig.set('browser.enabled', false)
     gulpConfig.set('typescript.enabled', false)
     gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('docs.inBuild', true)
     expect.assertions(3)
     build(() => {
       gulpConfig.set('docs.enabled', false)
@@ -711,6 +714,7 @@ describe('build', () => {
     gulpConfig.set('typescript.config', tsConfig)
     gulpConfig.set('typescript.enabled', true)
     gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('docs.inBuild', true)
     // typescript.enabled is true, which would normally infer 'typedoc' - method forces 'jsdoc' instead.
     gulpConfig.set('docs.method', 'jsdoc')
     expect.assertions(2)
