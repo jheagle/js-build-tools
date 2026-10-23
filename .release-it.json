@@ -12,5 +12,8 @@
   },
   "npm": {
     "publish": false
+  },
+  "hooks": {
+    "after:bump": "npm run docs"
   }
 }
