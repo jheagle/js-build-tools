@@ -561,6 +561,10 @@ Add the following to the exports in your `build-tools.config.json`:
 ```json
 {
   "docs": {
+    // jsdoc with clean-jsdoc-theme 5.x only: the path the documentation is served from, such as
+    // "/projects/my-lib/docs/". The theme's links start at the site root, so documentation served below it needs
+    // this. Left false, it is served from the site root
+    "basePath": false,
     // Generate the documentation from the source
     "enabled": true,
     // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc).
@@ -736,13 +740,16 @@ Simplified typescript task using tsFor.
 <a name="module_js-build-tools.typeDocs"></a>
 
 ### js-build-tools.typeDocs ⇒ <code>function</code>
-Generate the HTML documentation of a TypeScript project from its source, with the modules mirroring the sourcefolders. Turn it on with docs.enabled, see [typeDocsFor](#module_partials.typeDocsFor).
+Generate the HTML documentation of a TypeScript project from its source, with the modules mirroring the source
+folders. Turn it on with docs.enabled, see [typeDocsFor](#module_partials.typeDocsFor).
 
 **Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.jsdocDocs"></a>
 
 ### js-build-tools.jsdocDocs ⇒ <code>function</code>
-Generate the HTML documentation of a plain-JavaScript project from its source, with a modern jsdoc themeinstead of jsdoc's own classic default. Turn it on with docs.enabled and docs.method: 'jsdoc' (the defaultwhen typescript.enabled is off), see [module:partials.jsdocDocsFor](module:partials.jsdocDocsFor).
+Generate the HTML documentation of a plain-JavaScript project from its source, with a modern jsdoc theme
+instead of jsdoc's own classic default. Turn it on with docs.enabled and docs.method: 'jsdoc' (the default
+when typescript.enabled is off), see [module:partials.jsdocDocsFor](module:partials.jsdocDocsFor).
 
 **Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.compileReadme"></a>
@@ -766,25 +773,33 @@ Watch for changes and run the distribution for the changed files, then bundle an
 <a name="module_js-build-tools.testQuick"></a>
 
 ### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
-Run the Jest tests for files which have been modified (based on git status).Configure where tests are located by using 'testPath'.
+Run the Jest tests for files which have been modified (based on git status).
+Configure where tests are located by using 'testPath'.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.testFull"></a>
 
 ### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
-Run all tests with jest.Configure where tests are located by using 'testPath'.
+Run all tests with jest.
+Configure where tests are located by using 'testPath'.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.sourceLint"></a>
 
 ### js-build-tools.sourceLint() ⇒ <code>\*</code>
-Applies neostandard linting (js-build-tools' chosen style) to the real, hand-written source - not the compileddist/browser output, which is generated and so was never going to pass a hand-authored-code style check (everycompiler/bundler emits its own boilerplate - import aliasing, interop headers - that only looks like a styleviolation). Includes test files: there is no reason to hold tests to a lower style bar than the rest of thesource. When typescript.enabled, the real TypeScript source is linted too, with type-aware rules. Runs as part of`build`, where remaining errors are reported but never fail it.
+Applies neostandard linting (js-build-tools' chosen style) to the real, hand-written source - not the compiled
+dist/browser output, which is generated and so was never going to pass a hand-authored-code style check (every
+compiler/bundler emits its own boilerplate - import aliasing, interop headers - that only looks like a style
+violation). Includes test files: there is no reason to hold tests to a lower style bar than the rest of the
+source. When typescript.enabled, the real TypeScript source is linted too, with type-aware rules. Runs as part of
+`build`, where remaining errors are reported but never fail it.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.lint"></a>
 
 ### js-build-tools.lint() ⇒ <code>\*</code>
-The standalone lint command (`gulp lint`, or `npm run lint`): the same linting and fixing as sourceLint, but itfails (exits non-zero) when any errors remain that neostandard could not fix automatically.
+The standalone lint command (`gulp lint`, or `npm run lint`): the same linting and fixing as sourceLint, but it
+fails (exits non-zero) when any errors remain that neostandard could not fix automatically.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.images"></a>
@@ -796,7 +811,9 @@ Move and optimize the images into the browser folder using configured settings.
 <a name="module_js-build-tools.docs"></a>
 
 ### js-build-tools.docs([done]) ⇒ <code>\*</code>
-Generate the HTML documentation with whichever engine docs.method (or its typescript.enabled-based default)resolves to - see [resolveDocsMethod](#module_partials.resolveDocsMethod). The standalone counterpart to build's owninternal branching, for running `gulp docs` directly instead of as part of a full build.
+Generate the HTML documentation with whichever engine docs.method (or its typescript.enabled-based default)
+resolves to - see [resolveDocsMethod](#module_partials.resolveDocsMethod). The standalone counterpart to build's own
+internal branching, for running `gulp docs` directly instead of as part of a full build.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 
@@ -836,25 +853,58 @@ Move the font files into the browser directory.
 <a name="module_js-build-tools.copyFiles"></a>
 
 ### js-build-tools.copyFiles() ⇒ <code>Promise.&lt;void&gt;</code>
-Copy files from one place to another - any number of { from, to, base? } entries, configured via copyFiles.A project with no copyFiles entries gets a task that does nothing. Meant to be run explicitly (its own script,e.g. `gulp copyFiles`), not folded into the default build - a bundle (or any other file this copies) is oftenthe live, publicly-reachable version of something, so publishing it elsewhere should be a deliberate step, nota side effect of every routine local build.Reuses copyFor (already shared with copyFonts) rather than a fresh src()/dest() pair - that keeps its existingencoding: false fix (Gulp 5's default utf8 handling corrupts binary files such as fonts or a minified bundle)instead of silently losing it in a parallel implementation.Each entry runs as its own independent copyFor(), awaited via Promise.all rather than merged into one combinedstream (mergeStream, the pattern bundle.mjs uses) - that pattern assumes every merged stream ends up at thesame shared destination; here, each entry can have a genuinely different one, and merging streams that eachalready terminate at their own separate dest() hit a real "write after end" error in practice.
+Copy files from one place to another - any number of { from, to, base? } entries, configured via copyFiles.
+A project with no copyFiles entries gets a task that does nothing. Meant to be run explicitly (its own script,
+e.g. `gulp copyFiles`), not folded into the default build - a bundle (or any other file this copies) is often
+the live, publicly-reachable version of something, so publishing it elsewhere should be a deliberate step, not
+a side effect of every routine local build.
+
+Reuses copyFor (already shared with copyFonts) rather than a fresh src()/dest() pair - that keeps its existing
+encoding: false fix (Gulp 5's default utf8 handling corrupts binary files such as fonts or a minified bundle)
+instead of silently losing it in a parallel implementation.
+
+Each entry runs as its own independent copyFor(), awaited via Promise.all rather than merged into one combined
+stream (mergeStream, the pattern bundle.mjs uses) - that pattern assumes every merged stream ends up at the
+same shared destination; here, each entry can have a genuinely different one, and merging streams that each
+already terminate at their own separate dest() hit a real "write after end" error in practice.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.bundleMinify"></a>
 
 ### js-build-tools.bundleMinify() ⇒ <code>\*</code>
-Creates the minified file for every bundle (the primary bundle, plus any additional ones frombrowser.bundles). The minify step itself never varies per bundle, so this is one sharedsrc()/dest() pipeline (inside minifyFor) fed every bundle's filename at once, rather than onepipeline per bundle - gulp's src() accepts an array of paths natively.
+Creates the minified file for every bundle (the primary bundle, plus any additional ones from
+browser.bundles). The minify step itself never varies per bundle, so this is one shared
+src()/dest() pipeline (inside minifyFor) fed every bundle's filename at once, rather than one
+pipeline per bundle - gulp's src() accepts an array of paths natively.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.bundle"></a>
 
 ### js-build-tools.bundle() ⇒ <code>stream.Stream</code>
-Starting at each bundle's own entry point (dist.main for the primary bundle, or its ownoverride from browser.bundles), bundle all the reachable files into a single file per bundle andstore them in the specified output directory. A project with no browser.bundles entries getsexactly the one bundle it always did; each additional entry produces its own separate bundle(for example, a render-only variant built from a different entry point than the full bundle).A bundle's name does double duty: it names the output file (name.js) and, via browserify's`standalone` option, is also the name its exports are exposed under - as a global when loadedwith a bare `<script>` tag, or as the module when required via CommonJS/AMD. Without this, abundle built from a real entry point (one that actually exports something) builds successfullybut exposes nothing a consumer can reach.Two escape hatches from browser.config.json keep an unwanted dependency (or a dependency's dependency) out of thebundle: 'ignore' replaces it with an empty object (safe when your code never actually calls into it - for examplea library's default option value you always override with your own) and 'exclude' leaves it out entirely (yourcode must not require it, or provide it another way, such as a separate script tag).
+Starting at each bundle's own entry point (dist.main for the primary bundle, or its own
+override from browser.bundles), bundle all the reachable files into a single file per bundle and
+store them in the specified output directory. A project with no browser.bundles entries gets
+exactly the one bundle it always did; each additional entry produces its own separate bundle
+(for example, a render-only variant built from a different entry point than the full bundle).
+
+A bundle's name does double duty: it names the output file (name.js) and, via browserify's
+`standalone` option, is also the name its exports are exposed under - as a global when loaded
+with a bare `<script>` tag, or as the module when required via CommonJS/AMD. Without this, a
+bundle built from a real entry point (one that actually exports something) builds successfully
+but exposes nothing a consumer can reach.
+
+Two escape hatches from browser.config.json keep an unwanted dependency (or a dependency's dependency) out of the
+bundle: 'ignore' replaces it with an empty object (safe when your code never actually calls into it - for example
+a library's default option value you always override with your own) and 'exclude' leaves it out entirely (your
+code must not require it, or provide it another way, such as a separate script tag).
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.build"></a>
 
 ### js-build-tools.build() ⇒ <code>stream.Stream</code>
-Runs several processes to build and validate the project.Cleans and lints the source, distributes and minifies, bundles and minifies, creates the readme, then runs thetests.
+Runs several processes to build and validate the project.
+Cleans and lints the source, distributes and minifies, bundles and minifies, creates the readme, then runs the
+tests.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_gulpConfig"></a>
@@ -872,11 +922,12 @@ Modify these configurations to match your project specifications.
     * _inner_
         * [~ArrayableSetting](#module_gulpConfig..ArrayableSetting) : <code>Array.&lt;string&gt;</code> \| <code>string</code>
         * [~BooleanSetting](#module_gulpConfig..BooleanSetting) : <code>boolean</code>
+        * [~FlagNumberSetting](#module_gulpConfig..FlagNumberSetting) : <code>false</code> \| <code>number</code>
         * [~FlagStringSetting](#module_gulpConfig..FlagStringSetting) : <code>false</code> \| <code>StringSetting</code>
         * [~FlagsSetting](#module_gulpConfig..FlagsSetting) : <code>Object.&lt;string, BooleanSetting&gt;</code>
         * [~JestTestFlags](#module_gulpConfig..JestTestFlags) : <code>FlagsSetting</code>
         * [~StringSetting](#module_gulpConfig..StringSetting) : <code>string</code>
-        * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+        * [~Setting](#module_gulpConfig..Setting) : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagNumberSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
         * [~CopyFilesEntry](#module_gulpConfig..CopyFilesEntry) : <code>Object</code>
         * [~BrowserConfig](#module_gulpConfig..BrowserConfig) : <code>Object.&lt;string, Setting&gt;</code>
         * [~AdditionalBundleConfig](#module_gulpConfig..AdditionalBundleConfig) : <code>Object.&lt;string, Setting&gt;</code>
@@ -927,6 +978,12 @@ A setting that may be an array of strings or a string only.
 A setting that may be true or false.
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
+<a name="module_gulpConfig..FlagNumberSetting"></a>
+
+### gulpConfig~FlagNumberSetting : <code>false</code> \| <code>number</code>
+A setting that may be flag 'false' or provide a number
+
+**Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
 <a name="module_gulpConfig..FlagStringSetting"></a>
 
 ### gulpConfig~FlagStringSetting : <code>false</code> \| <code>StringSetting</code>
@@ -967,7 +1024,7 @@ A setting that may only be a string.
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
 <a name="module_gulpConfig..Setting"></a>
 
-### gulpConfig~Setting : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
+### gulpConfig~Setting : <code>ArrayableSetting</code> \| <code>BooleanSetting</code> \| <code>FlagNumberSetting</code> \| <code>FlagsSetting</code> \| <code>StringSetting</code>
 Any single configuration option is a Setting.
 
 **Kind**: inner typedef of [<code>gulpConfig</code>](#module_gulpConfig)  
@@ -1059,6 +1116,7 @@ Configurations to minify and copy the images.
 | --- | --- | --- |
 | enabled | <code>BooleanSetting</code> | Toggle image minify and copy process. |
 | from | <code>StringSetting</code> | Path to search for images. |
+| jpegQuality | <code>FlagNumberSetting</code> | The JPEG quality (0 to 100) mozjpeg compresses to. False (the default) keeps mozjpeg's own default, 75. Raise it (85 is usually indistinguishable from the original) when 75 visibly bands smooth gradients. |
 | to | <code>StringSetting</code> | Path to output images. |
 
 <a name="module_gulpConfig..LintConfig"></a>
@@ -1101,8 +1159,11 @@ TypeScript types) or jsdoc (a modern theme over jsdoc's own classic default) - s
 
 | Name | Type | Description |
 | --- | --- | --- |
+| basePath | <code>FlagStringSetting</code> | The path the documentation is served from, such as '/projects/my-lib/docs/' (jsdoc with clean-jsdoc-theme 5.x only). The theme's links start at the site root, so documentation served below it needs this. False (the default) serves it from the site root. |
 | enabled | <code>BooleanSetting</code> | Toggle generating the documentation from the source. When it is on the build does this instead of generating the readme from the jsdoc comments of the compiled files. |
 | from | <code>ArrayableSetting</code> | The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc). jsdoc also takes a list of directories and files. |
+| gitRevision | <code>FlagStringSetting</code> | The git revision TypeDoc's "Defined in" source links point to (TypeDoc only). False (the default) is TypeDoc's own: the current commit, which changes every page on every commit. A branch name such as 'main' keeps the pages unchanged until the documentation itself changes; '{branch}' is the branch being built. |
+| inBuild | <code>BooleanSetting</code> | Generate the documentation as part of build (the default). Turn it off to only generate it when you run the docs task yourself (gulp docs), for example when docs.to points into another repository and you only want to publish the documentation of a release. |
 | index | <code>StringSetting</code> | The markdown file used as the front page of the documentation. |
 | logLevel | <code>StringSetting</code> | How much TypeDoc reports: Verbose, Info, Warn, Error or None. Not used by jsdoc. |
 | method | <code>FlagStringSetting</code> | 'typedoc' or 'jsdoc'. False (the default) infers it from typescript.enabled - 'typedoc' when on, 'jsdoc' when off - so an existing TypeScript project's config needs no change to keep working exactly as it already does; set this explicitly to override that inference either way. |

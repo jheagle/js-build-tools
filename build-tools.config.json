@@ -15,6 +15,7 @@
     "to": "dist"
   },
   "docs": {
+    "basePath": "/projects/js-build-tools/docs/",
     "enabled": true,
     "from": [
       "functions",

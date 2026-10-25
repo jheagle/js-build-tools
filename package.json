@@ -122,7 +122,7 @@
   ],
   "funding": "https://www.paypal.com/donate/?business=LRYR6SZRWKXVY&no_recurring=0&item_name=Let%27s+build+together+today+to+simplify+our+jobs+tomorrow.&currency_code=CAD",
   "devDependencies": {
-    "clean-jsdoc-theme": "^4.3.3",
+    "clean-jsdoc-theme": "^5.2.1",
     "gulp-imagemin": "github:jheagle/gulp-imagemin#common-js-compatibility",
     "jsdoc": "^4.0.5",
     "playwright": "^1.64.1",
@@ -140,6 +140,7 @@
     "core-js": false,
     "core-js-pure": false,
     "@parcel/watcher": false,
-    "unrs-resolver": false
+    "unrs-resolver": false,
+    "esbuild": false
   }
 }

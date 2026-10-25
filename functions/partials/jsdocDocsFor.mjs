@@ -103,7 +103,15 @@ export const jsdocDocsFor = (
       const themeDir = resolveJsdocTheme(theme)
       const indexFile = gulpConfig.get('docs.index')
       const title = gulpConfig.get('docs.title')
+      const basePath = gulpConfig.get('docs.basePath')
       await removeDirectory(outPath)
+      const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'jsdocdocs-'))
+      // clean-jsdoc-theme 5.x writes no index.html at all without a front page, so fall back to one with the title
+      let readme = indexFile && fs.existsSync(indexFile) ? path.resolve(indexFile) : ''
+      if (!readme) {
+        readme = path.join(workDir, 'index.md')
+        fs.writeFileSync(readme, `# ${title || 'Documentation'}\n`)
+      }
       const config = {
         ...jsdocBase,
         source: {
@@ -117,9 +125,13 @@ export const jsdocDocsFor = (
           // quick-start example, which sets this explicitly, not assumed from jsdoc's own classic defaults.
           recurse: true,
           template: themeDir,
-          // clean-jsdoc-theme's own options for the name in its header and the home page's <title> (otherwise "Home").
+          // clean-jsdoc-theme 4.x's own options for the name in its header and the home page's <title> (otherwise "Home").
           // The header is given as a link: a plain-text title links to the site root ("/"), while every page is in one
           // folder, so index.html is the home page wherever they are served. Both are printed unescaped by the theme.
+          // clean-jsdoc-theme 5.x reads its options from opts itself: the name in its header and <title>, and the path
+          // its root-absolute links start from (4.x reads only theme_opts).
+          ...(title ? { siteName: title } : {}),
+          ...(basePath ? { basePath } : {}),
           ...(title
             ? {
                 theme_opts: {
@@ -128,10 +140,9 @@ export const jsdocDocsFor = (
                 }
               }
             : {}),
-          ...(indexFile && fs.existsSync(indexFile) ? { readme: path.resolve(indexFile) } : {})
+          readme
         }
       }
-      const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'jsdocdocs-'))
       try {
         const configPath = path.join(workDir, 'jsdoc.conf.json')
         fs.writeFileSync(configPath, JSON.stringify(config))
