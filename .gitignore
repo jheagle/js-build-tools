@@ -1,1 +1,4 @@
 /node_modules
+
+# Generated build output (rebuilt by `npm run build`, shipped via npm)
+/dist/
