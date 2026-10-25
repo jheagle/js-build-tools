@@ -561,6 +561,10 @@ Add the following to the exports in your `build-tools.config.json`:
 ```json
 {
   "docs": {
+    // jsdoc with clean-jsdoc-theme 5.x only: the path the documentation is served from, such as
+    // "/projects/my-lib/docs/". The theme's links start at the site root, so documentation served below it needs
+    // this. Left false, it is served from the site root
+    "basePath": false,
     // Generate the documentation from the source
     "enabled": true,
     // The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc).

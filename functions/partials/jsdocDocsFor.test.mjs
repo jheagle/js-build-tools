@@ -43,6 +43,7 @@ describe('jsdocDocsFor', () => {
     calls.bin = bin
     calls.args = args
     calls.config = JSON.parse(fs.readFileSync(args[args.indexOf('-c') + 1], 'utf8'))
+    calls.readme = fs.readFileSync(calls.config.opts.readme, 'utf8')
     fs.mkdirSync(calls.config.opts.destination, { recursive: true })
     fs.writeFileSync(`${calls.config.opts.destination}/index.html`, '<html></html>')
     return Promise.resolve()
@@ -103,9 +104,25 @@ describe('jsdocDocsFor', () => {
       homepageTitle: 'Tom &amp; Jerry &lt;Tools&gt;'
     })
 
+    expect(calls.config.opts.siteName).toBe('Tom & Jerry <Tools>')
+
     gulpConfig.set('docs.title', '')
     await jsdocDocsFor(srcPath, `${srcPath}/../docs`, fakeRunJsdoc(calls))()
     expect(calls.config.opts.theme_opts).toBeUndefined()
+    expect(calls.config.opts.siteName).toBeUndefined()
+  })
+
+  test('passes docs.basePath to the theme, and leaves it out when unset', async () => {
+    gulpConfig.set('docs.enabled', true)
+    const srcPath = gulpConfig.get('srcPath')
+    const calls = {}
+    gulpConfig.set('docs.basePath', '/projects/tools/docs/')
+    await jsdocDocsFor(srcPath, `${srcPath}/../docs`, fakeRunJsdoc(calls))()
+    expect(calls.config.opts.basePath).toBe('/projects/tools/docs/')
+
+    gulpConfig.set('docs.basePath', false)
+    await jsdocDocsFor(srcPath, `${srcPath}/../docs`, fakeRunJsdoc(calls))()
+    expect(calls.config.opts.basePath).toBeUndefined()
   })
 
   test('uses the configured theme as the template directory', async () => {
@@ -116,7 +133,7 @@ describe('jsdocDocsFor', () => {
     expect(calls.config.opts.template).toBe(resolveJsdocTheme('clean-jsdoc-theme'))
   })
 
-  test('uses the front page from docs.index when it exists, and leaves readme unset when it does not', async () => {
+  test('uses the front page from docs.index when it exists, and falls back to one with the title when it does not', async () => {
     gulpConfig.set('docs.enabled', true)
     gulpConfig.set('docs.index', `${gulpConfig.get('srcPath')}/../MAIN.md`)
     write(`${gulpConfig.get('srcPath')}/../MAIN.md`, '# hello\n')
@@ -125,8 +142,11 @@ describe('jsdocDocsFor', () => {
     expect(calls.config.opts.readme).toBe(path.resolve(`${gulpConfig.get('srcPath')}/../MAIN.md`))
 
     gulpConfig.set('docs.index', 'does-not-exist.md')
+    gulpConfig.set('docs.title', 'Tom & Jerry')
     await jsdocDocsFor(gulpConfig.get('srcPath'), `${gulpConfig.get('srcPath')}/../docs`, fakeRunJsdoc(calls))()
-    expect(calls.config.opts.readme).toBeUndefined()
+    expect(calls.readme).toBe('# Tom & Jerry\n')
+    // The fallback is written to a temporary folder, which is removed afterwards
+    expect(fs.existsSync(calls.config.opts.readme)).toBe(false)
   })
 
   test('skips if docs.enabled is false', () => {
@@ -147,6 +167,16 @@ describe('jsdocDocsFor, end to end with the real jsdoc CLI and clean-jsdoc-theme
     // outPath's own root - confirmed by actually running it, not assumed from the classic jsdoc template shape.
     const files = fs.readdirSync(outPath, { recursive: true })
     expect(files.some(file => file.endsWith('.html'))).toBe(true)
-    expect(fs.readFileSync(`${outPath}/index.html`, 'utf8')).toMatch(/<title>\s*Tom &amp; Jerry\s*<\/title>/)
+    expect(fs.readFileSync(`${outPath}/index.html`, 'utf8')).toMatch(/<title>[^<]*Tom &amp; Jerry\s*<\/title>/)
+  }, 30000)
+
+  test('starts every link at docs.basePath, for documentation served below the site root', async () => {
+    gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('docs.basePath', '/projects/tools/docs/')
+    const outPath = `${gulpConfig.get('srcPath')}/../docs`
+    await jsdocDocsFor(gulpConfig.get('srcPath'), outPath)()
+    const links = [...fs.readFileSync(`${outPath}/index.html`, 'utf8').matchAll(/(?:href|src)="(\/[^"]*)"/g)].map(match => match[1])
+    expect(links.length).toBeGreaterThan(0)
+    expect(links.filter(link => !link.startsWith('/projects/tools/docs'))).toEqual([])
   }, 30000)
 })

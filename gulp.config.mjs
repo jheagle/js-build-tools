@@ -138,6 +138,9 @@ import { fileExists } from 'test-filesystem'
  * Configurations for generating the HTML documentation of a project's own source, with either TypeDoc (real
  * TypeScript types) or jsdoc (a modern theme over jsdoc's own classic default) - see docs.method.
  * @typedef {Object<string, Setting>} module:gulpConfig~DocsConfig
+ * @property {FlagStringSetting} basePath - The path the documentation is served from, such as '/projects/my-lib/docs/'
+ * (jsdoc with clean-jsdoc-theme 5.x only). The theme's links start at the site root, so documentation served below it
+ * needs this. False (the default) serves it from the site root.
  * @property {BooleanSetting} enabled - Toggle generating the documentation from the source. When it is on the
  * build does this instead of generating the readme from the jsdoc comments of the compiled files.
  * @property {ArrayableSetting} from - The directory holding the source, each folder in it becomes a module (TypeDoc) or
@@ -228,6 +231,7 @@ const setDefaults = {
     to: 'dist',
   },
   docs: {
+    basePath: false,
     enabled: false,
     from: 'src',
     gitRevision: false,
