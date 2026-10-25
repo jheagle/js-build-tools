@@ -22,6 +22,7 @@
     "dev": "gulp",
     "docs": "gulp docs",
     "lint": "gulp lint",
+    "prepublishOnly": "npm run build",
     "readme": "gulp readme",
     "release": "release-it",
     "release:dry-run": "release-it --dry-run",
