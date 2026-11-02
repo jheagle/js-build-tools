@@ -6,10 +6,6 @@ import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import * as gulpConfig from '../../gulp.config.mjs'
 import { removeDirectory } from './removeDirectory.mjs'
-// jsdoc.base.js is CommonJS (it's also required directly by consuming projects' own .jsdoc.conf.js) - Node's ESM
-// loader imports a CJS module's module.exports as the default export directly, no createRequire/import.meta needed
-// (import.meta.url tripped up this project's own Babel CJS transform, which Jest relies on to run .mjs test files -
-// confirmed by removing it and nothing else changing).
 
 const execFileAsync = promisify(execFile)
 
@@ -111,7 +107,9 @@ export const jsdocDocsFor = (
         readme = path.join(workDir, 'index.md')
         fs.writeFileSync(readme, `# ${title || 'Documentation'}\n`)
       }
-      // Loaded here, not at the top: jsdoc.base.js reads the gulp config as soon as it loads
+      // Loaded here, not at the top: jsdoc.base.js reads the gulp config as soon as it loads (at the top, Jest's
+      // native ES module mode hit a require(esm) cycle through gulp.config.js). It's CommonJS (consuming projects'
+      // .jsdoc.conf.js require it directly); import() gives its module.exports as the default export.
       const { default: jsdocBase } = await import('../../jsdoc.base.js')
       const config = {
         ...jsdocBase,
