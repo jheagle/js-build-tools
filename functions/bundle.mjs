@@ -173,12 +173,19 @@ const browserifyCompat = (ignore, exclude, commonJsRoot) => ({
           if (excluded.has(args.path) || excluded.has(bareName)) {
             return { path: args.path, external: true }
           }
+          const installed = args.path.startsWith('node:') ? { errors: [true] } : await resolveNormally(args)
+          const isFile = !installed.errors.length && installed.namespace === 'file' && path.isAbsolute(installed.path)
+          // Disabled by the importing package's "browser" field (e.g. postcss: { "fs": false, "path": false }):
+          // esbuild resolves it to nothing, not a file. The package chose this, so an empty object without a
+          // warning, before any stand-in, as browserify did.
+          if (!installed.errors.length && !isFile) {
+            return emptyModule(bareName)
+          }
           if (builtinShims[bareName]) {
             return { path: resolveShim(builtinShims[bareName]) }
           }
           // A project's own installed package of the same name (a browser shim) wins over an empty object
-          const installed = args.path.startsWith('node:') ? { errors: [true] } : await resolveNormally(args)
-          if (!installed.errors.length) {
+          if (isFile) {
             return { path: installed.path }
           }
           // browserify bundled a real shim for some of these (events, buffer, util...); say so instead of failing
