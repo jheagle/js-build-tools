@@ -79,7 +79,7 @@
     "regenerator-runtime": "^0.14.1",
     "sass": "^1.107.1",
     "test-filesystem": "^2.1.0",
-    "through2": "^4.0.2",
+    "through2": "^5.0.12",
     "vinyl": "^3.0.1"
   },
   "peerDependencies": {
