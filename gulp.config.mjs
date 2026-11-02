@@ -105,6 +105,8 @@ import { fileExists } from 'test-filesystem'
 /**
  * Configurations to minify and copy the images.
  * @typedef {Object<string, Setting>} module:gulpConfig~ImageConfig
+ * @property {StringSetting} cacheDir - Where optimized images are cached between runs, so an image that hasn't
+ * changed isn't optimized again. Inside node_modules by default, so it's never committed; delete it to start over.
  * @property {BooleanSetting} enabled - Toggle image minify and copy process.
  * @property {StringSetting} from - Path to search for images.
  * @property {FlagNumberSetting} jpegQuality - The JPEG quality (0 to 100) mozjpeg compresses to. False (the
@@ -250,6 +252,7 @@ const setDefaults = {
     to: 'browser/fonts',
   },
   images: {
+    cacheDir: 'node_modules/.cache/js-build-tools/images',
     enabled: false,
     from: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
     jpegQuality: false,

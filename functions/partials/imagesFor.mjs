@@ -1,4 +1,4 @@
-import cache from 'gulp-cache'
+import { cacheFiles } from './cacheFiles.mjs'
 import { requirePeer } from './loadPeer.mjs'
 import { dest, src } from 'gulp'
 import * as gulpConfig from '../../gulp.config.mjs'
@@ -65,18 +65,21 @@ export const imagesFor = (imageSrc = gulpConfig.get('images.from'), imageDest = 
   const jpegQuality = gulpConfig.get('images.jpegQuality')
   // Left unset, imagemin runs its default plugins with their own defaults
   const plugins = jpegQuality ? imageminPlugins(jpegQuality) : undefined
-  // Gulp 5 reads files as utf8 text unless told otherwise, which corrupts binary images (and makes gulp-cache drop them).
+  // Gulp 5 reads files as utf8 text unless told otherwise, which corrupts binary images.
   return src(imageSrc, { encoding: false })
     .pipe(
-      // Caching images that ran through imagemin
-      cache(
+      // Only images imagemin hasn't optimized before go through it; the rest come from the cache
+      cacheFiles(
         imagemin(plugins, {
           interlaced: true,
           silent: true,
           verbose: false,
         }),
-        // gulp-cache keys on the file's contents alone, so keep each quality's results apart
-        { name: jpegQuality ? `jpeg-quality-${jpegQuality}` : 'default' }
+        {
+          directory: gulpConfig.get('images.cacheDir'),
+          // Each quality gets results of its own
+          name: jpegQuality ? `jpeg-quality-${jpegQuality}` : 'default'
+        }
       )
     )
     .pipe(dest(imageDest))

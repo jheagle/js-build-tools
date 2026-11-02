@@ -9,6 +9,7 @@
 
 export { addToReadme } from './partials/addToReadme.mjs'
 export { beginWatcher } from './partials/beginWatcher.mjs'
+export { cacheFiles } from './partials/cacheFiles.mjs'
 export { clean } from './partials/clean.mjs'
 export { copyFor } from './partials/copyFor.mjs'
 export { distFor } from './partials/distFor.mjs'
