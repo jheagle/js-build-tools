@@ -528,4 +528,29 @@ describe('bundle with a dependency whose "browser" field disables Node built-ins
       })
       .on('error', finish)
   })
+
+  test('one package disabling path leaves another package\'s require(\'path\') on the stand-in', done => {
+    const modules = `${gulpConfig.get('rootPath')}node_modules`
+    fs.mkdirSync(`${modules}/disables-path`, { recursive: true })
+    fs.writeFileSync(`${modules}/disables-path/package.json`, JSON.stringify({ name: 'disables-path', main: 'index.js', browser: { path: false } }))
+    fs.writeFileSync(`${modules}/disables-path/index.js`, 'module.exports = Object.keys(require(\'path\')).length\n')
+    fs.mkdirSync(`${modules}/uses-path`, { recursive: true })
+    fs.writeFileSync(`${modules}/uses-path/package.json`, JSON.stringify({ name: 'uses-path', main: 'index.js' }))
+    fs.writeFileSync(`${modules}/uses-path/index.js`, 'module.exports = require(\'path\').join(\'a\', \'..\', \'b\')\n')
+    fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, 'module.exports = { disabled: require(\'disables-path\'), joined: require(\'uses-path\') }\n')
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(1)
+    bundle()
+      .on('finish', () => {
+        try {
+          const context = vm.createContext({})
+          vm.runInContext(fs.readFileSync(bundledFile).toString(), context)
+          expect(context[toGlobalName(gulpConfig.get('browser.name'))]).toEqual({ disabled: 0, joined: 'b' })
+          done()
+        } catch (error) {
+          done(error)
+        }
+      })
+      .on('error', error => done(error))
+  })
 })
