@@ -4,7 +4,7 @@ import * as setUp from '../test-helpers/setUp.mjs'
 import os from 'os'
 import path from 'path'
 import zlib from 'zlib'
-import { imageminPlugins, imagesFor, loadImagemin } from './imagesFor.mjs'
+import { imageminPlugins, imageminVersions, imagesFor, loadImagemin } from './imagesFor.mjs'
 
 setUp.setDefaults('test-images-for')
 const gulpConfig = setUp.gulpConfig
@@ -177,7 +177,6 @@ const optimize = (file, to) => new Promise((resolve, reject) => {
     .on('error', reject)
 })
 
-// The cache outlives a run, so clear it or a stale result from an older imagemin can pass
 // A fresh temp directory each test, which is also an empty image cache (see setUp's images.cacheDir)
 beforeEach(() => setUp.beforeEach())
 
@@ -227,6 +226,32 @@ describe('imagesFor', () => {
         console.error('Encountered error', error)
         done()
       })
+  })
+})
+
+describe('images.cacheDir', () => {
+  test('a second run takes the optimized image from the cache in images.cacheDir', async () => {
+    const srcPath = gulpConfig.get('srcPath')
+    const imagesFile = `${srcPath}/cached.svg`
+    fs.writeFileSync(imagesFile, imageContents)
+    const browserPath = gulpConfig.get('browser.to')
+    expect((await optimize(imagesFile, browserPath)).toString()).toEqual(imageCompressed)
+    const cacheDir = path.join(gulpConfig.get('images.cacheDir'), 'default')
+    const entries = fs.readdirSync(cacheDir)
+    expect(entries).toHaveLength(1)
+    // Change the cached result: the second run can only produce this by reading the cache instead of imagemin
+    fs.writeFileSync(path.join(cacheDir, entries[0]), '<svg>from the cache</svg>')
+    expect((await optimize(imagesFile, browserPath)).toString()).toEqual('<svg>from the cache</svg>')
+  })
+
+  test('the cache key includes the installed imagemin packages\' versions', () => {
+    const versions = imageminVersions()
+    expect(Object.keys(versions)).toEqual(expect.arrayContaining(['gulp-imagemin', 'imagemin', 'imagemin-svgo', 'svgo', 'imagemin-mozjpeg', 'mozjpeg']))
+    expect(versions['gulp-imagemin']).toMatch(/^\d+\.\d+\.\d+/)
+  })
+
+  test('no gulp-imagemin to find gives no versions', () => {
+    expect(imageminVersions(os.tmpdir())).toEqual({})
   })
 })
 

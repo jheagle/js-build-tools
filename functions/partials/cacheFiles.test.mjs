@@ -76,6 +76,44 @@ describe('cacheFiles', () => {
     expect(otherName.calls).toBe(1)
   })
 
+  test('another fingerprint (say, a new plugin version) goes through the plugin again', async () => {
+    await run([file('/a.txt', 'one')], upperCase(), { directory: cacheDir(), fingerprint: 'v1' })
+    const sameVersion = upperCase()
+    await run([file('/a.txt', 'one')], sameVersion, { directory: cacheDir(), fingerprint: 'v1' })
+    expect(sameVersion.calls).toBe(0)
+    const newVersion = upperCase()
+    await run([file('/a.txt', 'one')], newVersion, { directory: cacheDir(), fingerprint: 'v2' })
+    expect(newVersion.calls).toBe(1)
+  })
+
+  test('a plugin that renames files has its results cached, and a cached file is renamed the same way', async () => {
+    const renaming = () => {
+      const plugin = upperCase()
+      const transform = plugin._transform.bind(plugin)
+      plugin._transform = (input, encoding, callback) => transform(input, encoding, (error, output) => {
+        output.path = output.path.replace('.txt', '.md')
+        callback(error, output)
+      })
+      return plugin
+    }
+    expect(await run([file('/a.txt', 'one')], renaming(), { directory: cacheDir() })).toEqual({ 'a.md': 'ONE' })
+    const again = renaming()
+    // From the cache, renamed the same way, without the plugin
+    expect(await run([file('/a.txt', 'one')], again, { directory: cacheDir() })).toEqual({ 'a.md': 'ONE' })
+    expect(again.calls).toBe(0)
+  })
+
+  test('a plugin that makes new file objects still works; its results just aren\'t cached', async () => {
+    const copying = new Transform({
+      objectMode: true,
+      transform (input, encoding, callback) {
+        callback(null, file(input.path, input.contents.toString().toUpperCase()))
+      }
+    })
+    expect(await run([file('/a.txt', 'one')], copying, { directory: cacheDir() })).toEqual({ 'a.txt': 'ONE' })
+    expect(fs.existsSync(path.join(cacheDir(), 'default'))).toBe(false)
+  })
+
   test('a file without contents (a directory) passes straight through', async () => {
     const plugin = upperCase()
     expect(await run([file('/folder', null)], plugin, { directory: cacheDir() })).toEqual({ folder: null })

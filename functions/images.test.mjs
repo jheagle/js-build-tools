@@ -114,7 +114,6 @@ const imageContents = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
   '     inkscape:connector-curvature="0" />\n' +
   '</svg>\n'
 
-// The cache outlives a run, so clear it or a stale result from an older imagemin can pass
 // A fresh temp directory each test, which is also an empty image cache (see setUp's images.cacheDir)
 beforeEach(() => setUp.beforeEach())
 

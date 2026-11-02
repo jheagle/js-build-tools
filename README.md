@@ -1119,7 +1119,7 @@ Configurations to minify and copy the images.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| cacheDir | <code>StringSetting</code> | Where optimized images are cached between runs, so an image that hasn't changed isn't optimized again. Inside node_modules by default, so it's never committed; delete it to start over. |
+| cacheDir | <code>StringSetting</code> | Where optimized images are cached between runs, so an image that hasn't changed isn't optimized again. An upgrade of imagemin (or its plugins) or other settings starts new results. Inside node_modules by default, so it's never committed; old entries aren't pruned, so delete it now and then to start over. |
 | enabled | <code>BooleanSetting</code> | Toggle image minify and copy process. |
 | from | <code>StringSetting</code> | Path to search for images. |
 | jpegQuality | <code>FlagNumberSetting</code> | The JPEG quality (0 to 100) mozjpeg compresses to. False (the default) keeps mozjpeg's own default, 75. Raise it (85 is usually indistinguishable from the original) when 75 visibly bands smooth gradients. |
