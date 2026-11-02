@@ -69,10 +69,11 @@ import { fileExists } from 'test-filesystem'
  * bundle instead of their real contents. For a dependency which is only reached because it is the default value of
  * an option you always override (for example a selector engine's default DOM adapter, when you always pass your
  * own), this keeps it (and anything only it requires) out of the bundle, as long as your code never actually reaches
- * the real module by not overriding that option. See browserify's b.ignore(file).
+ * the real module by not overriding that option. Matches browserify's b.ignore(file): a module name (also any file
+ * inside that package), or a file path with its extension, starting with './' or '/'.
  * @property {ArrayableSetting} exclude - Module names or file paths left out of the bundle entirely; requiring one at
- * runtime throws unless something else provides it (for example a script tag loading it separately). See
- * browserify's b.exclude(file).
+ * runtime throws unless something else provides it (for example a script tag loading it separately). Passed to
+ * esbuild's `external` (a module name also covers its subpaths, such as `name/lib/file`).
  * @property {Array<module:gulpConfig~AdditionalBundleConfig>} bundles - Additional bundles to produce alongside the
  * primary one (name/dist.main/ignore/exclude above) - for example a render-only variant built from a different
  * entry point than the full bundle. Empty by default: a project that never sets this gets exactly the one bundle it
