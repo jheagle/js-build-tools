@@ -8,10 +8,8 @@ import { testFull } from './testFull.mjs'
 import { typeDocs } from './typeDocs.mjs'
 import { jsdocDocs } from './jsdocDocs.mjs'
 import { countMatches } from 'test-filesystem'
-import { isolateGulpCache } from './test-helpers/isolateGulpCache.mjs'
 
 setUp.setDefaults('test-build')
-const clearImageCache = isolateGulpCache('build')
 const gulpConfig = setUp.gulpConfig
 
 const genericFunction = () => Promise.resolve(true)
@@ -255,10 +253,9 @@ const sassContents = 'html\n' +
 
 const sassPath = gulpConfig.get('sass.path')
 
-// The cache outlives a run, so clear it or a stale result from an older imagemin can pass
+// A fresh temp directory each test, which is also an empty image cache (see setUp's images.cacheDir)
 beforeEach(
-  () => clearImageCache()
-    .then(setUp.beforeEach)
+  () => setUp.beforeEach()
     .then(
       async () => {
         const srcPath = gulpConfig.get('srcPath')

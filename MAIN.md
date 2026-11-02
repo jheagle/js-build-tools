@@ -86,6 +86,8 @@ provided are the defaults):
     "to": "browser/fonts"
   },
   "images": {
+    // Where optimized images are cached between runs (an unchanged image isn't optimized again)
+    "cacheDir": "node_modules/.cache/js-build-tools/images",
     // Toggle image minify and copy process
     "enabled": false,
     // Path to search for images
@@ -437,6 +439,9 @@ Add the following to the exports in your `build-tools.config.json`:
 ```json
 {
   "images": {
+    // Where optimized images are cached between runs, so an image that hasn't changed isn't optimized again. Inside
+    // node_modules by default, so it's never committed; delete the folder to start over
+    "cacheDir": "node_modules/.cache/js-build-tools/images",
     // Enable image process
     "enabled": false,
     // Search pattern to find your images

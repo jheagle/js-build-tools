@@ -31,6 +31,8 @@ export const setDefaults = (testDir = 'test-temp') => {
   gulpConfig.set('docs.title', '')
   gulpConfig.set('fonts.from', `${srcPath}/fonts/**/*`)
   gulpConfig.set('fonts.to', `${browserPath}/fonts`)
+  // Each test file's own cache, inside its temp directory, so beforeEach's fresh directory is also an empty cache
+  gulpConfig.set('images.cacheDir', `${tempDir}image-cache`)
   gulpConfig.set('images.from', `${srcPath}/img/**/*.+(png|jpg|jpeg|gif|svg)`)
   gulpConfig.set('images.to', `${browserPath}/img`)
   gulpConfig.set('readme.template', `${tempDir}MAIN.md`)

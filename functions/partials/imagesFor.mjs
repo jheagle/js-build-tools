@@ -1,4 +1,6 @@
-import cache from 'gulp-cache'
+import { existsSync, readFileSync } from 'fs'
+import path from 'path'
+import { cacheFiles } from './cacheFiles.mjs'
 import { requirePeer } from './loadPeer.mjs'
 import { dest, src } from 'gulp'
 import * as gulpConfig from '../../gulp.config.mjs'
@@ -53,6 +55,62 @@ export const imageminPlugins = (jpegQuality, plugins = loadImageminPlugins()) =>
   name => Promise.resolve(plugins[name]).then(makePlugin => name === 'mozjpeg' ? makePlugin({ quality: jpegQuality }) : makePlugin())
 )
 
+// The packages that decide imagemin's output: the wrapper and imagemin, then each plugin with the engine it runs
+const imageminPackages = [
+  ['gulp-imagemin'],
+  ['imagemin'],
+  ['imagemin-gifsicle', 'gifsicle'],
+  ['imagemin-mozjpeg', 'mozjpeg'],
+  ['imagemin-optipng', 'optipng-bin'],
+  ['imagemin-svgo', 'svgo']
+]
+
+/**
+ * Find an installed package the way Node does, from a directory up through each node_modules folder. Reads the
+ * package.json directly, so it also works for ESM-only packages that don't export it.
+ * @private
+ * @param {string} name
+ * @param {string} fromDirectory
+ * @returns {{directory: string, version: string}|undefined}
+ */
+const findPackage = (name, fromDirectory) => {
+  for (let directory = path.resolve(fromDirectory); ; directory = path.dirname(directory)) {
+    const file = path.join(directory, 'node_modules', name, 'package.json')
+    if (existsSync(file)) {
+      return { directory: path.dirname(file), version: JSON.parse(readFileSync(file, 'utf8')).version }
+    }
+    if (directory === path.dirname(directory)) {
+      return undefined
+    }
+  }
+}
+
+/**
+ * The installed versions of the packages that decide imagemin's output, so the image cache stops using results made
+ * by older versions after an upgrade (see images.cacheDir).
+ * @memberOf module:partials
+ * @param {string} [projectPath=process.cwd()] - The project directory gulp-imagemin is installed in.
+ * @returns {Object<string, string>} Each package's version by name; a package that isn't installed is left out.
+ */
+export const imageminVersions = (projectPath = process.cwd()) => {
+  const gulpImagemin = findPackage('gulp-imagemin', projectPath)
+  const versions = {}
+  if (!gulpImagemin) {
+    return versions
+  }
+  for (const [wrapper, engine] of imageminPackages) {
+    const found = findPackage(wrapper, gulpImagemin.directory)
+    if (found) {
+      versions[wrapper] = found.version
+      const engineFound = engine && findPackage(engine, found.directory)
+      if (engineFound) {
+        versions[engine] = engineFound.version
+      }
+    }
+  }
+  return versions
+}
+
 /**
  * Move and optimize images into the browser directory.
  * @memberOf module:partials
@@ -65,18 +123,24 @@ export const imagesFor = (imageSrc = gulpConfig.get('images.from'), imageDest = 
   const jpegQuality = gulpConfig.get('images.jpegQuality')
   // Left unset, imagemin runs its default plugins with their own defaults
   const plugins = jpegQuality ? imageminPlugins(jpegQuality) : undefined
-  // Gulp 5 reads files as utf8 text unless told otherwise, which corrupts binary images (and makes gulp-cache drop them).
+  const options = {
+    interlaced: true,
+    silent: true,
+    verbose: false,
+  }
+  // Gulp 5 reads files as utf8 text unless told otherwise, which corrupts binary images.
   return src(imageSrc, { encoding: false })
     .pipe(
-      // Caching images that ran through imagemin
-      cache(
-        imagemin(plugins, {
-          interlaced: true,
-          silent: true,
-          verbose: false,
-        }),
-        // gulp-cache keys on the file's contents alone, so keep each quality's results apart
-        { name: jpegQuality ? `jpeg-quality-${jpegQuality}` : 'default' }
+      // Only images imagemin hasn't optimized before go through it; the rest come from the cache
+      cacheFiles(
+        imagemin(plugins, options),
+        {
+          directory: gulpConfig.get('images.cacheDir'),
+          // Each quality gets results of its own
+          name: jpegQuality ? `jpeg-quality-${jpegQuality}` : 'default',
+          // A new imagemin (or plugin, or engine) version, or other options, makes new results
+          fingerprint: JSON.stringify({ options, versions: imageminVersions() })
+        }
       )
     )
     .pipe(dest(imageDest))
