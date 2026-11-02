@@ -238,7 +238,6 @@ describe('bundle as a browser script', () => {
   })
 
   test('Node built-ins: path gets a browser stand-in, fs an empty object, process and global still work', done => {
-    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
     fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, 'const path = require(\'path\')\n' +
       'const fs = require(\'fs\')\n' +
       'module.exports = {\n' +
@@ -248,19 +247,28 @@ describe('bundle as a browser script', () => {
       '  isGlobal: global === globalThis\n' +
       '}\n')
     const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    // fs has no browser version, so it warns; that warning has its own test below
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const finish = (error) => {
+      warn.mockRestore()
+      done(error)
+    }
     expect.assertions(4)
     bundle()
       .on('finish', () => {
-        const context = runAsScript(bundledFile)
-        const loaded = context[toGlobalName(originalName)]
-        expect(loaded.joined).toBe('a/c')
-        expect(loaded.fsKeys).toBe(0)
-        expect(loaded.env).toEqual({})
-        expect(loaded.isGlobal).toBe(true)
-        warn.mockRestore()
-        done()
+        try {
+          const context = runAsScript(bundledFile)
+          const loaded = context[toGlobalName(originalName)]
+          expect(loaded.joined).toBe('a/c')
+          expect(loaded.fsKeys).toBe(0)
+          expect(loaded.env).toEqual({})
+          expect(loaded.isGlobal).toBe(true)
+          finish()
+        } catch (error) {
+          finish(error)
+        }
       })
-      .on('error', error => done(error))
+      .on('error', finish)
   })
 
   test('a built-in that becomes an empty object is reported, unless it is listed in ignore', done => {
@@ -275,10 +283,14 @@ describe('bundle as a browser script', () => {
     expect.assertions(2)
     bundle()
       .on('finish', () => {
-        const messages = warn.mock.calls.map(([message]) => message)
-        expect(messages).toEqual([expect.stringContaining('Node built-in "os" has no browser version')])
-        expect(messages.join('')).not.toContain('"fs"')
-        finish()
+        try {
+          const messages = warn.mock.calls.map(([message]) => message)
+          expect(messages).toEqual([expect.stringContaining('Node built-in "os" has no browser version')])
+          expect(messages.join('')).not.toContain('"fs"')
+          finish()
+        } catch (error) {
+          finish(error)
+        }
       })
       .on('error', finish)
   })
@@ -417,6 +429,64 @@ describe('bundle in a "type": "module" package', () => {
         // Paths in the bundle stay relative, never the machine's absolute path
         expect(contents).not.toContain(path.resolve(distPath))
         done()
+      })
+      .on('error', error => done(error))
+  })
+})
+
+describe('bundle exclude on Node built-ins', () => {
+  afterEach(() => gulpConfig.set('browser.exclude', []))
+
+  test('an excluded built-in is left out (required at runtime), not shimmed or emptied', done => {
+    fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, 'module.exports = () => [require(\'events\'), require(\'path\')]\n')
+    gulpConfig.set('browser.exclude', ['events', 'path'])
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const finish = (error) => {
+      warn.mockRestore()
+      done(error)
+    }
+    expect.assertions(3)
+    bundle()
+      .on('finish', () => {
+        try {
+          const contents = fs.readFileSync(bundledFile).toString()
+          // Left as runtime requires: no path-browserify code, no empty stand-in, and nothing to warn about
+          expect(contents).not.toContain('path-browserify')
+          expect(contents).not.toContain('js-build-tools-empty')
+          expect(warn).not.toHaveBeenCalled()
+          finish()
+        } catch (error) {
+          finish(error)
+        }
+      })
+      .on('error', finish)
+  })
+})
+
+describe('bundle ignore with a scoped package', () => {
+  afterEach(() => gulpConfig.set('browser.ignore', []))
+
+  test.each([
+    ['the package', '@scoped/dep'],
+    ['the whole scope (browserify\'s own rule)', '@scoped']
+  ])('ignoring %s also empties a deep import from inside it', (_, entry, done) => {
+    const depDir = `${gulpConfig.get('rootPath')}node_modules/@scoped/dep`
+    fs.mkdirSync(`${depDir}/lib`, { recursive: true })
+    fs.writeFileSync(`${depDir}/package.json`, JSON.stringify({ name: '@scoped/dep', main: 'index.js' }))
+    fs.writeFileSync(`${depDir}/lib/inner.js`, 'module.exports = \'SCOPED_DEP_INNER_MARKER\'\n')
+    fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, 'module.exports = require(\'@scoped/dep/lib/inner\')\n')
+    gulpConfig.set('browser.ignore', [entry])
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(1)
+    bundle()
+      .on('finish', () => {
+        try {
+          expect(fs.readFileSync(bundledFile).toString()).not.toContain('SCOPED_DEP_INNER_MARKER')
+          done()
+        } catch (error) {
+          done(error)
+        }
       })
       .on('error', error => done(error))
   })

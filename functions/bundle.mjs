@@ -108,8 +108,13 @@ const browserifyIgnoreMatcher = (ignore) => {
     if (entries.has(id) || entries.has(file)) {
       return true
     }
-    const packageName = file.replace(/\\/g, '/').split('/node_modules/')[1]?.split('/')[0]
-    return entries.has(packageName) || entries.has(`/${path.relative(process.cwd(), file).replace(/\\/g, '/')}`)
+    // Every package the file sits inside (nested node_modules too). browserify only took the first segment of the
+    // outermost one, so `@scope` matched a whole scope; that still works, and `@scope/name` now matches its package.
+    const inPackage = file.replace(/\\/g, '/').split('/node_modules/').slice(1).some((part) => {
+      const [first, second] = part.split('/')
+      return entries.has(first) || (first.startsWith('@') && entries.has(`${first}/${second}`))
+    })
+    return inPackage || entries.has(`/${path.relative(process.cwd(), file).replace(/\\/g, '/')}`)
   }
 }
 
@@ -122,14 +127,17 @@ const browserifyIgnoreMatcher = (ignore) => {
  * is always CommonJS (Babel), even in a `"type": "module"` project, where esbuild would read it as an ES module and
  * leave `exports` undefined. So when commonJsRoot is given, files under it are loaded as CommonJS.
  * @param {Array<string>} ignore
+ * @param {Array<string>} exclude - also applies to Node built-ins, which are otherwise shimmed before esbuild's
+ * `external` is checked (browserify checked exclude first too)
  * @param {string|null} commonJsRoot - absolute dist.to, for a `"type": "module"` project; otherwise null
  * @returns {Object} an esbuild plugin
  * @private
  */
-const browserifyCompat = (ignore, commonJsRoot) => ({
+const browserifyCompat = (ignore, exclude, commonJsRoot) => ({
   name: 'js-build-tools-browserify-compat',
   setup (build) {
     const isIgnored = browserifyIgnoreMatcher(ignore)
+    const excluded = new Set(exclude)
     const emptyModule = (name) => ({ path: name, namespace: emptyNamespace })
     const resolveNormally = (args) => build.resolve(args.path, {
       kind: args.kind,
@@ -162,6 +170,9 @@ const browserifyCompat = (ignore, commonJsRoot) => ({
         }
         const bareName = args.path.replace(/^node:/, '')
         if (builtins.has(bareName)) {
+          if (excluded.has(args.path) || excluded.has(bareName)) {
+            return { path: args.path, external: true }
+          }
           if (builtinShims[bareName]) {
             return { path: resolveShim(builtinShims[bareName]) }
           }
@@ -240,7 +251,7 @@ const buildBundle = async ({ name, main, ignore, exclude }) => {
     inject: [processInject],
     // Also reachable through CommonJS, as browserify's UMD wrapper was (the <script> tag global is unchanged)
     footer: { js: `if (typeof module === 'object' && module && module.exports) { module.exports = ${globalName} }` },
-    plugins: [browserifyCompat(ignoreList, commonJsDistRoot())],
+    plugins: [browserifyCompat(ignoreList, excludeList, commonJsDistRoot())],
     logLevel: 'silent'
   })
   result.warnings.forEach(({ text }) => console.warn(`bundle ${name}.js: ${text}`))
