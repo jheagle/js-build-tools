@@ -316,8 +316,9 @@ module.exports = jsDocBase
 ### Configure what the browser bundle leaves out (optional)
 
 A dependency can be reached from your code without being needed in the browser, and bundling it can add a lot of size.
-Two settings in `browser` handle this, both take module names or file paths (see browserify's `b.ignore(file)` and
-`b.exclude(file)`):
+Two settings in `browser` handle this, both take module names or file paths (bundles are built with esbuild; `ignore`
+matches what browserify's `b.ignore(file)` did: a module name, which also covers every file inside that package, or a
+file path with its extension starting with `./` or `/`; `exclude` is esbuild's `external`):
 
 ```json
 {
@@ -333,6 +334,18 @@ Two settings in `browser` handle this, both take module names or file paths (see
   }
 }
 ```
+
+### How the browser bundle is built
+
+With esbuild since 6.9.0 (browserify before):
+
+* The bundle is a plain script: `<script src="browser/my-package.js">` defines a global named after `browser.name`,
+  camel-cased (`my-package` becomes `window.myPackage`), and `require()` of the file returns the same value. AMD
+  loaders are no longer supported.
+* Node built-ins: `path` and `process` get browser stand-ins; any other built-in (`fs`, `child_process`, ...) becomes
+  an empty object, unless your project installs a package of the same name (for example `events`).
+* Your `dist` files are read as CommonJS even when your package.json says `"type": "module"`, because the dist step
+  always compiles them to CommonJS.
 
 ### Configure additional browser bundles (optional)
 

@@ -316,8 +316,9 @@ module.exports = jsDocBase
 ### Configure what the browser bundle leaves out (optional)
 
 A dependency can be reached from your code without being needed in the browser, and bundling it can add a lot of size.
-Two settings in `browser` handle this, both take module names or file paths (see browserify's `b.ignore(file)` and
-`b.exclude(file)`):
+Two settings in `browser` handle this, both take module names or file paths (bundles are built with esbuild; `ignore`
+matches what browserify's `b.ignore(file)` did: a module name, which also covers every file inside that package, or a
+file path with its extension starting with `./` or `/`; `exclude` is esbuild's `external`):
 
 ```json
 {
@@ -333,6 +334,18 @@ Two settings in `browser` handle this, both take module names or file paths (see
   }
 }
 ```
+
+### How the browser bundle is built
+
+With esbuild since 6.9.0 (browserify before):
+
+* The bundle is a plain script: `<script src="browser/my-package.js">` defines a global named after `browser.name`,
+  camel-cased (`my-package` becomes `window.myPackage`), and `require()` of the file returns the same value. AMD
+  loaders are no longer supported.
+* Node built-ins: `path` and `process` get browser stand-ins; any other built-in (`fs`, `child_process`, ...) becomes
+  an empty object, unless your project installs a package of the same name (for example `events`).
+* Your `dist` files are read as CommonJS even when your package.json says `"type": "module"`, because the dist step
+  always compiles them to CommonJS.
 
 ### Configure additional browser bundles (optional)
 
@@ -869,7 +882,7 @@ encoding: false fix (Gulp 5's default utf8 handling corrupts binary files such a
 instead of silently losing it in a parallel implementation.
 
 Each entry runs as its own independent copyFor(), awaited via Promise.all rather than merged into one combined
-stream (mergeStream, the pattern bundle.mjs uses) - that pattern assumes every merged stream ends up at the
+stream (the pattern bundle.mjs used before esbuild) - that pattern assumes every merged stream ends up at the
 same shared destination; here, each entry can have a genuinely different one, and merging streams that each
 already terminate at their own separate dest() hit a real "write after end" error in practice.
 
@@ -892,16 +905,19 @@ store them in the specified output directory. A project with no browser.bundles 
 exactly the one bundle it always did; each additional entry produces its own separate bundle
 (for example, a render-only variant built from a different entry point than the full bundle).
 
-A bundle's name does double duty: it names the output file (name.js) and, via browserify's
-`standalone` option, is also the name its exports are exposed under - as a global when loaded
-with a bare `<script>` tag, or as the module when required via CommonJS/AMD. Without this, a
-bundle built from a real entry point (one that actually exports something) builds successfully
-but exposes nothing a consumer can reach.
+Bundling is done by esbuild (replacing browserify since 6.9.0), as an IIFE. A bundle's name does
+double duty: it names the output file (name.js) and is also the name its exports are exposed
+under - as a global when loaded with a bare `<script>` tag (camel-cased the way browserify's
+`standalone` option did, so `matrix-dom` is `window.matrixDom`), or as the module when required
+via CommonJS. AMD loaders are no longer supported.
 
 Two escape hatches from browser.config.json keep an unwanted dependency (or a dependency's dependency) out of the
 bundle: 'ignore' replaces it with an empty object (safe when your code never actually calls into it - for example
 a library's default option value you always override with your own) and 'exclude' leaves it out entirely (your
 code must not require it, or provide it another way, such as a separate script tag).
+
+Node built-ins: `path` and `process` get browser stand-ins, any other built-in resolves to a package of the same
+name if the project installs one, otherwise to an empty object.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.build"></a>
@@ -1061,8 +1077,8 @@ Configurations for building the browser files.
 | from | <code>StringSetting</code> | The search pattern used for retrieving compiled distribution files. |
 | name | <code>StringSetting</code> | The name to use for the browser-bundled output file (.js will be appended). |
 | to | <code>StringSetting</code> | The output directory for browser-bundled files. |
-| ignore | <code>ArrayableSetting</code> | Module names or file paths which resolve to an empty object ({}) in the bundle instead of their real contents. For a dependency which is only reached because it is the default value of an option you always override (for example a selector engine's default DOM adapter, when you always pass your own), this keeps it (and anything only it requires) out of the bundle, as long as your code never actually reaches the real module by not overriding that option. See browserify's b.ignore(file). |
-| exclude | <code>ArrayableSetting</code> | Module names or file paths left out of the bundle entirely; requiring one at runtime throws unless something else provides it (for example a script tag loading it separately). See browserify's b.exclude(file). |
+| ignore | <code>ArrayableSetting</code> | Module names or file paths which resolve to an empty object ({}) in the bundle instead of their real contents. For a dependency which is only reached because it is the default value of an option you always override (for example a selector engine's default DOM adapter, when you always pass your own), this keeps it (and anything only it requires) out of the bundle, as long as your code never actually reaches the real module by not overriding that option. Matches browserify's b.ignore(file): a module name (also any file inside that package), or a file path with its extension, starting with './' or '/'. |
+| exclude | <code>ArrayableSetting</code> | Module names or file paths left out of the bundle entirely; requiring one at runtime throws unless something else provides it (for example a script tag loading it separately). Passed to esbuild's `external` (a module name also covers its subpaths, such as `name/lib/file`). |
 | bundles | [<code>Array.&lt;AdditionalBundleConfig&gt;</code>](#module_gulpConfig..AdditionalBundleConfig) | Additional bundles to produce alongside the primary one (name/dist.main/ignore/exclude above) - for example a render-only variant built from a different entry point than the full bundle. Empty by default: a project that never sets this gets exactly the one bundle it always did. |
 
 <a name="module_gulpConfig..AdditionalBundleConfig"></a>

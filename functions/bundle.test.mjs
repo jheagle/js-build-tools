@@ -1,7 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import * as setUp from './test-helpers/setUp.mjs'
-import { bundle } from './bundle.mjs'
+import { bundle, toGlobalName } from './bundle.mjs'
+import vm from 'vm'
 import { countMatches } from 'test-filesystem'
 
 setUp.setDefaults('test-bundle')
@@ -45,27 +46,19 @@ afterEach(setUp.afterEach)
 
 describe('bundle', () => {
   test('copies all the dist contents into a single file for browsers', done => {
-    const distPath = gulpConfig.get('dist.to')
     const destFile = `${gulpConfig.get('browser.name')}.js`
     const destPath = gulpConfig.get('browser.to')
     const bundledFile = `${destPath}/${destFile}`
-    const sourcesPath = `${distPath}/sources`
-    const file1Path = `${sourcesPath}/file1.js`
-    const file2Path = `${sourcesPath}/file2.js`
-    const oldFile1Contents = fs.readFileSync(file1Path).toString()
-    const oldFile2Contents = fs.readFileSync(file2Path).toString()
     expect.assertions(2)
     bundle()
       .on('finish', () => {
+        // esbuild re-indents each module inside its own wrapper, so look for each module's code, not its exact text
         const bundledContents = fs.readFileSync(bundledFile).toString()
-        expect(countMatches(bundledContents, oldFile1Contents)).toEqual(1)
-        expect(countMatches(bundledContents, oldFile2Contents)).toEqual(1)
+        expect(countMatches(bundledContents, 'console.log("Hello from file1")')).toEqual(1)
+        expect(countMatches(bundledContents, 'console.log("Good-bye from file2")')).toEqual(1)
         done()
       })
-      .on('error', error => {
-        console.error('Encountered error', error)
-        done()
-      })
+      .on('error', error => done(error))
   })
 
   test('exposes browser.name as the standalone export, reachable by a real consumer', done => {
@@ -212,6 +205,217 @@ describe('bundle ignore / exclude', () => {
     bundle()
       .on('finish', () => {
         expect(fs.readFileSync(bundledFile).toString()).not.toContain(optionalDepMarker)
+        done()
+      })
+      .on('error', error => done(error))
+  })
+})
+
+describe('bundle as a browser script', () => {
+  const runAsScript = (file) => {
+    // A bare <script> tag: no module, no require, no process, no global - only the window (globalThis)
+    const context = vm.createContext({})
+    vm.runInContext(fs.readFileSync(file).toString(), context)
+    return context
+  }
+
+  const originalName = gulpConfig.get('browser.name')
+
+  afterEach(() => gulpConfig.set('browser.name', originalName))
+
+  test('exposes the bundle as a global, camel-cased the way browserify standalone did', done => {
+    gulpConfig.set('browser.name', 'my-bundle')
+    const bundledFile = `${gulpConfig.get('browser.to')}/my-bundle.js`
+    expect.assertions(2)
+    bundle()
+      .on('finish', () => {
+        const context = runAsScript(bundledFile)
+        expect(typeof context.myBundle.file1).toBe('function')
+        expect(typeof context.myBundle.file2).toBe('function')
+        done()
+      })
+      .on('error', error => done(error))
+  })
+
+  test('Node built-ins: path gets a browser stand-in, fs an empty object, process and global still work', done => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, 'const path = require(\'path\')\n' +
+      'const fs = require(\'fs\')\n' +
+      'module.exports = {\n' +
+      '  joined: path.join(\'a\', \'b\', \'..\', \'c\'),\n' +
+      '  fsKeys: Object.keys(fs).length,\n' +
+      '  env: typeof process !== \'undefined\' && process.env,\n' +
+      '  isGlobal: global === globalThis\n' +
+      '}\n')
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(4)
+    bundle()
+      .on('finish', () => {
+        const context = runAsScript(bundledFile)
+        const loaded = context[toGlobalName(originalName)]
+        expect(loaded.joined).toBe('a/c')
+        expect(loaded.fsKeys).toBe(0)
+        expect(loaded.env).toEqual({})
+        expect(loaded.isGlobal).toBe(true)
+        warn.mockRestore()
+        done()
+      })
+      .on('error', error => done(error))
+  })
+
+  test('a built-in that becomes an empty object is reported, unless it is listed in ignore', done => {
+    fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, 'module.exports = { fs: require(\'fs\'), os: require(\'os\') }\n')
+    gulpConfig.set('browser.ignore', ['fs'])
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const finish = (error) => {
+      warn.mockRestore()
+      gulpConfig.set('browser.ignore', [])
+      done(error)
+    }
+    expect.assertions(2)
+    bundle()
+      .on('finish', () => {
+        const messages = warn.mock.calls.map(([message]) => message)
+        expect(messages).toEqual([expect.stringContaining('Node built-in "os" has no browser version')])
+        expect(messages.join('')).not.toContain('"fs"')
+        finish()
+      })
+      .on('error', finish)
+  })
+
+  test('a bundle that never uses process does not get the process stand-in', done => {
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(1)
+    bundle()
+      .on('finish', () => {
+        expect(fs.readFileSync(bundledFile).toString()).not.toContain('nextTick')
+        done()
+      })
+      .on('error', error => done(error))
+  })
+
+  test('a build failure is emitted as an error on the returned stream', done => {
+    fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, 'module.exports = require(\'./does-not-exist\')\n')
+    expect.assertions(1)
+    bundle()
+      .on('finish', () => done(new Error('should not finish')))
+      .on('error', error => {
+        expect(error.message).toContain('does-not-exist')
+        done()
+      })
+  })
+})
+
+describe('bundle ignore by file path', () => {
+  test('a file path without its extension does not match, as with browserify', done => {
+    const distPath = gulpConfig.get('dist.to')
+    gulpConfig.set('browser.ignore', [`./${distPath}/sources/file2`])
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(1)
+    bundle()
+      .on('finish', () => {
+        gulpConfig.set('browser.ignore', [])
+        expect(fs.readFileSync(bundledFile).toString()).toContain('Good-bye from file2')
+        done()
+      })
+      .on('error', error => {
+        gulpConfig.set('browser.ignore', [])
+        done(error)
+      })
+  })
+
+  test.each([
+    ['relative, starting with ./', (distPath) => `./${distPath}/sources/file2.js`],
+    ['absolute', (distPath) => path.resolve(`${distPath}/sources/file2.js`)],
+    ['/ + relative to the working directory', (distPath) => `/${distPath}/sources/file2.js`]
+  ])('ignore also accepts a file path: %s', (_, toEntry, done) => {
+    const distPath = gulpConfig.get('dist.to')
+    gulpConfig.set('browser.ignore', [toEntry(distPath)])
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(2)
+    bundle()
+      .on('finish', () => {
+        gulpConfig.set('browser.ignore', [])
+        const contents = fs.readFileSync(bundledFile).toString()
+        expect(contents).toContain('Hello from file1')
+        expect(contents).not.toContain('Good-bye from file2')
+        done()
+      })
+      .on('error', error => {
+        gulpConfig.set('browser.ignore', [])
+        done(error)
+      })
+  })
+})
+
+describe('toGlobalName', () => {
+  test.each([
+    ['jsonDom', 'jsonDom'],
+    ['matrix-dom', 'matrixDom'],
+    ['pseudo-dom', 'pseudoDom'],
+    ['collect-your-stuff', 'collectYourStuff'],
+    ['my.name-space', 'my.nameSpace']
+  ])('%s -> %s', (name, expected) => {
+    expect(toGlobalName(name)).toBe(expected)
+  })
+
+  test('throws when nothing valid is left', () => {
+    expect(() => toGlobalName('---')).toThrow('valid JavaScript identifier')
+  })
+})
+
+describe('bundle ignore by package name', () => {
+  test('ignoring a package name also empties a deep import from inside that package', done => {
+    const tempDir = gulpConfig.get('rootPath')
+    const depDir = `${tempDir}node_modules/deep-dep`
+    fs.mkdirSync(`${depDir}/lib`, { recursive: true })
+    fs.writeFileSync(`${depDir}/package.json`, JSON.stringify({ name: 'deep-dep', main: 'index.js' }))
+    fs.writeFileSync(`${depDir}/lib/inner.js`, 'module.exports = \'DEEP_DEP_INNER_MARKER\'\n')
+    fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, 'module.exports = require(\'deep-dep/lib/inner\')\n')
+    gulpConfig.set('browser.ignore', ['deep-dep'])
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(1)
+    bundle()
+      .on('finish', () => {
+        gulpConfig.set('browser.ignore', [])
+        expect(fs.readFileSync(bundledFile).toString()).not.toContain('DEEP_DEP_INNER_MARKER')
+        done()
+      })
+      .on('error', error => {
+        gulpConfig.set('browser.ignore', [])
+        done(error)
+      })
+  })
+})
+
+describe('bundle in a "type": "module" package', () => {
+  const packageFile = () => `${gulpConfig.get('rootPath')}package.json`
+
+  afterEach(() => fs.rmSync(packageFile(), { force: true }))
+
+  test('the Babel-compiled (CommonJS) dist files still bundle as CommonJS', done => {
+    fs.writeFileSync(packageFile(), JSON.stringify({ name: 'esm-app', type: 'module' }))
+    const distPath = gulpConfig.get('dist.to')
+    fs.writeFileSync(`${distPath}/sources/esModuleFlag.js`, '"use strict";\n' +
+      'Object.defineProperty(exports, "__esModule", { value: true });\n' +
+      'exports.flag = void 0;\n' +
+      'var flag = exports.flag = \'babel-cjs\';\n')
+    fs.writeFileSync(`${gulpConfig.get('dist.main')}.js`, '"use strict";\n' +
+      'var _flag = require("./sources/esModuleFlag.js");\n' +
+      'exports.flag = _flag.flag;\n' +
+      'exports.file1 = require("./sources/file1");\n')
+    const bundledFile = `${gulpConfig.get('browser.to')}/${gulpConfig.get('browser.name')}.js`
+    expect.assertions(3)
+    bundle()
+      .on('finish', () => {
+        const contents = fs.readFileSync(bundledFile).toString()
+        const context = vm.createContext({})
+        vm.runInContext(contents, context)
+        const loaded = context[toGlobalName(gulpConfig.get('browser.name'))]
+        expect(loaded.flag).toBe('babel-cjs')
+        expect(typeof loaded.file1).toBe('function')
+        // Paths in the bundle stay relative, never the machine's absolute path
+        expect(contents).not.toContain(path.resolve(distPath))
         done()
       })
       .on('error', error => done(error))

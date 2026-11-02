@@ -13,7 +13,7 @@ import * as gulpConfig from '../gulp.config.mjs'
  * instead of silently losing it in a parallel implementation.
  *
  * Each entry runs as its own independent copyFor(), awaited via Promise.all rather than merged into one combined
- * stream (mergeStream, the pattern bundle.mjs uses) - that pattern assumes every merged stream ends up at the
+ * stream (the pattern bundle.mjs used before esbuild) - that pattern assumes every merged stream ends up at the
  * same shared destination; here, each entry can have a genuinely different one, and merging streams that each
  * already terminate at their own separate dest() hit a real "write after end" error in practice.
  * @memberOf module:js-build-tools
