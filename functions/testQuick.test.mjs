@@ -1,12 +1,14 @@
+import { jest } from '@jest/globals'
 import { testHelpers } from './testHelpers.mjs'
-import { runCLI } from 'jest'
-import { testQuick } from './testQuick.mjs'
 
 const gulpConfig = testHelpers.gulpConfig
 
-jest.mock('jest', () => ({
+jest.unstable_mockModule('jest', () => ({
   runCLI: jest.fn(() => Promise.resolve(true))
 }))
+
+const { testQuick } = await import('./testQuick.mjs')
+const { runCLI } = await import('jest')
 
 describe('testQuick', () => {
   test('runs the jest CLI with onlyChanged option', () => {

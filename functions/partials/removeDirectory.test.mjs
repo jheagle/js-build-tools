@@ -1,12 +1,14 @@
+import { jest } from '@jest/globals'
 import fs from 'fs'
-import { rm } from 'node:fs/promises'
-import { removeDirectory } from './removeDirectory.mjs'
 
 // Wrap rm so tests can simulate something recreating the directory while (or right after) it is deleted.
-jest.mock('node:fs/promises', () => {
+jest.unstable_mockModule('node:fs/promises', () => {
   const actual = jest.requireActual('node:fs/promises')
   return { ...actual, rm: jest.fn(actual.rm) }
 })
+
+const { removeDirectory } = await import('./removeDirectory.mjs')
+const { rm } = await import('node:fs/promises')
 const { rm: realRm } = jest.requireActual('node:fs/promises')
 
 const dirPath = 'remove-directory'

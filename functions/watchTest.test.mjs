@@ -1,14 +1,16 @@
+import { jest } from '@jest/globals'
 import * as setUp from './test-helpers/setUp.mjs'
-import { watchTest } from './watchTest.mjs'
 import { EventEmitter } from 'node:events'
 import fs from 'fs'
-import { testQuick } from './testQuick.mjs'
 
 setUp.setDefaults('test-watch-test')
 const gulpConfig = setUp.gulpConfig
 gulpConfig.set('test.watch', 'test-begin-watcher/*.js')
 
-jest.mock('./testQuick.mjs', () => ({ testQuick: jest.fn(() => Promise.resolve(true)) }))
+jest.unstable_mockModule('./testQuick.mjs', () => ({ testQuick: jest.fn(() => Promise.resolve(true)) }))
+
+const { watchTest } = await import('./watchTest.mjs')
+const { testQuick } = await import('./testQuick.mjs')
 
 const rawContents = 'const gulpConfig = require(\'../gulp.config.js\')\n' +
   'const { watch } = require(\'gulp\')\n' +

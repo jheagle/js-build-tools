@@ -18,7 +18,7 @@
     "./testHelpers.mjs": "./functions/testHelpers.mjs"
   },
   "scripts": {
-    "build": "gulp build",
+    "build": "node --experimental-vm-modules node_modules/gulp/bin/gulp.js build",
     "dev": "gulp",
     "docs": "gulp docs",
     "lint": "gulp lint",
@@ -26,10 +26,10 @@
     "readme": "gulp readme",
     "release": "release-it",
     "release:dry-run": "release-it --dry-run",
-    "test": "gulp testFull",
-    "test:quick": "gulp testQuick",
-    "watch": "gulp watchFull",
-    "watch:test": "gulp watchTest"
+    "test": "node --experimental-vm-modules node_modules/gulp/bin/gulp.js testFull",
+    "test:quick": "node --experimental-vm-modules node_modules/gulp/bin/gulp.js testQuick",
+    "watch": "node --experimental-vm-modules node_modules/gulp/bin/gulp.js watchFull",
+    "watch:test": "node --experimental-vm-modules node_modules/gulp/bin/gulp.js watchTest"
   },
   "repository": "github:jheagle/js-build-tools",
   "keywords": [

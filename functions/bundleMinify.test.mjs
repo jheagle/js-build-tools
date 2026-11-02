@@ -1,10 +1,12 @@
+import { jest } from '@jest/globals'
 import { testHelpers } from './testHelpers.mjs'
-import { bundleMinify } from './bundleMinify.mjs'
-import { minifyFor } from './partials/minifyFor.mjs'
 
 const gulpConfig = testHelpers.gulpConfig
 
-jest.mock('./partials/minifyFor.mjs', () => ({ minifyFor: jest.fn(() => Promise.resolve(true)) }))
+jest.unstable_mockModule('./partials/minifyFor.mjs', () => ({ minifyFor: jest.fn(() => Promise.resolve(true)) }))
+
+const { bundleMinify } = await import('./bundleMinify.mjs')
+const { minifyFor } = await import('./partials/minifyFor.mjs')
 
 describe('bundleMinify', () => {
   afterEach(() => {

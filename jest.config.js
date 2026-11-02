@@ -2,7 +2,7 @@ module.exports = {
   testMatch: [
     '**/?(*.)+(spec|test).mjs?(x)'
   ],
-  transform: {
-    '^.+\\.[cm]?[jt]sx?$': 'babel-jest'
-  }
+  // Native ES modules, no transform: run with node --experimental-vm-modules (the npm scripts do). Projects using
+  // js-build-tools keep their own Jest setup; this is only for js-build-tools' own tests.
+  transform: {}
 }

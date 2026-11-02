@@ -1,14 +1,16 @@
+import { jest } from '@jest/globals'
 import fs from 'fs'
 import * as setUp from './test-helpers/setUp.mjs'
-import { watchFull } from './watchFull.mjs'
-import { beginWatcher } from './partials/beginWatcher.mjs'
-import { runOnChange } from './partials/runOnChange.mjs'
 
 setUp.setDefaults('test-watch-full')
 const gulpConfig = setUp.gulpConfig
 
-jest.mock('./partials/beginWatcher.mjs', () => ({ beginWatcher: jest.fn(() => ({ on: (event, fn) => fn() })) }))
-jest.mock('./partials/runOnChange.mjs', () => ({ runOnChange: jest.fn() }))
+jest.unstable_mockModule('./partials/beginWatcher.mjs', () => ({ beginWatcher: jest.fn(() => ({ on: (event, fn) => fn() })) }))
+jest.unstable_mockModule('./partials/runOnChange.mjs', () => ({ runOnChange: jest.fn() }))
+
+const { watchFull } = await import('./watchFull.mjs')
+const { beginWatcher } = await import('./partials/beginWatcher.mjs')
+const { runOnChange } = await import('./partials/runOnChange.mjs')
 
 const rawContents = 'const { beginWatcher, runOnChange } = require(\'./partials\')\n' +
   '\n' +

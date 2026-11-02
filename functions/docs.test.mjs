@@ -1,12 +1,14 @@
+import { jest } from '@jest/globals'
 import * as setUp from './test-helpers/setUp.mjs'
-import { docs } from './docs.mjs'
-import { typeDocs } from './typeDocs.mjs'
-import { jsdocDocs } from './jsdocDocs.mjs'
 
 const genericFunction = () => Promise.resolve(true)
 
-jest.mock('./typeDocs.mjs', () => ({ typeDocs: jest.fn(genericFunction) }))
-jest.mock('./jsdocDocs.mjs', () => ({ jsdocDocs: jest.fn(genericFunction) }))
+jest.unstable_mockModule('./typeDocs.mjs', () => ({ typeDocs: jest.fn(genericFunction) }))
+jest.unstable_mockModule('./jsdocDocs.mjs', () => ({ jsdocDocs: jest.fn(genericFunction) }))
+
+const { docs } = await import('./docs.mjs')
+const { typeDocs } = await import('./typeDocs.mjs')
+const { jsdocDocs } = await import('./jsdocDocs.mjs')
 
 setUp.setDefaults('test-docs')
 const gulpConfig = setUp.gulpConfig

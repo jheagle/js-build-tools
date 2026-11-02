@@ -1,8 +1,10 @@
+import { jest } from '@jest/globals'
 import fs from 'fs'
 import path from 'node:path'
 import * as setUp from '../test-helpers/setUp.mjs'
 import { jsdocDocsFor, resolveJsdocBin, resolveJsdocTheme } from './jsdocDocsFor.mjs'
-import jsdocBase from '../../jsdoc.base.js'
+// After the ES modules have run: jsdoc.base.js reads the gulp config as soon as it loads
+const { default: jsdocBase } = await import('../../jsdoc.base.js')
 
 setUp.setDefaults('test-jsdoc-docs-for')
 const gulpConfig = setUp.gulpConfig
