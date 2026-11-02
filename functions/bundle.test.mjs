@@ -1,3 +1,5 @@
+import { createRequire } from 'module'
+import { jest } from '@jest/globals'
 import fs from 'fs'
 import path from 'path'
 import * as setUp from './test-helpers/setUp.mjs'
@@ -5,6 +7,7 @@ import { bundle, toGlobalName } from './bundle.mjs'
 import vm from 'vm'
 import { countMatches } from 'test-filesystem'
 
+const require = createRequire(import.meta.url)
 setUp.setDefaults('test-bundle')
 const gulpConfig = setUp.gulpConfig
 

@@ -1,12 +1,14 @@
+import { jest } from '@jest/globals'
 /* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import fs from 'fs'
 import * as setUp from './test-helpers/setUp.mjs'
-import { lint } from './lint.mjs'
-import { sourceLint } from './sourceLint.mjs'
 import { countMatches } from 'test-filesystem'
 
 // Run the real neostandard (in a subprocess) - Jest's CommonJS transform can't load the ESM-only package itself.
-jest.mock('./partials/neostandardLint.mjs', () => require('./test-helpers/neostandardLintWithRealNeostandard.mjs'))
+jest.unstable_mockModule('./partials/neostandardLint.mjs', () => import('./test-helpers/neostandardLintWithRealNeostandard.mjs'))
+
+const { lint } = await import('./lint.mjs')
+const { sourceLint } = await import('./sourceLint.mjs')
 
 setUp.setDefaults('test-source-lint')
 const gulpConfig = setUp.gulpConfig

@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals'
 import Vinyl from 'vinyl'
 import { Readable } from 'node:stream'
 import { neostandardLint } from './neostandardLint.mjs'

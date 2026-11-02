@@ -1,14 +1,16 @@
+import { jest } from '@jest/globals'
 import * as setUp from '../test-helpers/setUp.mjs'
-import { distSeries } from './distSeries.mjs'
-import { tsFor } from './tsFor.mjs'
-import { distFor } from './distFor.mjs'
 
 const gulpConfig = setUp.gulpConfig
 
 const genericFunction = () => Promise.resolve(true)
 
-jest.mock('./distFor.mjs', () => ({ distFor: jest.fn(genericFunction) }))
-jest.mock('./tsFor.mjs', () => ({ tsFor: jest.fn(() => genericFunction) }))
+jest.unstable_mockModule('./distFor.mjs', () => ({ distFor: jest.fn(genericFunction) }))
+jest.unstable_mockModule('./tsFor.mjs', () => ({ tsFor: jest.fn(() => genericFunction) }))
+
+const { distSeries } = await import('./distSeries.mjs')
+const { tsFor } = await import('./tsFor.mjs')
+const { distFor } = await import('./distFor.mjs')
 
 describe('distSeries', () => {
   test('when not using ts config only returns runnable distFor', done => {

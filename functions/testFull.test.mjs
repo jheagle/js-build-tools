@@ -1,12 +1,14 @@
+import { jest } from '@jest/globals'
 import { testHelpers } from './testHelpers.mjs'
-import { runCLI } from 'jest'
-import { testFull } from './testFull.mjs'
 
 const gulpConfig = testHelpers.gulpConfig
 
-jest.mock('jest', () => ({
+jest.unstable_mockModule('jest', () => ({
   runCLI: jest.fn(() => Promise.resolve(true))
 }))
+
+const { testFull } = await import('./testFull.mjs')
+const { runCLI } = await import('jest')
 
 describe('testFull', () => {
   test('runs the Jest CLI with the configured options', () => {

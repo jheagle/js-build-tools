@@ -1,21 +1,23 @@
+import { jest } from '@jest/globals'
 /* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import fs from 'fs'
 import * as setUp from '../test-helpers/setUp.mjs'
-import { bundle } from '../bundle.mjs'
-import { distFor } from './distFor.mjs'
-import { runOnChange } from './runOnChange.mjs'
-import { tsFor } from './tsFor.mjs'
-import { testQuick } from '../testQuick.mjs'
 
 setUp.setDefaults('test-run-on-change')
 const gulpConfig = setUp.gulpConfig
 
 const genericFunction = () => Promise.resolve(true)
 
-jest.mock('../bundle.mjs', () => ({ bundle: jest.fn(genericFunction) }))
-jest.mock('./distFor.mjs', () => ({ distFor: jest.fn(genericFunction) }))
-jest.mock('./tsFor.mjs', () => ({ tsFor: jest.fn(() => genericFunction) }))
-jest.mock('../testQuick.mjs', () => ({ testQuick: jest.fn(genericFunction) }))
+jest.unstable_mockModule('../bundle.mjs', () => ({ bundle: jest.fn(genericFunction) }))
+jest.unstable_mockModule('./distFor.mjs', () => ({ distFor: jest.fn(genericFunction) }))
+jest.unstable_mockModule('./tsFor.mjs', () => ({ tsFor: jest.fn(() => genericFunction) }))
+jest.unstable_mockModule('../testQuick.mjs', () => ({ testQuick: jest.fn(genericFunction) }))
+
+const { bundle } = await import('../bundle.mjs')
+const { distFor } = await import('./distFor.mjs')
+const { runOnChange } = await import('./runOnChange.mjs')
+const { tsFor } = await import('./tsFor.mjs')
+const { testQuick } = await import('../testQuick.mjs')
 
 const rawContents = 'export function sayHello(name: string) {\n' +
   '  return `Hello from ${name}`;\n' +

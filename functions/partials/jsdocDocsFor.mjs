@@ -10,7 +10,6 @@ import { removeDirectory } from './removeDirectory.mjs'
 // loader imports a CJS module's module.exports as the default export directly, no createRequire/import.meta needed
 // (import.meta.url tripped up this project's own Babel CJS transform, which Jest relies on to run .mjs test files -
 // confirmed by removing it and nothing else changing).
-import jsdocBase from '../../jsdoc.base.js'
 
 const execFileAsync = promisify(execFile)
 
@@ -112,6 +111,8 @@ export const jsdocDocsFor = (
         readme = path.join(workDir, 'index.md')
         fs.writeFileSync(readme, `# ${title || 'Documentation'}\n`)
       }
+      // Loaded here, not at the top: jsdoc.base.js reads the gulp config as soon as it loads
+      const { default: jsdocBase } = await import('../../jsdoc.base.js')
       const config = {
         ...jsdocBase,
         source: {

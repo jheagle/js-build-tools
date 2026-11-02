@@ -2,7 +2,7 @@ import { execFileSync } from 'child_process'
 import path from 'path'
 import * as esmConfig from '../gulp.config.mjs'
 
-const root = path.resolve(__dirname, '..')
+const root = path.resolve(import.meta.dirname, '..')
 const readFromCjs = (dotPath) => JSON.parse(execFileSync(process.execPath, [
   '-e',
   `console.log(JSON.stringify(require('./gulp.config.js').get(${JSON.stringify(dotPath)})))`
