@@ -58,7 +58,7 @@
     "autoprefixer": "^10.6.2",
     "babel-jest": "^30.5.2",
     "core-js": "^3.51.0",
-    "cssnano": "^6.1.2",
+    "cssnano": "^9.9.0",
     "esbuild": "^0.28.2",
     "eslint": "^10.14.0",
     "glob": "^14.0.3",
@@ -132,7 +132,7 @@
     "typescript": "^6.0.3"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": "^22.22.3 || ^24.15.0 || >=26.0"
   },
   "allowScripts": {
     "gifsicle@5.3.0": true,

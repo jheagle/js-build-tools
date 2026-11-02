@@ -1,3 +1,4 @@
+import { createRequire } from 'module'
 import fs from 'fs'
 import * as setUp from '../test-helpers/setUp.mjs'
 import { sassFor } from './sassFor.mjs'
@@ -77,5 +78,33 @@ describe('sassFor', () => {
         console.error('Encountered error', error)
         done()
       })
+  })
+
+  test('the minified css is exactly what cssnano produces for a small fixture', done => {
+    // Pins cssnano's behaviour (colour minification, shorthand merging, declaration order kept as written), so a
+    // future cssnano upgrade that changes the output fails here instead of passing unnoticed
+    const sassFile = `${sassPath}/exactOutput.scss`
+    fs.writeFileSync(sassFile, '.a { margin: 0px 0px 0px 0px; color: #ff0000; }\n.b { padding: 0px; color: #ff0000; }\n')
+    expect.assertions(1)
+    const cssPath = gulpConfig.get('sass.to')
+    sassFor(sassFile)
+      .on('finish', () => {
+        try {
+          expect(fs.readFileSync(`${cssPath}/exactOutput.min.css`).toString().trim()).toBe('.a{margin:0}.a,.b{color:red}.b{padding:0}')
+          done()
+        } catch (error) {
+          done(error)
+        }
+      })
+      .on('error', error => done(error))
+  })
+
+  test('cssnano loads through require(), as the CommonJS dist/partials/sassFor.js does', () => {
+    // dist/ is Babel's CommonJS output: `_interopRequireDefault(require('cssnano')).default()`. cssnano 9 is an ES
+    // module; require() of it must hand back the plugin function itself for that interop to work.
+    const cssnanoRequired = createRequire(import.meta.url)('cssnano')
+    const interop = cssnanoRequired && cssnanoRequired.__esModule ? cssnanoRequired : { default: cssnanoRequired }
+    expect(typeof interop.default).toBe('function')
+    expect(typeof interop.default().postcssPlugin === 'string' || Array.isArray(interop.default().plugins)).toBe(true)
   })
 })
