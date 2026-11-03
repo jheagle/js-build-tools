@@ -14,15 +14,16 @@ const targets = {
   samsung: '29'
 }
 
+// Plugins and presets by resolved path, not by name: Babel resolves names from the *project's* root, but a project
+// keeps Babel 7 at its top level (Jest's own internals use it), so npm installs Babel 8 inside js-build-tools, where a
+// name lookup from the project can't reach it. require.resolve here finds js-build-tools' own copies wherever they are.
 module.exports = {
   plugins: [
-    '@babel/plugin-transform-modules-commonjs'
+    require.resolve('@babel/plugin-transform-modules-commonjs'),
+    // Babel 8 removed preset-env's useBuiltIns/corejs options; the same polyfill injection, as its own plugin
+    [require.resolve('babel-plugin-polyfill-corejs3'), { method: 'usage-global', version: '3.6', proposals: true, targets }]
   ],
   presets: [
-    ['@babel/preset-env', {
-      useBuiltIns: 'usage',
-      corejs: { version: '3.6', proposals: true },
-      targets
-    }]
+    [require.resolve('@babel/preset-env'), { targets }]
   ]
 }
