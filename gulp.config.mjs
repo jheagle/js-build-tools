@@ -308,14 +308,15 @@ const setDefaults = {
  * @memberOf module:gulpConfig` `
  * @type {Configurations}
  */
-let gulpConfigurations = null
+// Starts empty: with no build-tools.config.json, every setting falls back to its default below
+let gulpConfigurations = {}
 if (fileExists(process.cwd() + '/build-tools.config.json')) {
   gulpConfigurations = JSON.parse(readFileSync(process.cwd() + '/build-tools.config.json').toString())
 } else {
   if (fileExists('./build-tools.config.json')) {
     gulpConfigurations = JSON.parse(readFileSync('./build-tools.config.json').toString())
   } else {
-    console.warn('Missing config path, ensure you have a build-tools.config.js file in you project root')
+    console.warn('Missing build-tools.config.json in your project root, using the default settings')
   }
 }
 
