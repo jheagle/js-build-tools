@@ -37,3 +37,9 @@ When comparing `dist/`: Babel 8 renames the variables inside its `_interopRequir
 
 - The core-js `proposals: true` setting (injects iterator polyfills for every `.map` / `.forEach`): changing it changes compiled output; its own decision.
 - TypeScript 7 for js-build-tools (no TypeScript source here; its TS-API tools need TS 6 until TS 7.1).
+
+## Release notes for 8.0.0 (collected as the epic goes)
+
+- **Breaking:** projects need Babel 8: declare `@babel/core` ^8 as a dev dependency (their `babel-jest` uses it), bump any `@babel/*` packages they list themselves to 8, and the `@babel/preset-typescript` change from task 2.
+- js-build-tools' `babel.config.js` references its plugins and presets by resolved path (works wherever npm installs Babel 8); polyfills come from `babel-plugin-polyfill-corejs3` with the same settings, and inject the same core-js modules as before (pinned by `functions/babelConfig.test.mjs`).
+- Compiled output: dynamic `import()` stays native in CommonJS `dist/` instead of becoming `Promise.resolve().then(() => require(...))` (same result for CommonJS files; and ES-module-only packages can now be loaded lazily from a CommonJS `dist/`). Babel's `_interopRequireWildcard` helper has renamed variables.
