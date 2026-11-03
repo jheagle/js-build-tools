@@ -6,7 +6,7 @@ const require = createRequire(import.meta.url)
 const configFile = require.resolve('../babel.config.js')
 const babelConfig = require(configFile)
 
-const compile = (code) => transformSync(code, { filename: 'snippet.js', configFile }).code
+const compile = (code, filename = 'snippet.js') => transformSync(code, { filename, configFile }).code
 
 describe('babel.config.js', () => {
   test('every plugin and preset is a resolved path to a file that exists', () => {
@@ -40,5 +40,24 @@ describe('babel.config.js', () => {
       'require("core-js/modules/esnext.iterator.map.js")',
       'require("core-js/modules/esnext.iterator.to-array.js")'
     ])
+  })
+
+  test('compiles TypeScript: types are removed, the code is kept', () => {
+    const output = compile('interface Point { x: number }\nexport const origin: Point = { x: 0 }\nexport type Name = string\n', 'snippet.ts')
+    expect(output).toContain('exports.origin')
+    expect(output).not.toContain('interface')
+    expect(output).not.toContain(': Point')
+    expect(output).not.toContain('Name')
+  })
+
+  test('plain JavaScript compiles exactly as it would without the TypeScript preset', () => {
+    const code = 'export const label = (name) => "Hello " + name\n'
+    const withoutTypeScript = transformSync(code, {
+      filename: 'snippet.js',
+      configFile: false,
+      plugins: babelConfig.plugins,
+      presets: babelConfig.presets.slice(0, -1)
+    }).code
+    expect(compile(code)).toBe(withoutTypeScript)
   })
 })
