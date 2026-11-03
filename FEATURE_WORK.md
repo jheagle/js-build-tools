@@ -26,8 +26,8 @@ When comparing `dist/`: Babel 8 renames the variables inside its `_interopRequir
 
 ## Work Split
 
-- [ ] 1. js-build-tools: Babel 8 (`@babel/core` 8.1.0, preset-env / preset-typescript 8.0.7, plugin-transform-modules-commonjs 8.0.1); polyfills via `babel-plugin-polyfill-corejs3` with the same options; plugins and presets referenced by resolved path, so the config works wherever npm puts them (fixes 1)
-- [ ] 2. Decide how projects get `@babel/preset-typescript` (fixes 3): (a) the base config includes it (it only touches `.ts` files) and projects delete their `presets.push(...)` line, or (b) js-build-tools exports its resolved path for projects to push
+- [x] 1. js-build-tools: Babel 8 (#367) (`@babel/core` 8.1.0, preset-env / preset-typescript 8.0.7, plugin-transform-modules-commonjs 8.0.1); polyfills via `babel-plugin-polyfill-corejs3` with the same options; plugins and presets referenced by resolved path, so the config works wherever npm puts them (fixes 1)
+- [ ] 2. `@babel/preset-typescript` in the base config (decided 2026-11-02: option a); projects delete their `presets.push(...)` line (fixes 3)
 - [ ] 3. Confirm the project setup with a real install (not `--no-save`): projects declare `@babel/core` ^8 as a dev dependency so their `babel-jest` uses Babel 8 (fixes 2); write it up for the release notes
 - [ ] 4. common-exports: its own tests on Jest's native ES-module mode (fixes 4)
 - [ ] 5. Project adoption PRs, base projects first (test-fs, si-funciona, collect-your-stuff, then up the chain): own `@babel/*` packages to 8, `@babel/core` ^8, the preset-typescript change; each checked against this branch (tests, `dist/` byte comparison, bundles, Chromium for the apps)
@@ -40,6 +40,6 @@ When comparing `dist/`: Babel 8 renames the variables inside its `_interopRequir
 
 ## Release notes for 8.0.0 (collected as the epic goes)
 
-- **Breaking:** projects need Babel 8: declare `@babel/core` ^8 as a dev dependency (their `babel-jest` uses it), bump any `@babel/*` packages they list themselves to 8, and the `@babel/preset-typescript` change from task 2.
+- **Breaking:** projects need Babel 8: declare `@babel/core` ^8 as a dev dependency (their `babel-jest` uses it), bump any `@babel/*` packages they list themselves to 8, and delete `babelConfig.presets.push('@babel/preset-typescript')` (the base config includes it now; keeping the line fails with "Duplicate plugin/preset detected").
 - js-build-tools' `babel.config.js` references its plugins and presets by resolved path (works wherever npm installs Babel 8); polyfills come from `babel-plugin-polyfill-corejs3` with the same settings, and inject the same core-js modules as before (pinned by `functions/babelConfig.test.mjs`).
 - Compiled output: dynamic `import()` stays native in CommonJS `dist/` instead of becoming `Promise.resolve().then(() => require(...))` (same result for CommonJS files; and ES-module-only packages can now be loaded lazily from a CommonJS `dist/`). Babel's `_interopRequireWildcard` helper has renamed variables.
