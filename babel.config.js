@@ -14,15 +14,23 @@ const targets = {
   samsung: '29'
 }
 
+// Plugins and presets by resolved path, not by name: Babel resolves names from the *project's* root, but a project
+// keeps Babel 7 at its top level (Jest's own internals use it), so npm installs Babel 8 inside js-build-tools, where a
+// name lookup from the project can't reach it. require.resolve here finds js-build-tools' own copies wherever they are.
 module.exports = {
   plugins: [
-    '@babel/plugin-transform-modules-commonjs'
+    require.resolve('@babel/plugin-transform-modules-commonjs'),
+    // Compile import() to an interop require, as Babel 7 did. Babel 8 leaves it native when the targets support it,
+    // but a native import() of a Babel-compiled CommonJS module ignores its __esModule marker, so
+    // `(await import(x)).default` becomes the whole exports object instead of the default export.
+    require.resolve('@babel/plugin-transform-dynamic-import'),
+    // Babel 8 removed preset-env's useBuiltIns/corejs options; the same polyfill injection, as its own plugin
+    [require.resolve('babel-plugin-polyfill-corejs3'), { method: 'usage-global', version: '3.6', proposals: true, targets }]
   ],
   presets: [
-    ['@babel/preset-env', {
-      useBuiltIns: 'usage',
-      corejs: { version: '3.6', proposals: true },
-      targets
-    }]
+    [require.resolve('@babel/preset-env'), { targets }],
+    // Presets run last to first, so TypeScript is stripped before preset-env compiles the result. It only acts on
+    // .ts/.tsx/.mts/.cts files, so plain JavaScript projects are unaffected; projects no longer push it themselves.
+    require.resolve('@babel/preset-typescript')
   ]
 }
