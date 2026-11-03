@@ -224,7 +224,8 @@ Example:
 
 ```js
 const babelConfig = require('js-build-tools/babel.config')
-// You may add additional configuration here. Example: babelConfig.presets.push('@babel/preset-env')
+// You may add additional configuration here, for example a plugin your project installs itself:
+// babelConfig.plugins.push(require.resolve('@babel/plugin-proposal-throw-expressions'))
 module.exports = babelConfig
 ```
 
@@ -543,14 +544,10 @@ Add the following to the exports in your `build-tools.config.json`:
 The `js-to-markdown` only works on .js files, so we run the readme search on the built dist files. Also, we want to
 register the tsconfig.json we created earlier and will alter the processes to build for TypeScript.
 
-Update `babel.config.js` with the following:
-
-```js
-const babelConfig = require('js-build-tools/babel.config')
-// This is the important line, we need to add compatibility for Jest to run tests on .ts files
-babelConfig.presets.push('@babel/preset-typescript')
-module.exports = babelConfig
-```
+The shared `babel.config.js` (see 'Configure Babel') already includes `@babel/preset-typescript`, so Jest and the
+dist task compile `.ts` files with no extra configuration. (Before 8.0.0 projects added it themselves with
+`babelConfig.presets.push('@babel/preset-typescript')`; remove that line: keeping it fails the build, with
+"Duplicate plugin/preset detected" or a not-found error, depending on where npm installed the preset.)
 
 ### Configure HTML documentation (optional)
 

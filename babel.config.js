@@ -24,6 +24,9 @@ module.exports = {
     [require.resolve('babel-plugin-polyfill-corejs3'), { method: 'usage-global', version: '3.6', proposals: true, targets }]
   ],
   presets: [
-    [require.resolve('@babel/preset-env'), { targets }]
+    [require.resolve('@babel/preset-env'), { targets }],
+    // Presets run last to first, so TypeScript is stripped before preset-env compiles the result. It only acts on
+    // .ts/.tsx/.mts/.cts files, so plain JavaScript projects are unaffected; projects no longer push it themselves.
+    require.resolve('@babel/preset-typescript')
   ]
 }
