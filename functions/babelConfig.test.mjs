@@ -60,4 +60,12 @@ describe('babel.config.js', () => {
     }).code
     expect(compile(code)).toBe(withoutTypeScript)
   })
+
+  test('compiles import() to an interop require, as Babel 7 did', () => {
+    // A native import() of a Babel-compiled CommonJS module would ignore its __esModule marker, so
+    // `(await import(x)).default` would be the whole exports object instead of the default export
+    const output = compile('export const load = async () => (await import(\'./plugin.js\')).default\n')
+    expect(output).toContain('_interopRequireWildcard(require(')
+    expect(output).not.toMatch(/[^.\w]import\(/)
+  })
 })

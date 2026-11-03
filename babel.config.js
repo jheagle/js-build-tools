@@ -20,6 +20,10 @@ const targets = {
 module.exports = {
   plugins: [
     require.resolve('@babel/plugin-transform-modules-commonjs'),
+    // Compile import() to an interop require, as Babel 7 did. Babel 8 leaves it native when the targets support it,
+    // but a native import() of a Babel-compiled CommonJS module ignores its __esModule marker, so
+    // `(await import(x)).default` becomes the whole exports object instead of the default export.
+    require.resolve('@babel/plugin-transform-dynamic-import'),
     // Babel 8 removed preset-env's useBuiltIns/corejs options; the same polyfill injection, as its own plugin
     [require.resolve('babel-plugin-polyfill-corejs3'), { method: 'usage-global', version: '3.6', proposals: true, targets }]
   ],
