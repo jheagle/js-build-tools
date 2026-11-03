@@ -33,12 +33,18 @@ When comparing `dist/`: Babel 8 renames the variables inside its `_interopRequir
   - **title-switcher:** 7 of 9 tests fail: Babel 8's TypeScript preset keeps uninitialized class fields (`typingEffect: switchTitleCallback` becomes `this.typingEffect = undefined`), hiding the method set on `TitleSwitcher.prototype`. Fix in its source: `declare typingEffect: ...` (no other project's tests hit this).
   - **workout-planner, task-manager:** own `babel.config.cjs` without `targets` (Babel 7 compiled to ES5; Babel 8 would default to modern browsers). Switched to the shared config + `throw-expressions` (by `require.resolve`): builds, workout-planner 44/44; `dist/` changes (modern targets), but their pages load `assets/js/index.js`, not that output.
   - **common-exports:** see task 4.
-- [ ] 4. common-exports (investigated 2026-11-02). Not a Jest hang: two real problems that Jest's default CommonJS mode hid.
+- [ ] 4. common-exports (investigated 2026-11-02; #370 merged, common-exports#27 in review: reworked after review to sweep the copy destinations, 72/72 on Babel 7 and on Babel 8). Not a Jest hang: two real problems that Jest's default CommonJS mode hid.
   - **common-exports bug** (common-exports#27, to its main): `makeCommon` only swept `destPath` for leftover `"type": "module"`, but converted dependencies are written next to it (`external-modules/imagemin-mozjpeg`), so their nested `package.json` files (execa, onetime, ...) kept `"type": "module"` over CommonJS content: broken in plain Node too. Fix: sweep `destPath` plus every conversion's folder; tests assert it; npm scripts run Jest with `--experimental-vm-modules` (needed to load Babel 8 there). 71/71 on Babel 7.
   - **Babel 8 change** (#370, into this epic): Babel 8 leaves `import()` native in CommonJS output; a native `import()` of a Babel-compiled CommonJS module ignores `__esModule`, so `(await import(x)).default` is the exports object (common-exports' converted gulp-imagemin: `plugin is not a function`). Fix: `@babel/plugin-transform-dynamic-import` in the base config, as Babel 7 effectively had.
   - With both: common-exports 71/71 on Babel 8. Then a patch release of common-exports (1.5.3) for the converted-output fix.
 - [ ] 5. Project adoption PRs, base projects first (test-fs, si-funciona, collect-your-stuff, then up the chain): own `@babel/*` packages to 8, `@babel/core` ^8, the preset-typescript line removed (title-switcher: `declare` fields; workout-planner / task-manager: shared config); each checked against this branch (tests, `dist/` byte comparison, bundles, Chromium for the apps)
 - [ ] 6. Release js-build-tools 8.0.0, then bump every project to ^8.0.0
+
+## Order from here (2026-11-03)
+
+1. Merge common-exports#27, release common-exports 1.5.3 (fixes its converted output).
+2. Merge this epic to main (copy this file into #368's description, delete it), release js-build-tools **8.0.0**.
+3. Task 5: every project's adoption PR against ^8.0.0 (the dry run in task 3 is the checklist), then task 6 is done with them.
 
 ## Out of scope
 
