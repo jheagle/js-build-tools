@@ -27,7 +27,7 @@ When comparing `dist/`: Babel 8 renames the variables inside its `_interopRequir
 ## Work Split
 
 - [x] 1. js-build-tools: Babel 8 (#367) (`@babel/core` 8.1.0, preset-env / preset-typescript 8.0.7, plugin-transform-modules-commonjs 8.0.1); polyfills via `babel-plugin-polyfill-corejs3` with the same options; plugins and presets referenced by resolved path, so the config works wherever npm puts them (fixes 1)
-- [ ] 2. `@babel/preset-typescript` in the base config (decided 2026-11-02: option a); projects delete their `presets.push(...)` line (fixes 3)
+- [x] 2. `@babel/preset-typescript` in the base config (#369; decided 2026-11-02: option a); projects delete their `presets.push(...)` line (fixes 3)
 - [x] 3. Confirm the project setup with a real install (dry run 2026-11-02, all 14 projects, packed epic branch installed for real + `@babel/core` ^8 + own `@babel/*` to 8 + the preset-typescript line removed): top-level `@babel/core` is 8.1.0 everywhere, so `babel-jest` runs on Babel 8. Results:
   - Clean (same tests, `dist/` and bundles identical apart from the renamed helper): battleship, collect-your-stuff, JSON-DOM, json-dom-components, matrix-dom, pseudo-dom, quizzes, si-funciona, json-file-db, website.
   - **title-switcher:** 7 of 9 tests fail: Babel 8's TypeScript preset keeps uninitialized class fields (`typingEffect: switchTitleCallback` becomes `this.typingEffect = undefined`), hiding the method set on `TitleSwitcher.prototype`. Fix in its source: `declare typingEffect: ...` (no other project's tests hit this).
