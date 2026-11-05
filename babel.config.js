@@ -24,8 +24,20 @@ module.exports = {
     // but a native import() of a Babel-compiled CommonJS module ignores its __esModule marker, so
     // `(await import(x)).default` becomes the whole exports object instead of the default export.
     require.resolve('@babel/plugin-transform-dynamic-import'),
-    // Babel 8 removed preset-env's useBuiltIns/corejs options; the same polyfill injection, as its own plugin
-    [require.resolve('babel-plugin-polyfill-corejs3'), { method: 'usage-global', version: '3.6', proposals: true, targets }]
+    // Babel 8 removed preset-env's useBuiltIns/corejs options; the same polyfill injection, as its own plugin.
+    // proposals: false - no polyfills for proposed (not yet standard) features, like WeakMap.prototype.deleteAll,
+    // which a class's #private fields (compiled to WeakMaps) used to pull in with ~23KB of core-js.
+    // exclude iterator helpers: Babel can't tell an array's .map/.filter/.reduce/.forEach from an iterator's, so it
+    // injected Iterator polyfills for every array call (most of si-funciona's dist). No project here uses iterator
+    // helpers; one that does should import them from core-js itself, or the targets should rise to browsers that
+    // have them (Chrome 122, Firefox 131, Safari 18.4).
+    [require.resolve('babel-plugin-polyfill-corejs3'), {
+      method: 'usage-global',
+      version: '3.6',
+      proposals: false,
+      exclude: [/^(es|esnext)\.(async-)?iterator\./],
+      targets
+    }]
   ],
   presets: [
     [require.resolve('@babel/preset-env'), { targets }],
