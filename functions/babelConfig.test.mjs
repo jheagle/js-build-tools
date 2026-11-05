@@ -25,21 +25,29 @@ describe('babel.config.js', () => {
     expect(output).not.toMatch(/^export /m)
   })
 
-  test('injects the same core-js polyfills as the Babel 7 config did', () => {
-    // Pinned against js-build-tools 7.0.0 (Babel 7, preset-env useBuiltIns: 'usage', corejs 3.6 + proposals), which
-    // gives exactly these five for this snippet. Promise.withResolvers / Object.groupBy get none: core-js 3.6 predates
-    // them. [].flat() gets none: every pinned target supports it.
+  test('injects no polyfills for proposals or iterator helpers, which arrays\' own methods set off', () => {
+    // Babel can't tell [].map from an iterator's map, so with iterator helpers in play every array call pulled in
+    // core-js Iterator polyfills. Promise.withResolvers / Object.groupBy get none: core-js 3.6 predates them.
+    // [].flat() gets none: every pinned target supports it.
     const output = compile('export const a = Promise.withResolvers()\n' +
       'export const b = Object.groupBy([1], x => x)\n' +
-      'export const c = [1, 2].values().map(x => x).toArray()\n' +
+      'export const c = [1, 2].map(x => x).filter(Boolean).reduce((sum, x) => sum + x, 0)\n' +
       'export const d = [1, 2].flat()\n')
-    expect(output.match(/require\("core-js\/[^"]+"\)/g)).toEqual([
-      'require("core-js/modules/esnext.async-iterator.constructor.js")',
-      'require("core-js/modules/esnext.async-iterator.to-array.js")',
-      'require("core-js/modules/esnext.iterator.constructor.js")',
-      'require("core-js/modules/esnext.iterator.map.js")',
-      'require("core-js/modules/esnext.iterator.to-array.js")'
-    ])
+    expect(output).not.toMatch(/require\("core-js\//)
+  })
+
+  test('a WeakMap gets no proposal polyfills', () => {
+    // TypeScript compiles a class's #private fields to WeakMaps before Babel sees them (title-switcher); with
+    // proposals: true each one added esnext.weak-map.delete-all and ~23KB of core-js
+    const output = compile('const counts = new WeakMap()\nexport const count = (key) => counts.get(key) ?? 0\n')
+    expect(output).toContain('new WeakMap()')
+    expect(output).not.toMatch(/require\("core-js\//)
+  })
+
+  test('still injects stable polyfills a target lacks', () => {
+    // Array.prototype.includes is stable; core-js still patches it for the pinned targets, so the stable path works
+    const output = compile('export const has = [1, 2].includes(2)\n')
+    expect(output).toContain('require("core-js/modules/es.array.includes.js")')
   })
 
   test('compiles TypeScript: types are removed, the code is kept', () => {
