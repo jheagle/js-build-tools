@@ -297,6 +297,41 @@ describe('build', () => {
     })
   }, 30000)
 
+  test('with readme.enabled false: leaves a hand-written readme as it is', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const readmeFile = `${gulpConfig.get('readme.to')}/${gulpConfig.get('readme.file')}`
+    fs.writeFileSync(`${srcPath}/sources/file1.js`, file1Contents)
+    fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
+    fs.writeFileSync(readmeFile, '# Written by hand\n')
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('readme.enabled', false)
+    build(error => {
+      gulpConfig.set('readme.enabled', true)
+      expect(error).toBeFalsy()
+      expect(fs.readFileSync(readmeFile, 'utf8')).toBe('# Written by hand\n')
+      expect(fs.existsSync(`${gulpConfig.get('dist.to')}/main.js`)).toBe(true)
+      done()
+    })
+  }, 30000)
+
+  test('without the readme template: builds, and the readme holds only the generated documentation', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const readmeFile = `${gulpConfig.get('readme.to')}/${gulpConfig.get('readme.file')}`
+    fs.writeFileSync(`${srcPath}/sources/file1.js`, file1Contents)
+    fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
+    fs.rmSync(`${gulpConfig.get('readme.to')}/MAIN.md`)
+    gulpConfig.set('browser.enabled', false)
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    build(error => {
+      warn.mockRestore()
+      expect(error).toBeFalsy()
+      const readme = fs.readFileSync(readmeFile, 'utf8')
+      expect(countMatches(readme, mainMd)).toEqual(0)
+      expect(countMatches(readme, 'file1')).toBeGreaterThan(0)
+      done()
+    })
+  }, 30000)
+
   test('when browser.enabled true: calls clean, sourceLint, distSeries, distMinify, bundle, bundleMinify, compileReadme, testFull', done => {
     const srcPath = gulpConfig.get('srcPath')
     const sourcesPath = `${srcPath}/sources`

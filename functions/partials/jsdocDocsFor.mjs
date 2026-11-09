@@ -6,6 +6,7 @@ import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import * as gulpConfig from '../../gulp.config.mjs'
 import { removeDirectory } from './removeDirectory.mjs'
+import { addToDocsPages } from './addToDocsPages.mjs'
 
 const execFileAsync = promisify(execFile)
 
@@ -153,6 +154,7 @@ export const jsdocDocsFor = (
         if (report) {
           console.warn(report)
         }
+        addToDocsPages(outPath)
       } finally {
         await removeDirectory(workDir)
       }

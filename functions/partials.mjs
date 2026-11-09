@@ -7,6 +7,7 @@
  * @memberOf module:js-build-tools
  */
 
+export { addToDocsPages } from './partials/addToDocsPages.mjs'
 export { addToReadme } from './partials/addToReadme.mjs'
 export { beginWatcher } from './partials/beginWatcher.mjs'
 export { cacheFiles } from './partials/cacheFiles.mjs'

@@ -130,13 +130,16 @@ import { fileExists } from 'test-filesystem'
 /**
  * Configurations to compile and generate the Readme file.
  * @typedef {Object<string, Setting>} module:gulpConfig~ReadmeConfig
+ * @property {BooleanSetting} enabled - Generate the readme (the default). Turn it off to keep a hand-written readme,
+ * or none: neither build nor the readme task writes it then.
  * @property {StringSetting} file - The name of the output documentation markdown file.
  * @property {StringSetting} from - Location of files to use for compiling documentation into the readme.
  * @property {ArrayableSetting} fromEsm - Additional `.mjs` files to document alongside `from`, converted on the
  * fly since the readme generator only recognizes `.js` files - see 'Configure including ESM files in the
  * generated readme'. Empty by default: a project that never sets this gets exactly the readme it always did.
  * @property {ArrayableSetting} options - Options for formatting the output readme.
- * @property {StringSetting} template - The file which will be pre-fixed to your README.md output.
+ * @property {StringSetting} template - The file which will be pre-fixed to your README.md output. When it doesn't
+ * exist, the readme holds only the generated documentation.
  * @property {StringSetting} to - The directory to output the readme file in.
  */
 /**
@@ -146,6 +149,8 @@ import { fileExists } from 'test-filesystem'
  * @property {FlagStringSetting} basePath - The path the documentation is served from, such as '/projects/my-lib/docs/'
  * (jsdoc with clean-jsdoc-theme 5.x only). The theme's links start at the site root, so documentation served below it
  * needs this. False (the default) serves it from the site root.
+ * @property {FlagStringSetting} bodyHtml - HTML added to every page of the documentation just before `</body>`, with
+ * either engine, for example the analytics script the rest of the site has. False (the default) adds nothing.
  * @property {BooleanSetting} enabled - Toggle generating the documentation from the source. When it is on the
  * build does this instead of generating the readme from the jsdoc comments of the compiled files.
  * @property {ArrayableSetting} from - The directory holding the source, each folder in it becomes a module (TypeDoc) or
@@ -154,6 +159,8 @@ import { fileExists } from 'test-filesystem'
  * only). False (the default) is TypeDoc's own: the current commit, which changes every page on every commit. A
  * branch name such as 'main' keeps the pages unchanged until the documentation itself changes; '{branch}' is the
  * branch being built.
+ * @property {FlagStringSetting} headHtml - HTML added to every page of the documentation just before `</head>`, with
+ * either engine. False (the default) adds nothing.
  * @property {BooleanSetting} inBuild - Generate the documentation as part of build (the default). Turn it off to only
  * generate it when you run the docs task yourself (gulp docs), for example when docs.to points into another
  * repository and you only want to publish the documentation of a release.
@@ -237,9 +244,11 @@ const setDefaults = {
   },
   docs: {
     basePath: false,
+    bodyHtml: false,
     enabled: false,
     from: 'src',
     gitRevision: false,
+    headHtml: false,
     inBuild: true,
     index: 'MAIN.md',
     logLevel: 'Warn',
@@ -265,6 +274,7 @@ const setDefaults = {
     rules: {},
   },
   readme: {
+    enabled: true,
     file: 'README.md',
     from: 'src/**/!(*.test).js',
     fromEsm: [],

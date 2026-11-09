@@ -17,4 +17,20 @@ describe('compileReadme', () => {
       done()
     }, 500)
   })
+
+  test('does nothing when readme.enabled is false', async () => {
+    const gulpConfig = await import('../gulp.config.mjs')
+    readmeTemplate.mockClear()
+    addToReadme.mockClear()
+    gulpConfig.set('readme.enabled', false)
+    try {
+      const done = jest.fn()
+      await compileReadme(done)
+      expect(done).toHaveBeenCalled()
+      expect(readmeTemplate).not.toHaveBeenCalled()
+      expect(addToReadme).not.toHaveBeenCalled()
+    } finally {
+      gulpConfig.set('readme.enabled', true)
+    }
+  })
 })

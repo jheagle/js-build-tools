@@ -172,6 +172,17 @@ describe('jsdocDocsFor, end to end with the real jsdoc CLI and clean-jsdoc-theme
     expect(fs.readFileSync(`${outPath}/index.html`, 'utf8')).toMatch(/<title>[^<]*Tom &amp; Jerry\s*<\/title>/)
   }, 30000)
 
+  test('adds docs.bodyHtml to every page it generates', async () => {
+    gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('docs.bodyHtml', '<script src="/count.js"></script>')
+    const outPath = `${gulpConfig.get('srcPath')}/../docs`
+    await jsdocDocsFor(gulpConfig.get('srcPath'), outPath)()
+    const pages = fs.readdirSync(outPath, { recursive: true }).filter(file => file.endsWith('.html'))
+    expect(pages.length).toBeGreaterThan(0)
+    pages.forEach(page => expect(fs.readFileSync(`${outPath}/${page}`, 'utf8')).toMatch(/<script src="\/count\.js"><\/script>\n<\/body>/))
+    gulpConfig.set('docs.bodyHtml', false)
+  }, 30000)
+
   test('starts every link at docs.basePath, for documentation served below the site root', async () => {
     gulpConfig.set('docs.enabled', true)
     gulpConfig.set('docs.basePath', '/projects/tools/docs/')
