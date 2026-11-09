@@ -197,6 +197,28 @@ describe('typeDocsFor', () => {
     })
   })
 
+  test('adds docs.bodyHtml to the pages TypeDoc generated', async () => {
+    gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('docs.bodyHtml', '<script src="/count.js"></script>')
+    const outPath = `${gulpConfig.get('srcPath')}/../docs`
+    const withBody = () => Promise.resolve({
+      Application: {
+        bootstrap: async () => ({
+          convert: async () => ({ name: 'project' }),
+          generateDocs: async (project, out) => {
+            fs.mkdirSync(`${out}/modules`, { recursive: true })
+            fs.writeFileSync(`${out}/index.html`, '<html><body></body></html>')
+            fs.writeFileSync(`${out}/modules/point.html`, '<html><body></body></html>')
+          }
+        })
+      }
+    })
+    await typeDocsFor(gulpConfig.get('srcPath'), outPath, withBody)()
+    expect(fs.readFileSync(`${outPath}/index.html`, 'utf8')).toBe('<html><body><script src="/count.js"></script>\n</body></html>')
+    expect(fs.readFileSync(`${outPath}/modules/point.html`, 'utf8')).toBe('<html><body><script src="/count.js"></script>\n</body></html>')
+    gulpConfig.set('docs.bodyHtml', false)
+  })
+
   test('uses the front page and the title from the config, and none when the front page is missing', async () => {
     gulpConfig.set('docs.enabled', true)
     gulpConfig.set('docs.title', 'my-title')

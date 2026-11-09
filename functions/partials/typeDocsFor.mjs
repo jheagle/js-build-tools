@@ -5,6 +5,7 @@ import * as gulpConfig from '../../gulp.config.mjs'
 import { importPeer } from './loadPeer.mjs'
 import { loadTypescript } from './tsFor.mjs'
 import { removeDirectory } from './removeDirectory.mjs'
+import { addToDocsPages } from './addToDocsPages.mjs'
 
 const installHint = 'Install it in your project with: npm install --save-dev typedoc'
 
@@ -222,6 +223,7 @@ export const typeDocsFor = (
           throw new Error('TypeDoc could not read the TypeScript source, see the errors above.')
         }
         await app.generateDocs(project, outPath)
+        addToDocsPages(outPath)
       } finally {
         await removeDirectory(workDir)
       }
