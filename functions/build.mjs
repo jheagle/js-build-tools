@@ -24,6 +24,8 @@ import { testFull } from './testFull.mjs'
 export const build = (done = null) => {
   const buildActions = [distSeries(), distMinify]
   const generateDocs = gulpConfig.get('docs.enabled')
+  // With the HTML documentation on, or readme.enabled off, the readme is the project's own (or there is none)
+  const generateReadme = !generateDocs && gulpConfig.get('readme.enabled') !== false
   const docsMethod = resolveDocsMethod()
   if (generateDocs) {
     // The documentation is generated from the source itself, the readme is written by hand. With docs.inBuild off,
@@ -31,7 +33,7 @@ export const build = (done = null) => {
     if (gulpConfig.get('docs.inBuild') !== false) {
       buildActions.push(docsMethod === 'jsdoc' ? jsdocDocs : typeDocs)
     }
-  } else if (gulpConfig.get('typescript.enabled')) {
+  } else if (generateReadme && gulpConfig.get('typescript.enabled')) {
     // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
     buildActions.push(compileReadme)
   }
@@ -43,7 +45,7 @@ export const build = (done = null) => {
   const runActions = [
     series(...buildActions),
   ]
-  if (!generateDocs && !gulpConfig.get('typescript.enabled')) {
+  if (generateReadme && !gulpConfig.get('typescript.enabled')) {
     // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
     runActions.push(compileReadme)
   }

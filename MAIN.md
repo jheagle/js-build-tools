@@ -121,7 +121,10 @@ default that keeps the build doing what it did, so an existing config never need
     "rules": {}
   },
   "readme": {
-    // The file which will be pre-fixed to your README.md output.
+    // Generate the readme; false keeps a hand-written readme (or none): neither build nor the readme task writes it.
+    "enabled": true,
+    // The file which will be pre-fixed to your README.md output. When it doesn't exist, the readme holds only the
+    // generated documentation.
     "template": "MAIN.md",
     // Options for formatting the output readme.
     "options": "utf8",

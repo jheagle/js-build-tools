@@ -121,7 +121,10 @@ default that keeps the build doing what it did, so an existing config never need
     "rules": {}
   },
   "readme": {
-    // The file which will be pre-fixed to your README.md output.
+    // Generate the readme; false keeps a hand-written readme (or none): neither build nor the readme task writes it.
+    "enabled": true,
+    // The file which will be pre-fixed to your README.md output. When it doesn't exist, the readme holds only the
+    // generated documentation.
     "template": "MAIN.md",
     // Options for formatting the output readme.
     "options": "utf8",
@@ -1202,11 +1205,12 @@ Configurations to compile and generate the Readme file.
 
 | Name | Type | Description |
 | --- | --- | --- |
+| enabled | <code>BooleanSetting</code> | Generate the readme (the default). Turn it off to keep a hand-written readme, or none: neither build nor the readme task writes it then. |
 | file | <code>StringSetting</code> | The name of the output documentation markdown file. |
 | from | <code>StringSetting</code> | Location of files to use for compiling documentation into the readme. |
 | fromEsm | <code>ArrayableSetting</code> | Additional `.mjs` files to document alongside `from`, converted on the fly since the readme generator only recognizes `.js` files - see 'Configure including ESM files in the generated readme'. Empty by default: a project that never sets this gets exactly the readme it always did. |
 | options | <code>ArrayableSetting</code> | Options for formatting the output readme. |
-| template | <code>StringSetting</code> | The file which will be pre-fixed to your README.md output. |
+| template | <code>StringSetting</code> | The file which will be pre-fixed to your README.md output. When it doesn't exist, the readme holds only the generated documentation. |
 | to | <code>StringSetting</code> | The directory to output the readme file in. |
 
 <a name="module_gulpConfig..DocsConfig"></a>
