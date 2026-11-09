@@ -15,6 +15,7 @@
     "to": "dist"
   },
   "docs": {
+    "bodyHtml": "<script data-goatcounter=\"https://joshuaheagle.goatcounter.com/count\" async src=\"//gc.zgo.at/count.js\"></script>",
     "basePath": "/projects/js-build-tools/docs/",
     "enabled": true,
     "from": [
