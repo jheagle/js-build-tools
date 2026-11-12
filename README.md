@@ -701,6 +701,25 @@ server.close()
 (`/browser/...`) against the filesystem root instead of the page's own directory - serving it over real HTTP avoids
 that entirely, and is also the right fix for the exact same problem in a jsdom-based test.
 
+A directory's own path (`/`, `/docs/`) serves its `index.html`, and nothing outside the served directory is ever
+served (403 for a path like `/../x`).
+
+Three more helpers cover what page scripts keep needing:
+
+```js
+const { clickLabel, trackMutations, watchPage } = require('js-build-tools').partials
+
+const problems = watchPage(page, { ignore: [/goatcounter/] }) // uncaught errors, console errors, failed requests,
+await page.goto(`${url}/index.html`)                          // HTTP 4xx/5xx: read the array whenever you like
+
+await clickLabel(page, 'Start Game')                 // a visible button or input button by its text or value; fails at
+await clickLabel(page, 'Ready', { inPage: true })    // once naming the visible ones; inPage clicks in one step, for a
+                                                     // page that replaces its elements while you click
+const mutations = await trackMutations(page)         // count what an action changes in the page
+await clickLabel(page, 'Randomise')
+console.log(await mutations.read())                  // { added, removed, attributes, text } since the last read
+```
+
 ### Configure lint rule overrides (optional)
 
 `sourceLint` lints your real source directly (not the compiled dist/browser output) with
@@ -773,7 +792,6 @@ Export these functions to your own project to customize your build pipeline.
     * [.typeScript](#module_js-build-tools.typeScript) ⇒ <code>function</code>
     * [.typeDocs](#module_js-build-tools.typeDocs) ⇒ <code>function</code>
     * [.jsdocDocs](#module_js-build-tools.jsdocDocs) ⇒ <code>function</code>
-    * [.compileReadme](#module_js-build-tools.compileReadme) ⇒ <code>stream.Stream</code>
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
     * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -787,6 +805,7 @@ Export these functions to your own project to customize your build pipeline.
     * [.defaultCmd([done])](#module_js-build-tools.defaultCmd) ⇒ <code>stream.Stream</code>
     * [.copyFonts()](#module_js-build-tools.copyFonts) ⇒ <code>stream.Stream</code>
     * [.copyFiles()](#module_js-build-tools.copyFiles) ⇒ <code>Promise.&lt;void&gt;</code>
+    * [.compileReadme([done])](#module_js-build-tools.compileReadme) ⇒ <code>\*</code>
     * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
     * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>stream.Stream</code>
     * [.build()](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
@@ -810,12 +829,6 @@ folders. Turn it on with docs.enabled, see [typeDocsFor](#module_partials.typeDo
 Generate the HTML documentation of a plain-JavaScript project from its source, with a modern jsdoc theme
 instead of jsdoc's own classic default. Turn it on with docs.enabled and docs.method: 'jsdoc' (the default
 when typescript.enabled is off), see [module:partials.jsdocDocsFor](module:partials.jsdocDocsFor).
-
-**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.compileReadme"></a>
-
-### js-build-tools.compileReadme ⇒ <code>stream.Stream</code>
-Generate the README.md file based off of the template, then append the generated documentation.
 
 **Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.watchTest"></a>
@@ -929,6 +942,18 @@ same shared destination; here, each entry can have a genuinely different one, an
 already terminate at their own separate dest() hit a real "write after end" error in practice.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.compileReadme"></a>
+
+### js-build-tools.compileReadme([done]) ⇒ <code>\*</code>
+Generate the README.md file based off of the template, then append the generated documentation. Does nothing when
+readme.enabled is false, so a project can keep a hand-written readme (or none).
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
 <a name="module_js-build-tools.bundleMinify"></a>
 
 ### js-build-tools.bundleMinify() ⇒ <code>\*</code>

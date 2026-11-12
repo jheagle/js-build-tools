@@ -24,6 +24,8 @@ const contentTypes = {
  * Serve a directory's real files over plain HTTP, for anything that needs a page loaded from a real URL rather
  * than a bare file:// path - most commonly, a page using root-relative asset paths (/browser/...), which a
  * file:// load resolves against the filesystem root instead of the page's own directory.
+ * A directory's own path (`/`, `/docs/`) serves its `index.html`, and nothing outside rootDir is ever served (403,
+ * also through a symbolic link); a malformed URL gets 400.
  * @memberOf module:partials
  * @param {string} rootDir - The directory to serve.
  * @param {number} [port=0] - The port to listen on; 0 picks any free port.
@@ -31,8 +33,36 @@ const contentTypes = {
  * server yourself (server.close()) once done with it.
  */
 export const serveStatic = (rootDir, port = 0) => new Promise((resolve, reject) => {
+  const root = path.resolve(rootDir)
+  // Where the directory really is (it may itself be a symbolic link); a missing one still starts, every request 404s
+  let realRoot = root
+  try {
+    realRoot = fs.realpathSync(root)
+  } catch {}
+  const inside = (base, file) => file === base || file.startsWith(base + path.sep)
   const server = http.createServer((req, res) => {
-    const filePath = path.join(rootDir, decodeURIComponent(req.url.split('?')[0]))
+    let filePath
+    try {
+      filePath = path.resolve(root, '.' + decodeURIComponent(req.url.split('?')[0]))
+    } catch {
+      // A malformed URL (/%) can't be decoded: answer it rather than letting the error stop the server
+      res.statusCode = 400
+      return res.end(`Bad request: ${req.url}`)
+    }
+    // Only files inside the served directory: a path like /../../x would otherwise read anything on the machine. A
+    // symbolic link inside it that points outside it doesn't count as inside.
+    let realPath = filePath
+    try {
+      realPath = fs.realpathSync(filePath)
+    } catch {}
+    if (filePath.includes('\0') || !inside(root, filePath) || !inside(realRoot, realPath)) {
+      res.statusCode = filePath.includes('\0') ? 400 : 403
+      return res.end(`Not served: ${req.url}`)
+    }
+    // A directory (/, /docs/) serves its index.html, as a web server would
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+      filePath = path.join(filePath, 'index.html')
+    }
     fs.readFile(filePath, (error, data) => {
       if (error) {
         res.statusCode = 404
