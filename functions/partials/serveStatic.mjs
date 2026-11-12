@@ -25,14 +25,25 @@ const contentTypes = {
  * than a bare file:// path - most commonly, a page using root-relative asset paths (/browser/...), which a
  * file:// load resolves against the filesystem root instead of the page's own directory.
  * @memberOf module:partials
+ * A directory's own path (`/`, `/docs/`) serves its `index.html`, and nothing outside rootDir is ever served (403).
  * @param {string} rootDir - The directory to serve.
  * @param {number} [port=0] - The port to listen on; 0 picks any free port.
  * @returns {Promise<{server: http.Server, url: string}>} The running server, and its base URL - close the
  * server yourself (server.close()) once done with it.
  */
 export const serveStatic = (rootDir, port = 0) => new Promise((resolve, reject) => {
+  const root = path.resolve(rootDir)
   const server = http.createServer((req, res) => {
-    const filePath = path.join(rootDir, decodeURIComponent(req.url.split('?')[0]))
+    let filePath = path.resolve(root, '.' + decodeURIComponent(req.url.split('?')[0]))
+    // Only files inside the served directory: a path like /../../x would otherwise read anything on the machine
+    if (filePath !== root && !filePath.startsWith(root + path.sep)) {
+      res.statusCode = 403
+      return res.end(`Outside the served directory: ${req.url}`)
+    }
+    // A directory (/, /docs/) serves its index.html, as a web server would
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+      filePath = path.join(filePath, 'index.html')
+    }
     fs.readFile(filePath, (error, data) => {
       if (error) {
         res.statusCode = 404

@@ -1,4 +1,5 @@
 import fs from 'fs'
+import http from 'node:http'
 import path from 'node:path'
 import * as setUp from '../test-helpers/setUp.mjs'
 import { serveStatic } from './serveStatic.mjs'
@@ -66,6 +67,43 @@ describe('serveStatic', () => {
     } finally {
       first.server.close()
       second.server.close()
+    }
+  })
+
+  test('a directory serves its index.html', async () => {
+    const { server, url } = await serveStatic(gulpConfig.get('srcPath'))
+    try {
+      expect(await (await fetch(`${url}/`)).text()).toBe('<!doctype html><html><body>hello</body></html>')
+      write(`${gulpConfig.get('srcPath')}/sub/index.html`, 'sub index')
+      expect(await (await fetch(`${url}/sub/`)).text()).toBe('sub index')
+    } finally {
+      server.close()
+    }
+  })
+
+  // fetch() normalises "..", so the request goes out raw, as any client could send it
+  const rawStatus = (url, requestPath) => new Promise((resolve, reject) => {
+    const { hostname, port } = new URL(url)
+    http.get({ hostname, port, path: requestPath }, response => {
+      response.resume()
+      resolve(response.statusCode)
+    }).on('error', reject)
+  })
+
+  test.each([
+    ['..', '/../serve-static-outside.txt'],
+    ['an encoded ..', '/%2e%2e/serve-static-outside.txt'],
+    ['a deeper ..', '/sub/../../serve-static-outside.txt'],
+  ])('nothing outside the served directory is served (%s)', async (description, requestPath) => {
+    const srcPath = gulpConfig.get('srcPath')
+    write(path.join(srcPath, '..', 'serve-static-outside.txt'), 'secret')
+    const { server, url } = await serveStatic(srcPath)
+    try {
+      expect(await rawStatus(url, requestPath)).toBe(403)
+      expect(await rawStatus(url, '/sub/../index.html')).toBe(200)
+    } finally {
+      server.close()
+      fs.rmSync(path.join(srcPath, '..', 'serve-static-outside.txt'), { force: true })
     }
   })
 })

@@ -701,6 +701,25 @@ server.close()
 (`/browser/...`) against the filesystem root instead of the page's own directory - serving it over real HTTP avoids
 that entirely, and is also the right fix for the exact same problem in a jsdom-based test.
 
+A directory's own path (`/`, `/docs/`) serves its `index.html`, and nothing outside the served directory is ever
+served (403 for a path like `/../x`).
+
+Three more helpers cover what page scripts keep needing:
+
+```js
+const { clickLabel, trackMutations, watchPage } = require('js-build-tools').partials
+
+const problems = watchPage(page, { ignore: [/goatcounter/] }) // uncaught errors, console errors, failed requests,
+await page.goto(`${url}/index.html`)                          // HTTP 4xx/5xx: read the array whenever you like
+
+await clickLabel(page, 'Start Game')                 // a visible button or input button by its text or value; fails at
+await clickLabel(page, 'Ready', { inPage: true })    // once naming the visible ones; inPage clicks in one step, for a
+                                                     // page that replaces its elements while you click
+const mutations = await trackMutations(page)         // count what an action changes in the page
+await clickLabel(page, 'Randomise')
+console.log(await mutations.read())                  // { added, removed, attributes, text } since the last read
+```
+
 ### Configure lint rule overrides (optional)
 
 `sourceLint` lints your real source directly (not the compiled dist/browser output) with
