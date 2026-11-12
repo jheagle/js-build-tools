@@ -39,8 +39,13 @@ beforeEach(
         setTimeout(() => { throw new Error('an uncaught error') }, 0)
       </script>`))
     write(`${srcPath}/controls.html`, page(`
-      <button onclick="window.clicked = 'start'">Start</button>
       <button onclick="window.clicked = 'start game'">Start Game</button>
+      <button onclick="window.clicked = 'start'">Start</button>
+      <button onclick="window.clicked = 'quoted'">Say "hi" (a+b)</button>
+      <button onclick="window.clicked = 'multi-line'">
+        Join
+        Room
+      </button>
       <input type="button" value="Ready" onclick="window.clicked = 'ready'">
       <button style="display: none" onclick="window.clicked = 'hidden'">Hidden</button>
       <button onclick="window.clicked = 'contains'">Play Again Now</button>`))
@@ -77,30 +82,34 @@ describe('watchPage', () => {
 })
 
 describe('clickLabel', () => {
-  test.each([
-    ['an exact label before one that only contains it', 'Start', 'start'],
+  // Both ways of clicking find the control the same way
+  const cases = [
+    ['an exact label, though an earlier one contains it', 'Start', 'start'],
     ['a longer exact label', 'Start Game', 'start game'],
     ['an input button by its value', 'Ready', 'ready'],
     ['otherwise the first label that contains it', 'Play Again', 'contains'],
-  ])('clicks %s', async (description, label, expected) => {
-    await tab.goto(`${served.url}/controls.html`)
-    await clickLabel(tab, label)
-    expect(await tab.evaluate(() => window.clicked)).toBe(expected)
-  })
+    ['a label with quotes and regex characters', 'Say "hi" (a+b)', 'quoted'],
+    ['a label written over several lines', 'Join Room', 'multi-line'],
+  ]
+  test.each(cases.flatMap(([description, label, expected]) => [[description, false, label, expected], [description, true, label, expected]]))(
+    'clicks %s (inPage %s)', async (description, inPage, label, expected) => {
+      await tab.goto(`${served.url}/controls.html`)
+      await clickLabel(tab, label, { inPage })
+      expect(await tab.evaluate(() => window.clicked)).toBe(expected)
+      // nothing is left behind on the page
+      expect(await tab.evaluate(() => Array.from(document.querySelectorAll('*')).some(element => Array.from(element.attributes).some(attribute => attribute.name.startsWith('data-page-tools'))))).toBe(false)
+    })
 
-  test('inPage clicks the same controls, in one step inside the page', async () => {
+  test('matching is case-sensitive', async () => {
     await tab.goto(`${served.url}/controls.html`)
-    await clickLabel(tab, 'Start', { inPage: true })
-    expect(await tab.evaluate(() => window.clicked)).toBe('start')
-    await clickLabel(tab, 'Ready', { inPage: true })
-    expect(await tab.evaluate(() => window.clicked)).toBe('ready')
+    await expect(clickLabel(tab, 'start game')).rejects.toThrow('No visible control labelled "start game"')
   })
 
   test.each([[false], [true]])('a missing or hidden label fails at once, naming what is visible (inPage %s)', async inPage => {
     await tab.goto(`${served.url}/controls.html`)
     const started = Date.now()
     await expect(clickLabel(tab, 'Hidden', { inPage })).rejects.toThrow(
-      'No visible control labelled "Hidden". Visible: "Start", "Start Game", "Ready", "Play Again Now"'
+      'No visible control labelled "Hidden". Visible: "Start Game", "Start", "Say "hi" (a+b)", "Join Room", "Ready", "Play Again Now"'
     )
     expect(Date.now() - started).toBeLessThan(5000)
   })
@@ -126,6 +135,27 @@ describe('trackMutations', () => {
     // read() starts the next count from zero
     expect(await mutations.read()).toEqual({ added: 0, removed: 3, attributes: 0, text: 1 })
     expect(await mutations.read()).toEqual({ added: 0, removed: 0, attributes: 0, text: 0 })
+  })
+
+  test('a text node added or removed counts as a text change, not an element', async () => {
+    await tab.goto(`${served.url}/changes.html`)
+    const mutations = await trackMutations(tab)
+    await tab.evaluate(() => { document.getElementById('target').textContent = 'some text' })
+    expect(await mutations.read()).toEqual({ added: 0, removed: 0, attributes: 0, text: 1 })
+    await tab.evaluate(() => { document.getElementById('target').textContent = 'other text' })
+    expect(await mutations.read()).toEqual({ added: 0, removed: 0, attributes: 0, text: 2 })
+  })
+
+  test('a selector that matches nothing fails clearly', async () => {
+    await tab.goto(`${served.url}/changes.html`)
+    await expect(trackMutations(tab, '#nothing')).rejects.toThrow('No element matches "#nothing"')
+  })
+
+  test('after the page reloads, read() says counting stopped', async () => {
+    await tab.goto(`${served.url}/changes.html`)
+    const mutations = await trackMutations(tab)
+    await tab.reload()
+    await expect(mutations.read()).rejects.toThrow('trackMutations stopped counting: the page navigated or reloaded')
   })
 
   test('watches only inside the given element', async () => {

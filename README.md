@@ -792,7 +792,6 @@ Export these functions to your own project to customize your build pipeline.
     * [.typeScript](#module_js-build-tools.typeScript) ⇒ <code>function</code>
     * [.typeDocs](#module_js-build-tools.typeDocs) ⇒ <code>function</code>
     * [.jsdocDocs](#module_js-build-tools.jsdocDocs) ⇒ <code>function</code>
-    * [.compileReadme](#module_js-build-tools.compileReadme) ⇒ <code>stream.Stream</code>
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
     * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -806,6 +805,7 @@ Export these functions to your own project to customize your build pipeline.
     * [.defaultCmd([done])](#module_js-build-tools.defaultCmd) ⇒ <code>stream.Stream</code>
     * [.copyFonts()](#module_js-build-tools.copyFonts) ⇒ <code>stream.Stream</code>
     * [.copyFiles()](#module_js-build-tools.copyFiles) ⇒ <code>Promise.&lt;void&gt;</code>
+    * [.compileReadme([done])](#module_js-build-tools.compileReadme) ⇒ <code>\*</code>
     * [.bundleMinify()](#module_js-build-tools.bundleMinify) ⇒ <code>\*</code>
     * [.bundle()](#module_js-build-tools.bundle) ⇒ <code>stream.Stream</code>
     * [.build()](#module_js-build-tools.build) ⇒ <code>stream.Stream</code>
@@ -829,12 +829,6 @@ folders. Turn it on with docs.enabled, see [typeDocsFor](#module_partials.typeDo
 Generate the HTML documentation of a plain-JavaScript project from its source, with a modern jsdoc theme
 instead of jsdoc's own classic default. Turn it on with docs.enabled and docs.method: 'jsdoc' (the default
 when typescript.enabled is off), see [module:partials.jsdocDocsFor](module:partials.jsdocDocsFor).
-
-**Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
-<a name="module_js-build-tools.compileReadme"></a>
-
-### js-build-tools.compileReadme ⇒ <code>stream.Stream</code>
-Generate the README.md file based off of the template, then append the generated documentation.
 
 **Kind**: static constant of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.watchTest"></a>
@@ -948,6 +942,18 @@ same shared destination; here, each entry can have a genuinely different one, an
 already terminate at their own separate dest() hit a real "write after end" error in practice.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+<a name="module_js-build-tools.compileReadme"></a>
+
+### js-build-tools.compileReadme([done]) ⇒ <code>\*</code>
+Generate the README.md file based off of the template, then append the generated documentation. Does nothing when
+readme.enabled is false, so a project can keep a hand-written readme (or none).
+
+**Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [done] | <code>function</code> | <code></code> | 
+
 <a name="module_js-build-tools.bundleMinify"></a>
 
 ### js-build-tools.bundleMinify() ⇒ <code>\*</code>

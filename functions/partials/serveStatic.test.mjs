@@ -106,4 +106,37 @@ describe('serveStatic', () => {
       fs.rmSync(path.join(srcPath, '..', 'serve-static-outside.txt'), { force: true })
     }
   })
+
+  test.each([['/%'], ['/%00'], ['/index.html%00.js']])('a malformed URL (%s) gets 400, and the server keeps serving', async requestPath => {
+    const { server, url } = await serveStatic(gulpConfig.get('srcPath'))
+    try {
+      expect(await rawStatus(url, requestPath)).toBe(400)
+      expect(await rawStatus(url, '/index.html')).toBe(200)
+    } finally {
+      server.close()
+    }
+  })
+
+  test('a symbolic link inside the served directory that points outside it is not followed', async () => {
+    const srcPath = gulpConfig.get('srcPath')
+    const outside = path.resolve(srcPath, '..', 'serve-static-linked')
+    write(path.join(outside, 'secret.txt'), 'secret')
+    fs.symlinkSync(outside, path.join(srcPath, 'linked'))
+    const { server, url } = await serveStatic(srcPath)
+    try {
+      expect(await rawStatus(url, '/linked/secret.txt')).toBe(403)
+    } finally {
+      server.close()
+      fs.rmSync(outside, { recursive: true, force: true })
+    }
+  })
+
+  test('a directory that does not exist still starts, and answers 404', async () => {
+    const { server, url } = await serveStatic(path.join(gulpConfig.get('srcPath'), 'no-such-dir'))
+    try {
+      expect(await rawStatus(url, '/index.html')).toBe(404)
+    } finally {
+      server.close()
+    }
+  })
 })
