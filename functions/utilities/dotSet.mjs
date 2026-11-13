@@ -34,7 +34,9 @@ export const dotSet = (arrayObject, dotNotation, value = null) => {
     arrayObject[dotNotation] = value
     return arrayObject
   }
-  const next = arrayObject[key] ?? []
-  arrayObject[key] = dotSet(next, strAfter(dotNotation, '.'), value)
+  const rest = strAfter(dotNotation, '.')
+  // A missing parent becomes an array only when the next key is an index (a.0), otherwise a plain object (a.b)
+  const next = arrayObject[key] ?? (/^\d+$/.test(strBefore(rest, '.') || rest) ? [] : {})
+  arrayObject[key] = dotSet(next, rest, value)
   return arrayObject
 }
