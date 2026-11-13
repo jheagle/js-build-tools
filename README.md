@@ -117,6 +117,8 @@ default that keeps the build doing what it did, so an existing config never need
     "to": "browser/img"
   },
   "lint": {
+    // Extra folders to lint alongside srcPath, e.g. ["scripts"] (see 'Lint folders outside srcPath').
+    "include": [],
     // Rule overrides on top of the shared lint config (see 'Configure lint rule overrides').
     "rules": {}
   },
@@ -720,6 +722,24 @@ await clickLabel(page, 'Randomise')
 console.log(await mutations.read())                  // { added, removed, attributes, text } since the last read
 ```
 
+### Lint folders outside srcPath (optional)
+
+`sourceLint` (in `build`) and `lint` cover `srcPath` only. Hand-written code elsewhere, such as helper scripts in
+`scripts/`, is never linted unless you list its folder in `lint.include`:
+
+```json
+{
+  "lint": {
+    // Linted (and fixed in place) with the same rules as srcPath.
+    "include": ["scripts"]
+  }
+}
+```
+
+Empty by default, so a project that never sets this lints `srcPath` only, as before. `node_modules` folders are
+always skipped (in `srcPath` too). List only hand-written code: a folder that holds generated output (`dist`,
+`browser`, or the project root `.`) would have that output linted and rewritten.
+
 ### Configure lint rule overrides (optional)
 
 `sourceLint` lints your real source directly (not the compiled dist/browser output) with
@@ -864,7 +884,7 @@ Applies neostandard linting (js-build-tools' chosen style) to the real, hand-wri
 dist/browser output, which is generated and so was never going to pass a hand-authored-code style check (every
 compiler/bundler emits its own boilerplate - import aliasing, interop headers - that only looks like a style
 violation). Includes test files: there is no reason to hold tests to a lower style bar than the rest of the
-source. When typescript.enabled, the real TypeScript source is linted too, with type-aware rules. Runs as part of
+source. Folders outside srcPath (for example scripts) are linted too when listed in lint.include. When typescript.enabled, the real TypeScript source is linted too, with type-aware rules. Runs as part of
 `build`, where remaining errors are reported but never fail it.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
@@ -1218,6 +1238,7 @@ Configurations for linting (see [neostandardLint](#module_partials.neostandardLi
 
 | Name | Type | Description |
 | --- | --- | --- |
+| include | <code>ArrayableSetting</code> | Extra folders to lint alongside srcPath, for hand-written code that lives outside it (for example `scripts`). Linted with the same rules, and fixed in place, like srcPath. Empty by default: a project that never sets this lints srcPath only, as before. |
 | rules | <code>Object.&lt;string, \*&gt;</code> | ESLint rule overrides layered on top of neostandard's own config, scoped to the same files neostandard itself lints. For a rule that is wrong for your project specifically (for example a test fixture that deliberately contains text neostandard mistakes for a real syntax problem), rather than something to fix in your code. Empty by default: a project that never sets this gets exactly neostandard's own rules, unchanged. Keyed and valued exactly as ESLint's own `rules` object - see https://eslint.org/docs/latest/use/configure/rules. |
 
 <a name="module_gulpConfig..ReadmeConfig"></a>

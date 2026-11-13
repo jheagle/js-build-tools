@@ -117,6 +117,8 @@ default that keeps the build doing what it did, so an existing config never need
     "to": "browser/img"
   },
   "lint": {
+    // Extra folders to lint alongside srcPath, e.g. ["scripts"] (see 'Lint folders outside srcPath').
+    "include": [],
     // Rule overrides on top of the shared lint config (see 'Configure lint rule overrides').
     "rules": {}
   },
@@ -719,6 +721,24 @@ const mutations = await trackMutations(page)         // count what an action cha
 await clickLabel(page, 'Randomise')
 console.log(await mutations.read())                  // { added, removed, attributes, text } since the last read
 ```
+
+### Lint folders outside srcPath (optional)
+
+`sourceLint` (in `build`) and `lint` cover `srcPath` only. Hand-written code elsewhere, such as helper scripts in
+`scripts/`, is never linted unless you list its folder in `lint.include`:
+
+```json
+{
+  "lint": {
+    // Linted (and fixed in place) with the same rules as srcPath.
+    "include": ["scripts"]
+  }
+}
+```
+
+Empty by default, so a project that never sets this lints `srcPath` only, as before. `node_modules` folders are
+always skipped (in `srcPath` too). List only hand-written code: a folder that holds generated output (`dist`,
+`browser`, or the project root `.`) would have that output linted and rewritten.
 
 ### Configure lint rule overrides (optional)
 
