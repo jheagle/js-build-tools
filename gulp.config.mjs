@@ -120,6 +120,9 @@ import { fileExists } from 'test-filesystem'
 /**
  * Configurations for linting (see {@link module:partials.neostandardLint}).
  * @typedef {Object<string, Setting>} module:gulpConfig~LintConfig
+ * @property {ArrayableSetting} include - Extra folders to lint alongside srcPath, for hand-written code that lives
+ * outside it (for example `scripts`). Linted with the same rules, and fixed in place, like srcPath. Empty by default:
+ * a project that never sets this lints srcPath only, as before.
  * @property {Object<string, *>} rules - ESLint rule overrides layered on top of neostandard's own config, scoped
  * to the same files neostandard itself lints. For a rule that is wrong for your project specifically (for example
  * a test fixture that deliberately contains text neostandard mistakes for a real syntax problem), rather than
@@ -271,6 +274,7 @@ const setDefaults = {
     to: 'browser/img',
   },
   lint: {
+    include: [],
     rules: {},
   },
   readme: {

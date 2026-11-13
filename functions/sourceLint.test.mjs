@@ -96,6 +96,76 @@ describe('sourceLint', () => {
       })
   }, 20000)
 
+  describe('lint.include', () => {
+    const tempDir = () => gulpConfig.get('srcPath').replace(/src$/, '')
+    afterEach(() => gulpConfig.set('lint.include', []))
+
+    test('lints and fixes extra folders outside srcPath, in place', done => {
+      const scripts = `${tempDir()}scripts`
+      fs.mkdirSync(`${scripts}/e2e`, { recursive: true })
+      fs.writeFileSync(`${scripts}/e2e/driver.mjs`, 'const d = "f";\n\nexport default d;\n')
+      gulpConfig.set('lint.include', [scripts])
+      expect.assertions(2)
+      sourceLint()
+        .on('finish', () => {
+          expect(fs.readFileSync(`${scripts}/e2e/driver.mjs`).toString()).toEqual('const d = \'f\'\n\nexport default d\n')
+          // srcPath is still linted alongside it
+          expect(countMatches(fs.readFileSync(`${gulpConfig.get('srcPath')}/example.js`).toString(), ';')).toEqual(0)
+          done()
+        })
+        .on('error', error => done(error))
+    }, 20000)
+
+    test('accepts a single folder as a string, with a trailing slash', done => {
+      const scripts = `${tempDir()}scripts`
+      fs.mkdirSync(scripts, { recursive: true })
+      fs.writeFileSync(`${scripts}/tool.cjs`, 'const t = "g";\n\nmodule.exports = t;\n')
+      gulpConfig.set('lint.include', `${scripts}/`)
+      expect.assertions(1)
+      sourceLint()
+        .on('finish', () => {
+          expect(fs.readFileSync(`${scripts}/tool.cjs`).toString()).toEqual('const t = \'g\'\n\nmodule.exports = t\n')
+          done()
+        })
+        .on('error', error => done(error))
+    }, 20000)
+
+    test('never lints node_modules inside an included folder', done => {
+      const scripts = `${tempDir()}scripts`
+      const vendored = `${scripts}/node_modules/dep/index.js`
+      const vendoredContents = 'const v = "h";\n\nmodule.exports = v;\n'
+      fs.mkdirSync(`${scripts}/node_modules/dep`, { recursive: true })
+      fs.writeFileSync(vendored, vendoredContents)
+      gulpConfig.set('lint.include', [scripts])
+      expect.assertions(1)
+      sourceLint()
+        .on('finish', () => {
+          expect(fs.readFileSync(vendored).toString()).toEqual(vendoredContents)
+          done()
+        })
+        .on('error', error => done(error))
+    }, 20000)
+
+    test('lint fails on an unfixable error in an included folder', done => {
+      const scripts = `${tempDir()}scripts`
+      fs.mkdirSync(scripts, { recursive: true })
+      fs.writeFileSync(`${scripts}/unfixable.js`, 'const unused = 1\n')
+      gulpConfig.set('lint.include', [scripts])
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      expect.assertions(1)
+      lint()
+        .on('error', error => {
+          logSpy.mockRestore()
+          expect(error.message).toMatch('neostandard found 1 lint error(s)')
+          done()
+        })
+        .on('finish', () => {
+          logSpy.mockRestore()
+          done(new Error('lint should have failed on the unused variable in the included folder'))
+        })
+    }, 20000)
+  })
+
   test('also lints .ts source when typescript.enabled', done => {
     const srcPath = gulpConfig.get('srcPath')
     gulpConfig.set('typescript.enabled', true)
