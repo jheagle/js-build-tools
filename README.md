@@ -737,7 +737,8 @@ console.log(await mutations.read())                  // { added, removed, attrib
 ```
 
 Empty by default, so a project that never sets this lints `srcPath` only, as before. `node_modules` folders are
-always skipped.
+always skipped (in `srcPath` too). List only hand-written code: a folder that holds generated output (`dist`,
+`browser`, or the project root `.`) would have that output linted and rewritten.
 
 ### Configure lint rule overrides (optional)
 
