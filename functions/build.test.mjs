@@ -244,6 +244,8 @@ beforeEach(
         await fs.mkdirSync(fontPath, { recursive: true })
         await fs.mkdirSync(imagePath, { recursive: true })
         await fs.mkdirSync(sassPath, { recursive: true })
+        // Off by default; most of these tests check the generated readme, so they turn it on
+        gulpConfig.set('readme.enabled', true)
         return fs.writeFileSync(`${readmePath}/MAIN.md`, mainMd)
       }
     )
@@ -306,7 +308,6 @@ describe('build', () => {
     gulpConfig.set('browser.enabled', false)
     gulpConfig.set('readme.enabled', false)
     build(error => {
-      gulpConfig.set('readme.enabled', true)
       expect(error).toBeFalsy()
       expect(fs.readFileSync(readmeFile, 'utf8')).toBe('# Written by hand\n')
       expect(fs.existsSync(`${gulpConfig.get('dist.to')}/main.js`)).toBe(true)
@@ -646,7 +647,7 @@ describe('build', () => {
     })
   }, 30000)
 
-  test('when docs.enabled is set: generates the documentation from the TypeScript source instead of the readme', done => {
+  test('when docs.enabled is set and readme.enabled is off: generates the documentation from the TypeScript source, not the readme', done => {
     const srcPath = gulpConfig.get('srcPath')
     const rootPath = gulpConfig.get('rootPath')
     const tsConfig = `${rootPath}/tsconfig.json`
@@ -660,6 +661,7 @@ describe('build', () => {
     gulpConfig.set('typescript.config', tsConfig)
     gulpConfig.set('typescript.enabled', true)
     gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('readme.enabled', false)
     // Set explicitly: the project's own build-tools.config.json has docs.inBuild off
     gulpConfig.set('docs.inBuild', true)
     expect.assertions(3)
@@ -667,7 +669,7 @@ describe('build', () => {
       gulpConfig.set('docs.enabled', false)
       gulpConfig.set('typescript.enabled', false)
       expect(typeDocs).toHaveBeenCalledTimes(1)
-      // The readme is not generated, it is written by hand
+      // readme.enabled is off: the readme is written by hand
       expect(fs.existsSync(`${readmePath}/${readmeFile}`)).toBe(false)
       expect(testFull).toHaveBeenCalled()
       done()
@@ -681,20 +683,21 @@ describe('build', () => {
     jsdocDocs.mockClear()
     gulpConfig.set('browser.enabled', false)
     gulpConfig.set('typescript.enabled', false)
+    gulpConfig.set('readme.enabled', false)
     gulpConfig.set('docs.enabled', true)
     gulpConfig.set('docs.inBuild', true)
     expect.assertions(3)
     build(() => {
       gulpConfig.set('docs.enabled', false)
       expect(jsdocDocs).toHaveBeenCalledTimes(1)
-      // The readme is not generated, it is written by hand - same as the TypeDoc path above
+      // readme.enabled is off: the readme is written by hand - same as the TypeDoc path above
       expect(fs.existsSync(`${readmePath}/${readmeFile}`)).toBe(false)
       expect(testFull).toHaveBeenCalled()
       done()
     })
   }, 30000)
 
-  test('with docs.inBuild off, build generates neither the documentation nor the readme', done => {
+  test('with docs.inBuild off and readme.enabled off, build generates neither the documentation nor the readme', done => {
     const readmePath = gulpConfig.get('readme.to')
     const readmeFile = gulpConfig.get('readme.file')
     fs.rmSync(`${readmePath}/${readmeFile}`, { force: true })
@@ -702,6 +705,7 @@ describe('build', () => {
     jsdocDocs.mockClear()
     gulpConfig.set('browser.enabled', false)
     gulpConfig.set('typescript.enabled', false)
+    gulpConfig.set('readme.enabled', false)
     gulpConfig.set('docs.enabled', true)
     gulpConfig.set('docs.inBuild', false)
     expect.assertions(4)
@@ -710,9 +714,74 @@ describe('build', () => {
       gulpConfig.set('docs.inBuild', true)
       expect(jsdocDocs).not.toHaveBeenCalled()
       expect(typeDocs).not.toHaveBeenCalled()
-      // The readme is still written by hand while docs.enabled is on
       expect(fs.existsSync(`${readmePath}/${readmeFile}`)).toBe(false)
       expect(testFull).toHaveBeenCalled()
+      done()
+    })
+  }, 30000)
+
+  test('with docs.enabled and readme.enabled both on: generates the documentation and the readme', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
+    fs.writeFileSync(`${srcPath}/sources/file1.js`, file1Contents)
+    fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
+    fs.rmSync(`${readmePath}/${readmeFile}`, { force: true })
+    jsdocDocs.mockClear()
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('typescript.enabled', false)
+    // The TypeScript tests above point this at dist/, which a plain JavaScript build hasn't written yet
+    gulpConfig.set('readme.from', `${srcPath}/**/!(*.test).js`)
+    gulpConfig.set('docs.enabled', true)
+    gulpConfig.set('docs.inBuild', true)
+    expect.assertions(3)
+    build(() => {
+      gulpConfig.set('docs.enabled', false)
+      expect(jsdocDocs).toHaveBeenCalledTimes(1)
+      const readmeContents = fs.readFileSync(`${readmePath}/${readmeFile}`).toString()
+      expect(countMatches(readmeContents, mainMd)).toEqual(1)
+      expect(countMatches(readmeContents, 'file1')).toBeGreaterThan(0)
+      done()
+    })
+  }, 30000)
+
+  test('without typescript.enabled, a readme.from pointing at dist documents every dist file', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const distPath = gulpConfig.get('dist.to')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
+    fs.writeFileSync(`${srcPath}/sources/file1.js`, file1Contents)
+    fs.writeFileSync(`${srcPath}/sources/file2.js`, file2Contents)
+    fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('typescript.enabled', false)
+    gulpConfig.set('readme.from', `${distPath}/**/!(*.min).js`)
+    expect.assertions(3)
+    build(error => {
+      expect(error).toBeFalsy()
+      const readmeContents = fs.readFileSync(`${readmePath}/${readmeFile}`).toString()
+      // The readme ran after dist, not alongside it while dist was still empty or half written
+      expect(countMatches(readmeContents, 'file1')).toBeGreaterThan(0)
+      expect(countMatches(readmeContents, 'file2')).toBeGreaterThan(0)
+      done()
+    })
+  }, 30000)
+
+  test('with readme.enabled at its default (off): leaves the readme alone', done => {
+    const srcPath = gulpConfig.get('srcPath')
+    const readmePath = gulpConfig.get('readme.to')
+    const readmeFile = gulpConfig.get('readme.file')
+    fs.writeFileSync(`${srcPath}/sources/file1.js`, file1Contents)
+    fs.writeFileSync(`${srcPath}/main.js`, mainFileContents)
+    fs.rmSync(`${readmePath}/${readmeFile}`, { force: true })
+    gulpConfig.set('browser.enabled', false)
+    gulpConfig.set('typescript.enabled', false)
+    // setUp.setDefaults resets readme.enabled to the default; this file's beforeEach turns it on afterwards
+    setUp.setDefaults('test-build')
+    expect.assertions(2)
+    build(error => {
+      expect(error).toBeFalsy()
+      expect(fs.existsSync(`${readmePath}/${readmeFile}`)).toBe(false)
       done()
     })
   }, 30000)

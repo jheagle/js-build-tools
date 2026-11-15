@@ -24,17 +24,17 @@ import { testFull } from './testFull.mjs'
 export const build = (done = null) => {
   const buildActions = [distSeries(), distMinify]
   const generateDocs = gulpConfig.get('docs.enabled')
-  // With the HTML documentation on, or readme.enabled off, the readme is the project's own (or there is none)
-  const generateReadme = !generateDocs && gulpConfig.get('readme.enabled') !== false
+  // The HTML documentation and the generated readme are separate settings: a project turns on either, both, or neither
+  const generateReadme = Boolean(gulpConfig.get('readme.enabled'))
   const docsMethod = resolveDocsMethod()
-  if (generateDocs) {
-    // The documentation is generated from the source itself, the readme is written by hand. With docs.inBuild off,
-    // generating it is left to the standalone docs task (gulp docs), so a build never rewrites it.
-    if (gulpConfig.get('docs.inBuild') !== false) {
-      buildActions.push(docsMethod === 'jsdoc' ? jsdocDocs : typeDocs)
-    }
-  } else if (generateReadme && gulpConfig.get('typescript.enabled')) {
-    // For ts usage, we need to run the readme on the dist directly since that is where the .js files are located
+  if (generateDocs && gulpConfig.get('docs.inBuild') !== false) {
+    // The documentation is generated from the source itself. With docs.inBuild off, generating it is left to the
+    // standalone docs task (gulp docs), so a build never rewrites it.
+    buildActions.push(docsMethod === 'jsdoc' ? jsdocDocs : typeDocs)
+  }
+  if (generateReadme) {
+    // After dist, never alongside it: readme.from often reads the dist files (always for TypeScript, where that is
+    // where the .js files are), and alongside it would document whatever part of dist had been written so far
     buildActions.push(compileReadme)
   }
   if (gulpConfig.get('browser.enabled')) {
@@ -45,10 +45,6 @@ export const build = (done = null) => {
   const runActions = [
     series(...buildActions),
   ]
-  if (generateReadme && !gulpConfig.get('typescript.enabled')) {
-    // Since we didn't run this in series after dist because of typescript, we need to run it now. Potentially faster here.
-    runActions.push(compileReadme)
-  }
   runActions.push(testFull)
   if (gulpConfig.get('fonts.enabled')) {
     // Conditionally add Fonts process

@@ -10,6 +10,9 @@ const { addToReadme, readmeTemplate } = await import('./partials.mjs')
 const gulpConfig = await import('../gulp.config.mjs')
 
 describe('compileReadme', () => {
+  // Off by default; this project's own build-tools.config.json turns it on, but don't depend on that
+  beforeEach(() => gulpConfig.set('readme.enabled', true))
+
   test('calls readmeTemplate and addToReadme', done => {
     expect.assertions(2)
     // A file to document (this repo's own src has none matching the default readme.from)
@@ -57,18 +60,34 @@ describe('compileReadme', () => {
     }, 500)
   })
 
-  test('does nothing when readme.enabled is false', async () => {
+  test('any truthy readme.enabled turns it on, like the other enabled settings', done => {
     readmeTemplate.mockClear()
     addToReadme.mockClear()
-    gulpConfig.set('readme.enabled', false)
+    gulpConfig.set('readme.enabled', 'true')
+    gulpConfig.set('readme.from', 'functions/compileReadme.mjs')
+    compileReadme()
+    setTimeout(() => {
+      gulpConfig.set('readme.from', 'src/**/!(*.test).js')
+      expect(readmeTemplate).toHaveBeenCalled()
+      expect(addToReadme).toHaveBeenCalled()
+      done()
+    }, 500)
+  })
+
+  test.each([false, undefined, 0])('does nothing, and says so, when readme.enabled is %s', async enabled => {
+    readmeTemplate.mockClear()
+    addToReadme.mockClear()
+    const info = jest.spyOn(console, 'info').mockImplementation(() => {})
+    gulpConfig.set('readme.enabled', enabled)
     try {
       const done = jest.fn()
       await compileReadme(done)
       expect(done).toHaveBeenCalled()
       expect(readmeTemplate).not.toHaveBeenCalled()
       expect(addToReadme).not.toHaveBeenCalled()
+      expect(info).toHaveBeenCalledWith(expect.stringContaining('readme.enabled is off'))
     } finally {
-      gulpConfig.set('readme.enabled', true)
+      info.mockRestore()
     }
   })
 })

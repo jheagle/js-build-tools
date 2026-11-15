@@ -29,6 +29,7 @@
     "inBuild": false
   },
   "readme": {
+    "enabled": true,
     "template": "MAIN.md",
     "options": "utf8",
     "from": [

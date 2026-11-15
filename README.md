@@ -71,7 +71,7 @@ default that keeps the build doing what it did, so an existing config never need
     // HTML added to every page of the documentation just before </body>, false for none.
     "bodyHtml": false,
     // Toggle generating the HTML documentation from the source (see 'Configure HTML documentation').
-    // When on, the build does this instead of generating the readme from the jsdoc comments.
+    // Independent of readme.enabled: turn on either, both, or neither.
     "enabled": false,
     // The directory holding the source, each folder in it becomes a module of the documentation.
     "from": "src",
@@ -123,8 +123,9 @@ default that keeps the build doing what it did, so an existing config never need
     "rules": {}
   },
   "readme": {
-    // Generate the readme; false keeps a hand-written readme (or none): neither build nor the readme task writes it.
-    "enabled": true,
+    // Generate the readme from the jsdoc comments (see 'Generate the readme'). False (the default) keeps a
+    // hand-written readme (or none): neither build nor the readme task writes it.
+    "enabled": false,
     // The file which will be pre-fixed to your README.md output. When it doesn't exist, the readme holds only the
     // generated documentation.
     "template": "MAIN.md",
@@ -275,6 +276,7 @@ Update the test config as follows:
     "to": "dist"
   },
   "readme": {
+    "enabled": true,
     "template": "MAIN.md",
     "options": "utf8",
     "file": "README.md",
@@ -405,6 +407,26 @@ that bundle; anything left out falls back to the primary bundle's own value:
 
 For the `gulpConfig` module's own `get`/`set` functions (read or override a resolved configuration value from your
 own code, by the same dot-notation path a setting has in the JSON above), see the generated reference below.
+
+### Generate the readme (optional)
+
+The readme and the HTML documentation (see 'Configure HTML documentation') are separate settings, both off by
+default: turn on either, both, or neither. With `readme.enabled` on, `gulp build` (and `gulp readme` on its own)
+writes `readme.file` from the template (`readme.template`, usually `MAIN.md`) followed by markdown generated from the
+jsdoc comments of the files `readme.from` matches. With it off, your `README.md` is your own: neither command touches
+it, and `gulp readme` says so instead.
+
+```json
+{
+  "readme": {
+    "enabled": true
+  }
+}
+```
+
+Before 9.0.0 the readme was on by default, and `docs.enabled` turned it off in `gulp build` (but not in `gulp
+readme`). A project which relied on that default now sets `readme.enabled` to `true`; a project with `docs.enabled`
+on and a hand-written readme needs no change.
 
 ### Configure including ESM files in the generated readme (optional)
 
@@ -553,6 +575,8 @@ Add the following to the exports in your `build-tools.config.json`:
 ```json
 {
   "readme": {
+    // Generate the readme (off by default, see 'Generate the readme').
+    "enabled": true,
     // Location of files to use for compiling documentation into the readme.
     "from": "dist/**/!(*.min).js"
   },
@@ -656,12 +680,13 @@ documentation with the site's GoatCounter:
 }
 ```
 
-While `docs.enabled` is on, `gulp build` generates the documentation instead of the readme, so your `README.md` stays
-hand-written (a short overview which links to the documentation). If you also export `docs` from your gulpfile you can
-run it on its own with `gulp docs`, and can then add the script `"docs": "gulp docs"`.
+While `docs.enabled` is on, `gulp build` generates the documentation. It leaves your `README.md` alone unless you
+also turn on `readme.enabled` (see 'Generate the readme'), so the readme can stay hand-written (a short overview which
+links to the documentation). If you also export `docs` from your gulpfile you can run it on its own with `gulp docs`,
+and can then add the script `"docs": "gulp docs"`.
 
 To make generating the documentation a deliberate step instead, set `docs.inBuild` to `false`: `gulp build` then
-generates neither the documentation nor the readme, and `gulp docs` is the only thing that writes to `docs.to`. This
+skips the documentation, and `gulp docs` is the only thing that writes to `docs.to`. This
 suits a `docs.to` which points into another repository (a website, say): a build on a work-in-progress branch no
 longer rewrites the published documentation, which you regenerate when you release instead. For example with
 release-it, in `.release-it.json`:
@@ -884,8 +909,9 @@ Applies neostandard linting (js-build-tools' chosen style) to the real, hand-wri
 dist/browser output, which is generated and so was never going to pass a hand-authored-code style check (every
 compiler/bundler emits its own boilerplate - import aliasing, interop headers - that only looks like a style
 violation). Includes test files: there is no reason to hold tests to a lower style bar than the rest of the
-source. Folders outside srcPath (for example scripts) are linted too when listed in lint.include. When typescript.enabled, the real TypeScript source is linted too, with type-aware rules. Runs as part of
-`build`, where remaining errors are reported but never fail it.
+source. Folders outside srcPath (for example scripts) are linted too when listed in lint.include. When
+typescript.enabled, the real TypeScript source is linted too, with type-aware rules. Runs as part of `build`, where
+remaining errors are reported but never fail it.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.lint"></a>
@@ -966,7 +992,9 @@ already terminate at their own separate dest() hit a real "write after end" erro
 
 ### js-build-tools.compileReadme([done]) ⇒ <code>\*</code>
 Generate the README.md file based off of the template, then append the generated documentation. Does nothing when
-readme.enabled is false, so a project can keep a hand-written readme (or none).
+readme.enabled is off (the default), so a project can keep a hand-written readme (or none). Also does nothing,
+with a warning, when no file matches readme.from or readme.fromEsm (a TypeScript project's src has no .js files,
+say): writing the template and then failing to document anything would leave a broken readme behind.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 
@@ -1251,7 +1279,7 @@ Configurations to compile and generate the Readme file.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| enabled | <code>BooleanSetting</code> | Generate the readme (the default). Turn it off to keep a hand-written readme, or none: neither build nor the readme task writes it then. |
+| enabled | <code>BooleanSetting</code> | Generate the readme from the jsdoc comments, in build and in the readme task. False (the default) keeps a hand-written readme, or none. Independent of docs.enabled: turn on either, both, or neither. |
 | file | <code>StringSetting</code> | The name of the output documentation markdown file. |
 | from | <code>StringSetting</code> | Location of files to use for compiling documentation into the readme. |
 | fromEsm | <code>ArrayableSetting</code> | Additional `.mjs` files to document alongside `from`, converted on the fly since the readme generator only recognizes `.js` files - see 'Configure including ESM files in the generated readme'. Empty by default: a project that never sets this gets exactly the readme it always did. |
@@ -1272,7 +1300,7 @@ TypeScript types) or jsdoc (a modern theme over jsdoc's own classic default) - s
 | --- | --- | --- |
 | basePath | <code>FlagStringSetting</code> | The path the documentation is served from, such as '/projects/my-lib/docs/' (jsdoc with clean-jsdoc-theme 5.x only). The theme's links start at the site root, so documentation served below it needs this. False (the default) serves it from the site root. |
 | bodyHtml | <code>FlagStringSetting</code> | HTML added to every page of the documentation just before `</body>`, with either engine, for example the analytics script the rest of the site has. False (the default) adds nothing. |
-| enabled | <code>BooleanSetting</code> | Toggle generating the documentation from the source. When it is on the build does this instead of generating the readme from the jsdoc comments of the compiled files. |
+| enabled | <code>BooleanSetting</code> | Toggle generating the documentation from the source. Independent of readme.enabled: turn on either, both, or neither. |
 | from | <code>ArrayableSetting</code> | The directory holding the source, each folder in it becomes a module (TypeDoc) or is scanned recursively (jsdoc). jsdoc also takes a list of directories and files. |
 | gitRevision | <code>FlagStringSetting</code> | The git revision TypeDoc's "Defined in" source links point to (TypeDoc only). False (the default) is TypeDoc's own: the current commit, which changes every page on every commit. A branch name such as 'main' keeps the pages unchanged until the documentation itself changes; '{branch}' is the branch being built. |
 | headHtml | <code>FlagStringSetting</code> | HTML added to every page of the documentation just before `</head>`, with either engine. False (the default) adds nothing. |
