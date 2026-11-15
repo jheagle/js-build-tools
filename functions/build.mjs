@@ -25,7 +25,7 @@ export const build = (done = null) => {
   const buildActions = [distSeries(), distMinify]
   const generateDocs = gulpConfig.get('docs.enabled')
   // The HTML documentation and the generated readme are separate settings: a project turns on either, both, or neither
-  const generateReadme = gulpConfig.get('readme.enabled') === true
+  const generateReadme = Boolean(gulpConfig.get('readme.enabled'))
   const docsMethod = resolveDocsMethod()
   if (generateDocs && gulpConfig.get('docs.inBuild') !== false) {
     // The documentation is generated from the source itself. With docs.inBuild off, generating it is left to the

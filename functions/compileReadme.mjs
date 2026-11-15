@@ -26,15 +26,16 @@ const skip = done => {
  * @returns {*}
  */
 export const compileReadme = (done = null) => {
-  if (gulpConfig.get('readme.enabled') !== true) {
-    console.info('readme.enabled is off, so the readme was left as it is. Set it to true to generate the readme.')
+  const enabled = gulpConfig.get('readme.enabled')
+  if (!enabled) {
+    console.info(`readme.enabled is off (${JSON.stringify(enabled)}), so the readme was left as it is. Set it to true to generate the readme.`)
     return skip(done)
   }
   const from = gulpConfig.get('readme.from')
   const fromEsm = gulpConfig.get('readme.fromEsm')
   if (globSync(from).length + globSync(fromEsm).length === 0) {
     const readmePath = gulpConfig.get('readme.to') + gulpConfig.get('readme.file')
-    console.warn(`No files match readme.from (${from})${[].concat(fromEsm).length ? ` or readme.fromEsm (${fromEsm})` : ''}: ${readmePath} was left as it is. Point readme.from at the files to document (the compiled .js, for TypeScript), or set readme.enabled to false to keep a hand-written readme.`)
+    console.warn(`No files match readme.from (${from})${[].concat(fromEsm).length ? ` or readme.fromEsm (${fromEsm})` : ''}: ${readmePath} was left as it is. Point readme.from at the files to document (the compiled .js, for TypeScript), or turn readme.enabled off (the default) to keep a hand-written readme.`)
     return skip(done)
   }
   return series(readmeTemplate, addToReadme)(done)

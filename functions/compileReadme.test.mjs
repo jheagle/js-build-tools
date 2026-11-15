@@ -60,7 +60,21 @@ describe('compileReadme', () => {
     }, 500)
   })
 
-  test.each([false, undefined])('does nothing, and says so, when readme.enabled is %s', async enabled => {
+  test('any truthy readme.enabled turns it on, like the other enabled settings', done => {
+    readmeTemplate.mockClear()
+    addToReadme.mockClear()
+    gulpConfig.set('readme.enabled', 'true')
+    gulpConfig.set('readme.from', 'functions/compileReadme.mjs')
+    compileReadme()
+    setTimeout(() => {
+      gulpConfig.set('readme.from', 'src/**/!(*.test).js')
+      expect(readmeTemplate).toHaveBeenCalled()
+      expect(addToReadme).toHaveBeenCalled()
+      done()
+    }, 500)
+  })
+
+  test.each([false, undefined, 0])('does nothing, and says so, when readme.enabled is %s', async enabled => {
     readmeTemplate.mockClear()
     addToReadme.mockClear()
     const info = jest.spyOn(console, 'info').mockImplementation(() => {})
