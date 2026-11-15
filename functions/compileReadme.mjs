@@ -5,6 +5,7 @@ import * as gulpConfig from '../gulp.config.mjs'
 
 /**
  * Finish without doing anything.
+ * @private
  * @param {Function} [done]
  * @returns {Promise<void>}
  */
@@ -17,15 +18,16 @@ const skip = done => {
 
 /**
  * Generate the README.md file based off of the template, then append the generated documentation. Does nothing when
- * readme.enabled is false, so a project can keep a hand-written readme (or none). Also does nothing, with a warning,
- * when no file matches readme.from or readme.fromEsm (a TypeScript project's src has no .js files, say): writing the
- * template and then failing to document anything would leave a broken readme behind.
+ * readme.enabled is off (the default), so a project can keep a hand-written readme (or none). Also does nothing,
+ * with a warning, when no file matches readme.from or readme.fromEsm (a TypeScript project's src has no .js files,
+ * say): writing the template and then failing to document anything would leave a broken readme behind.
  * @memberOf module:js-build-tools
  * @param {Function} [done]
  * @returns {*}
  */
 export const compileReadme = (done = null) => {
-  if (gulpConfig.get('readme.enabled') === false) {
+  if (gulpConfig.get('readme.enabled') !== true) {
+    console.info('readme.enabled is off, so the readme was left as it is. Set it to true to generate the readme.')
     return skip(done)
   }
   const from = gulpConfig.get('readme.from')

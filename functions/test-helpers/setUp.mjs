@@ -35,6 +35,8 @@ export const setDefaults = (testDir = 'test-temp') => {
   gulpConfig.set('images.cacheDir', `${tempDir}image-cache`)
   gulpConfig.set('images.from', `${srcPath}/img/**/*.+(png|jpg|jpeg|gif|svg)`)
   gulpConfig.set('images.to', `${browserPath}/img`)
+  // Reset explicitly to the default (off): this project's own build-tools.config.json turns it on
+  gulpConfig.set('readme.enabled', false)
   gulpConfig.set('readme.template', `${tempDir}MAIN.md`)
   gulpConfig.set('readme.to', tempDir)
   gulpConfig.set('readme.from', `${srcPath}/**/!(*.test).js`)

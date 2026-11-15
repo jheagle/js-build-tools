@@ -133,8 +133,9 @@ import { fileExists } from 'test-filesystem'
 /**
  * Configurations to compile and generate the Readme file.
  * @typedef {Object<string, Setting>} module:gulpConfig~ReadmeConfig
- * @property {BooleanSetting} enabled - Generate the readme (the default). Turn it off to keep a hand-written readme,
- * or none: neither build nor the readme task writes it then.
+ * @property {BooleanSetting} enabled - Generate the readme from the jsdoc comments, in build and in the readme task.
+ * False (the default) keeps a hand-written readme, or none. Independent of docs.enabled: turn on either, both, or
+ * neither.
  * @property {StringSetting} file - The name of the output documentation markdown file.
  * @property {StringSetting} from - Location of files to use for compiling documentation into the readme.
  * @property {ArrayableSetting} fromEsm - Additional `.mjs` files to document alongside `from`, converted on the
@@ -154,8 +155,8 @@ import { fileExists } from 'test-filesystem'
  * needs this. False (the default) serves it from the site root.
  * @property {FlagStringSetting} bodyHtml - HTML added to every page of the documentation just before `</body>`, with
  * either engine, for example the analytics script the rest of the site has. False (the default) adds nothing.
- * @property {BooleanSetting} enabled - Toggle generating the documentation from the source. When it is on the
- * build does this instead of generating the readme from the jsdoc comments of the compiled files.
+ * @property {BooleanSetting} enabled - Toggle generating the documentation from the source. Independent of
+ * readme.enabled: turn on either, both, or neither.
  * @property {ArrayableSetting} from - The directory holding the source, each folder in it becomes a module (TypeDoc) or
  * is scanned recursively (jsdoc). jsdoc also takes a list of directories and files.
  * @property {FlagStringSetting} gitRevision - The git revision TypeDoc's "Defined in" source links point to (TypeDoc
@@ -278,7 +279,7 @@ const setDefaults = {
     rules: {},
   },
   readme: {
-    enabled: true,
+    enabled: false,
     file: 'README.md',
     from: 'src/**/!(*.test).js',
     fromEsm: [],
