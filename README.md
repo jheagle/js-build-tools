@@ -1,5 +1,7 @@
 # [js-build-tools](https://www.npmjs.com/package/js-build-tools)
 
+[![tests](https://github.com/jheagle/js-build-tools/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jheagle/js-build-tools/actions/workflows/tests.yml)
+
 Centralize the build process for Node.js, JS and TypeScript projects into a single tool suite.
 
 ### Goals
@@ -839,8 +841,8 @@ Export these functions to your own project to customize your build pipeline.
     * [.jsdocDocs](#module_js-build-tools.jsdocDocs) ⇒ <code>function</code>
     * [.watchTest()](#module_js-build-tools.watchTest) ⇒ <code>\*</code>
     * [.watchFull()](#module_js-build-tools.watchFull) ⇒ <code>FSWatcher</code>
-    * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;\*&gt;</code>
-    * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;\*&gt;</code>
+    * [.testQuick()](#module_js-build-tools.testQuick) ⇒ <code>Promise.&lt;Object&gt;</code>
+    * [.testFull()](#module_js-build-tools.testFull) ⇒ <code>Promise.&lt;Object&gt;</code>
     * [.sourceLint()](#module_js-build-tools.sourceLint) ⇒ <code>\*</code>
     * [.lint()](#module_js-build-tools.lint) ⇒ <code>\*</code>
     * [.images()](#module_js-build-tools.images) ⇒ <code>stream.Stream</code>
@@ -890,18 +892,20 @@ Watch for changes and run the distribution for the changed files, then bundle an
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
 <a name="module_js-build-tools.testQuick"></a>
 
-### js-build-tools.testQuick() ⇒ <code>Promise.&lt;\*&gt;</code>
+### js-build-tools.testQuick() ⇒ <code>Promise.&lt;Object&gt;</code>
 Run the Jest tests for files which have been modified (based on git status).
 Configure where tests are located by using 'testPath'.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - Jest's aggregated results, when every test passed; rejects when any failed.  
 <a name="module_js-build-tools.testFull"></a>
 
-### js-build-tools.testFull() ⇒ <code>Promise.&lt;\*&gt;</code>
+### js-build-tools.testFull() ⇒ <code>Promise.&lt;Object&gt;</code>
 Run all tests with jest.
 Configure where tests are located by using 'testPath'.
 
 **Kind**: static method of [<code>js-build-tools</code>](#module_js-build-tools)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - Jest's aggregated results, when every test passed; rejects when any failed.  
 <a name="module_js-build-tools.sourceLint"></a>
 
 ### js-build-tools.sourceLint() ⇒ <code>\*</code>
