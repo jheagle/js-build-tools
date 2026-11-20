@@ -1,5 +1,7 @@
 # [js-build-tools](https://www.npmjs.com/package/js-build-tools)
 
+[![tests](https://github.com/jheagle/js-build-tools/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jheagle/js-build-tools/actions/workflows/tests.yml)
+
 Centralize the build process for Node.js, JS and TypeScript projects into a single tool suite.
 
 ### Goals
